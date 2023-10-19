@@ -3,5 +3,5 @@ export const ProductStyles = {
     justifyContent: 'center',
     width: '100%',
     backgroundColor: 'grey',
-    overflow: 'auto',
+    overflow: 'hidden',
 }

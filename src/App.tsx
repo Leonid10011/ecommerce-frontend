@@ -4,6 +4,7 @@ import { Grid, Theme, createTheme } from '@mui/material';
 import { ThemeProvider } from '@emotion/react';
 import Header from './components/Header/Header';
 import { Outlet, useLocation } from 'react-router';
+import Products from './pages/Products/Products';
 
 const theme: Theme = createTheme({
   typography: {
@@ -26,7 +27,7 @@ function App() {
     <ThemeProvider theme={theme}>
       <Grid container>
         <Navbar/>
-        <Header title={title}/>
+        <Header title='titel'/>
         <Outlet/>
       </Grid>
     </ThemeProvider>

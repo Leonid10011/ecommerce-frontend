@@ -30,6 +30,21 @@ export default function Products(){
             name: "item 5",
             price: "52190.00",
             imgSrc: "/test2.jpeg"
+        },
+        {
+            name: "item 6",
+            price: "521902.00",
+            imgSrc: "/test2.jpeg"
+        },
+        {
+            name: "item 7",
+            price: "5219032.00",
+            imgSrc: "/test2.jpeg"
+        },
+        {
+            name: "item 8",
+            price: "52123190.00",
+            imgSrc: "/test2.jpeg"
         }
     ]
 

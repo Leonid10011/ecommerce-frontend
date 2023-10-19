@@ -10,10 +10,10 @@ import Grid from '@mui/material//Grid';
 
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import LoginIcon from '@mui/icons-material/Login';
-import { Divider } from '@mui/material';
+import { Box, Divider } from '@mui/material';
 
 const appBarStyles = css`
-  
+  z-index: 100;
   background-color: #fff;
 `;
 
@@ -49,28 +49,26 @@ const LoginCartContainer = styled(Grid)`
 
 function Navbar() {
   return (
-    <NavbarContainer position="sticky">
-      <Toolbar>
-        <Grid container alignItems="center">
-          <Grid item>
-            <Logo src="/logo.png" alt="Logo" />
+      <NavbarContainer  position='sticky'>
+        <Toolbar>
+          <Grid container alignItems="center">
+            <Grid item>
+              <Logo src="/logo.png" alt="Logo" />
+            </Grid>
+              <SearchContainer item>
+                <SearchIcon />
+                <InputBase
+                  placeholder="Suche.sda.."
+                  inputProps={{ 'aria-label': 'search' }}
+                />
+              </SearchContainer>
+          <LoginCartContainer item>
+              <IconButton aria-label='Login'><LoginIcon/></IconButton>
+              <IconButton aria-label="Warenkorb"><ShoppingCartIcon/></IconButton>
+          </LoginCartContainer>
           </Grid>
-          <Divider/>
-            <SearchContainer item>
-              <SearchIcon />
-              <InputBase
-                placeholder="Suche..."
-                inputProps={{ 'aria-label': 'search' }}
-              />
-            </SearchContainer>
-            <Divider/>
-        <LoginCartContainer item>
-            <IconButton aria-label='Login'><LoginIcon/></IconButton>
-            <IconButton aria-label="Warenkorb"><ShoppingCartIcon/></IconButton>
-        </LoginCartContainer>
-        </Grid>
-      </Toolbar>
-    </NavbarContainer>
+        </Toolbar>
+      </NavbarContainer>
   );
 }
 
