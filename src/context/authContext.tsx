@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { loginUser } from "../api/authApi";
+import { useNavigate } from "react-router";
 
 interface AuthContextType {
     token: string,
@@ -19,6 +20,7 @@ export const useAuth = () => useContext(AuthContext);
 export const AuthContextProvider = (props: {
     children: React.ReactNode,
 }) => {
+    const navigation = useNavigate();
 
     const [token, setToken] = useState<string>("");
     const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
@@ -27,6 +29,7 @@ export const AuthContextProvider = (props: {
         const token = await loginUser(email, password);
         if(token){
             setToken(token);
+            navigation("/p");
         }
     }
 

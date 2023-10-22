@@ -5,6 +5,8 @@ import { ThemeProvider } from '@emotion/react';
 import Header from './components/Header/Header';
 import { Outlet, useLocation } from 'react-router';
 import Products from './pages/Products/Products';
+import keycloak from './keycloak-config';
+
 
 const theme: Theme = createTheme({
   typography: {
@@ -13,6 +15,8 @@ const theme: Theme = createTheme({
 });
 
 function App() {
+  
+  
   const [title,setTitle] = useState<string>("");
 
   const location = useLocation();
@@ -27,7 +31,7 @@ function App() {
     <ThemeProvider theme={theme}>
       <Grid container>
         <Navbar/>
-        <Header title={title}/>
+        {/* <Header title={title}/> */}
         <Outlet/>
       </Grid>
     </ThemeProvider>

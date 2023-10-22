@@ -10,6 +10,9 @@ import BasicCard from './components/common/BasicCard/BasicCard';
 import { AuthContextProvider } from './context/authContext';
 import SignIn from './pages/Login/Login';
 import SignUp from './pages/Register/Register';
+import RegisterForm from './pages/Register/Test';
+import ProductList from './pages/Products/P2';
+import { DataContextProvider } from './context/dataContext';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -18,14 +21,18 @@ const root = ReactDOM.createRoot(
 root.render(
   <BrowserRouter>
   <AuthContextProvider>
-    <Routes>
-      <Route path="/" element={<App/>}>
-        <Route path="/start" element={<Start/>}/>
-        <Route path="/products"element={<Products/>}/>
-        <Route path="/signin" element={<SignIn/>}/>
-        <Route path="/signup" element={<SignUp/>}/>
-      </Route>
-    </Routes>
+    <DataContextProvider>
+      <Routes>
+        <Route path="/" element={<App/>}>
+          <Route path="/start" element={<Start/>}/>
+          <Route path="/products"element={<Products/>}/>
+          <Route path="/signin" element={<SignIn/>}/>
+          <Route path="/signup" element={<RegisterForm/>}/>
+          <Route path="/test" element={<RegisterForm/>} />
+          <Route path='/p' element={<ProductList/>} />
+        </Route>
+      </Routes>  
+    </DataContextProvider>
   </AuthContextProvider>
   </BrowserRouter>
 );
