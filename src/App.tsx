@@ -27,7 +27,7 @@ function App() {
     <ThemeProvider theme={theme}>
       <Grid container>
         <Navbar/>
-        <Header title='titel'/>
+        <Header title={title}/>
         <Outlet/>
       </Grid>
     </ThemeProvider>

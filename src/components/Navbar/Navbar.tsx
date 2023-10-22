@@ -11,6 +11,8 @@ import Grid from '@mui/material//Grid';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import LoginIcon from '@mui/icons-material/Login';
 import { Box, Divider } from '@mui/material';
+import { useAuth } from '../../context/authContext';
+import { Link, useNavigate, useNavigation } from 'react-router-dom';
 
 const appBarStyles = css`
   z-index: 100;
@@ -48,6 +50,16 @@ const LoginCartContainer = styled(Grid)`
 `;
 
 function Navbar() {
+
+  const { token, resetToken } = useAuth();
+
+  const navigation = useNavigate();
+
+  const logout = () => {
+    resetToken();
+    navigation("/")
+  }
+
   return (
       <NavbarContainer  position='sticky'>
         <Toolbar>
@@ -63,7 +75,11 @@ function Navbar() {
                 />
               </SearchContainer>
           <LoginCartContainer item>
-              <IconButton aria-label='Login'><LoginIcon/></IconButton>
+              { token === ""
+              ? 
+              <IconButton aria-label='Login' onClick={() => navigation("/signin")}><LoginIcon/></IconButton>
+
+              : <IconButton aria-label='Logout' onClick={logout}><LoginIcon/></IconButton>}
               <IconButton aria-label="Warenkorb"><ShoppingCartIcon/></IconButton>
           </LoginCartContainer>
           </Grid>
