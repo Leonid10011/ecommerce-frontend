@@ -26,7 +26,7 @@ export default function SignIn() {
     };
 
     return (
-        <Container component="main" maxWidth="xs" sx={{overflow: 'auto', maxHeight: '50vh'}}>
+        <Container component="main" maxWidth="xs" sx={{overflow: 'auto', minHeight: "300px"}}>
         <Box
             sx={{  
             marginTop: 8,

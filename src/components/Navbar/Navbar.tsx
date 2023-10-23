@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { FormEvent, useState } from 'react';
 import { css } from '@emotion/react'; // Importiere css aus @emotion/react
 import styled from '@emotion/styled'; // Importiere styled aus @emotion/styled
 import AppBar from '@mui/material/AppBar';
@@ -15,6 +15,7 @@ import LoginIcon from '@mui/icons-material/Login';
 import { Box, Divider } from '@mui/material';
 import { useAuth } from '../../context/authContext';
 import { Link, useNavigate, useNavigation } from 'react-router-dom';
+import { useData } from '../../context/dataContext';
 
 const logoStyles = css`
   width: 100%;
@@ -32,14 +33,25 @@ function Navbar() {
   const [authenticated, setAuthenticated] = useState<boolean>(false);
 
   const { token, resetToken } = useAuth();
+  const [ searchTerm, setSearchTerm ] = useState<string>("");
+
+  const { fetchAndSetProductsByName } = useData();
 
   const navigation = useNavigate();
 
   const logout = () => {
     resetToken();
-    navigation("/")
+    navigation("/start");
   }
 
+  const handleSearch = (e: FormEvent) => {
+    fetchAndSetProductsByName(searchTerm);
+    navigation("/p");
+  }
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+  }
 
   // 
   // useEffect(() => {
@@ -55,7 +67,7 @@ function Navbar() {
         <Toolbar>
           <Grid container alignItems="center">
             <Grid item xs={4}>
-              <Link to="/"><Logo src="/logo.png" alt="Logo" /></Link>
+              <Link to="/start"><Logo src="/logo.png" alt="Logo" /></Link>
             </Grid>
             <Grid item xs={8} display={'flex'} justifyContent={'flex-end'}>
               <Grid item>
@@ -63,12 +75,15 @@ function Navbar() {
                 ? 
                 <IconButton aria-label='Login' onClick={() => navigation("/signin")}><LoginIcon/></IconButton>
                 : <IconButton aria-label='Logout' onClick={logout}><LoginIcon/></IconButton>}
-                <IconButton aria-label="Warenkorb"><ShoppingCartIcon/></IconButton>
+                <IconButton aria-label="Warenkorb" onClick={() => navigation("/cart")}><ShoppingCartIcon/></IconButton>
               </Grid>
             </Grid>
               <Grid item xs={12} sx={{display: 'flex', alignContent: 'center'}}>
-                <SearchIcon />
+                <button onClick={handleSearch}>
+                  <SearchIcon />
+                </button>
                 <InputBase
+                  onChange={handleChange}
                   placeholder="Suche..."
                   inputProps={{ 'aria-label': 'search' }}
                 />

@@ -13,6 +13,7 @@ import SignUp from './pages/Register/Register';
 import RegisterForm from './pages/Register/Test';
 import ProductList from './pages/Products/P2';
 import { DataContextProvider } from './context/dataContext';
+import Cart from './pages/Cart/Cart';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -30,6 +31,7 @@ root.render(
           <Route path="/signup" element={<RegisterForm/>}/>
           <Route path="/test" element={<RegisterForm/>} />
           <Route path='/p' element={<ProductList/>} />
+          <Route path='/cart' element={<Cart/>}/>
         </Route>
       </Routes>  
     </DataContextProvider>

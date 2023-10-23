@@ -26,7 +26,7 @@ function RegisterForm() {
     }
 
   return (
-    <Container maxWidth="sm" sx={{overflow: "auto", maxHeight: '80vh'}}>
+    <Container maxWidth="sm" sx={{overflow: "hidden", minHeight: '300px'}}>
       <form onSubmit={handleSubmit}>
         <Grid container spacing={2}>
           <Grid item xs={12}>

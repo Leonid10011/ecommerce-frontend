@@ -3,7 +3,7 @@ import Navbar from './components/Navbar/Navbar';
 import { Grid, Theme, createTheme } from '@mui/material';
 import { ThemeProvider } from '@emotion/react';
 import Header from './components/Header/Header';
-import { Outlet, useLocation } from 'react-router';
+import { Outlet, useLocation, useNavigate } from 'react-router';
 import Products from './pages/Products/Products';
 import keycloak from './keycloak-config';
 
@@ -21,17 +21,17 @@ function App() {
 
   const location = useLocation();
 
+  const navigation = useNavigate();
+
   useEffect(() => {
-    console.log(location.pathname)
     const parsedTitle = location.pathname.replace(/\W/g, ' ');
     setTitle(parsedTitle);
-  }, [location])
+  }, [])
 
   return (
     <ThemeProvider theme={theme}>
       <Grid container>
         <Navbar/>
-        {/* <Header title={title}/> */}
         <Outlet/>
       </Grid>
     </ThemeProvider>

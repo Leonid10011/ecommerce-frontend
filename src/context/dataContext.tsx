@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { getProducts } from "../api/dataApi";
+import { getProducts, getProductsByName } from "../api/dataApi";
 
 interface Product {
     id: string,
@@ -13,9 +13,11 @@ interface Product {
 
 const initData = {
     products: [],
+    fetchAndSetProductsByName: () => {}
 }
 interface DataContextType {
     products: Product[],
+    fetchAndSetProductsByName: (name: string) => void;
 }
 
 const DataContext = createContext<DataContextType>(initData);
@@ -33,12 +35,22 @@ const DataContextProvider = ({children}: {
         setProducts(data);
     }
 
+    const fetchAndSetProductsByName = async (name: string) => {
+        try {
+            let data = await getProductsByName(name);
+            setProducts(data);
+            console.log("qwerty", data);
+        } catch( err: any){
+            console.error("Error: ", err);
+        }
+    }
+
     useEffect(() => {
         fetchAndSetProducts();
     }, [])
 
     return (
-        <DataContext.Provider value={{products}}>
+        <DataContext.Provider value={{products, fetchAndSetProductsByName}}>
             {children}
         </DataContext.Provider>
     )
