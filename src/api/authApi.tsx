@@ -19,6 +19,7 @@ export const loginUser = async (username: string, password: string) => {
         }
         let res = await fetch("/user/login", requestOptions);
         let data = res.text();
+        console.log("Login: ", data);
         return data;
     } catch(err: any){
         console.error("Error: ", err);

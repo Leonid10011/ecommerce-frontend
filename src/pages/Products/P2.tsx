@@ -5,6 +5,13 @@ import { useData } from '../../context/dataContext';
 function ProductList() {
     const isLargeScreen = useMediaQuery('(min-width: 768px');
     const { products } = useData();
+
+    const handleBuy = (e: React.FormEvent<HTMLButtonElement>) => {
+        e.preventDefault();
+        const productId = e.currentTarget.parentElement!.dataset.user;
+        console.log("ID: ", productId)
+
+    }
   
     return (
       <Container maxWidth="sm" sx={{ position: 'relative', overflow: 'hidden', minHeight: '300px' }}>
@@ -14,12 +21,12 @@ function ProductList() {
               <Grid item xs={4}>
                 <img src={product.imageURL} alt={product.name} style={{ width: '100%', height: 'auto' }} />
               </Grid>
-              <Grid item xs={8}>
+              <Grid item xs={8} data-user={product.id}>
                 <Typography variant="h6">{product.name}</Typography>
                 <Typography variant="subtitle1" color="textSecondary">
                   {product.price}
                 </Typography>
-                <Button variant="contained" color="primary">
+                <Button variant="contained" color="primary" onClick={handleBuy}>
                   Buy
                 </Button>
               </Grid>
@@ -29,7 +36,7 @@ function ProductList() {
       </Container>
     );
         }
-
+// Refactor later
 const ProductCard = ({ name, description, price }: {
     name: string,
     description: string,
