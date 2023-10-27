@@ -3,8 +3,8 @@ Written in React.
 ## Backend: ecommerce-backend repository
 
 ### Currently working on:
--Cleaning Code\n
--Using material-ui to improve the optical quality
+-Cleaning Code  
+-Using material-ui to improve the optical quality  
 
 #### Todos:
 -User Profile
