@@ -7,7 +7,7 @@ Written in React.
 -Using material-ui to improve the optical quality  
 
 #### Todos:
--User Profile
--Starting Page
--Category selection
--many more, but first need to finish "Currently working on"
+-User Profile  
+-Starting Page  
+-Category selection  
+-many more, but first need to finish "Currently working on"  
