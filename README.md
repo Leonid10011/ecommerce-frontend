@@ -6,11 +6,6 @@ Welcome to my E-Commerce Frontend project! This project serves as part of my por
 - [Project Description](#project-description)
 - [Features](#features)
 - [Project Status](#project-status)
-- [Installation](#installation)
-- [Usage](#usage)
-- [Planned Features](#planned-features)
-- [Contributing](#contributing)
-- [License](#license)
 
 ## Project Description
 
