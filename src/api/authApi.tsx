@@ -26,21 +26,13 @@ export const loginUser = async (username: string, password: string) => {
     }
 }
 
-interface UserDTO {
+export interface UserDTO {
     username: string,
-    forename: string,
-    surname: string,
-    city: string,
-    country: string,
-    street: string,
-    zipCode:string,
-    phone: string,
     email: string,
     password: string,
 }
 
 export const signUp = async (userDTO: UserDTO) => {
-
     try {
         const requestOptions = {
             method: "POST",
@@ -50,25 +42,19 @@ export const signUp = async (userDTO: UserDTO) => {
             },
             body: JSON.stringify({
                 username: userDTO.username,
-                forename: userDTO.forename,
-                surname: userDTO.surname,
-                city: userDTO.city,
-                country: userDTO.country,
-                street: userDTO.street,
-                zipCode: userDTO.zipCode,
-                phone: userDTO.phone,
                 email: userDTO.email,
                 roleID: 1,
                 password: userDTO.password
             }),
         }
 
-        await fetch('/user/create', requestOptions);
-        return true;    
+        let res = await fetch('/user/create', requestOptions);
+        
+        return res.status;
 
     } catch(err: any){
         console.error("Error: ", err);
-        return false;
+        return 404;
     }
 
 }

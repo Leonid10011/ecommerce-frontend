@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { getProducts, getProductsByName } from "../api/dataApi";
 
-interface Product {
+export interface Product {
     id: string,
     name: string,
     description: string,
@@ -13,7 +13,8 @@ interface Product {
 
 const initData = {
     products: [],
-    fetchAndSetProductsByName: () => {}
+    fetchAndSetProductsByName: () => {},
+
 }
 interface DataContextType {
     products: Product[],
@@ -39,9 +40,7 @@ const DataContextProvider = ({children}: {
         try {
             let data = await getProductsByName(name);
             setProducts(data);
-            console.log("qwerty", data);
         } catch( err: any){
-            console.error("Error: ", err);
         }
     }
 
@@ -50,7 +49,7 @@ const DataContextProvider = ({children}: {
     }, [])
 
     return (
-        <DataContext.Provider value={{products, fetchAndSetProductsByName}}>
+        <DataContext.Provider value={{products, fetchAndSetProductsByName }}>
             {children}
         </DataContext.Provider>
     )
