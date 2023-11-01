@@ -4,7 +4,6 @@ import { Grid, Theme, createTheme } from '@mui/material';
 import { ThemeProvider } from '@emotion/react';
 import Header from './components/Header/Header';
 import { Outlet, useLocation, useNavigate } from 'react-router';
-import Products from './pages/Products/Products';
 import keycloak from './keycloak-config';
 
 
@@ -30,7 +29,7 @@ function App() {
 
   return (
     <ThemeProvider theme={theme}>
-      <Grid container>
+      <Grid container justifyContent={"center"}>
         <Navbar/>
         <Outlet/>
       </Grid>

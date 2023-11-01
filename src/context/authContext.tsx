@@ -2,39 +2,10 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { loginUser } from "../api/authApi";
 import { useNavigate } from "react-router";
 import { decodeToken } from "react-jwt";
-import { getOrder } from "../api/dataApi";
 import { useOrder } from "./orderContext";
+import { useData } from "./dataContext";
 
-
-interface AuthContextType {
-    token: string,
-    fetchAndSetToken: (email: string, password: string) => Promise<void>,
-    resetToken: () => void;
-    userId: number,
-    order: {
-        id: number,
-        userId: number,
-        date: Date,
-        status: string
-    },
-    isAuthenticated: boolean
-}
-
-const AuthContext = createContext<AuthContextType>({
-    token: "",
-    fetchAndSetToken: async () => {},
-    resetToken: () => {},
-    userId: 0,
-    order: {
-        id: 0,
-        userId: 0,
-        date: new Date(),
-        status: ""
-    },
-    isAuthenticated: false
-});
-
-interface TokenType {
+export interface TokenType {
     sub: string,
     groups: string[],
     upn: string,
@@ -43,12 +14,35 @@ interface TokenType {
     jti: string
 }
 
-interface OrderType {
+export interface OrderType {
     id: number,
     userId: number,
     date: Date,
     status: string
 }
+
+interface fetchAndSetTokenType {
+    id: number,
+    token: string
+}
+
+interface AuthContextType {
+    token: string,
+    fetchAndSetToken: (email: string, password: string) => Promise<fetchAndSetTokenType>,
+    resetToken: () => void;
+    userId: number,
+    isAuthenticated: boolean
+}
+
+const AuthContext = createContext<AuthContextType>({
+    token: "",
+    fetchAndSetToken:  async ()  => { 
+        return { id: 0, token: ""} as {id:number; token: string};
+    },
+    resetToken: () => {},
+    userId: 0,
+    isAuthenticated: false
+});
 
 export const useAuth = () => useContext(AuthContext);
 
@@ -59,43 +53,49 @@ export const AuthContextProvider = (props: {
 
     const [token, setToken] = useState<string>("");
     const [userId, setUserId] = useState<number>(0);
-    const [order, setOrder] = useState<OrderType>({
-        id: 0,
-        userId: 0,
-        date: new Date(),
-        status: ""
-    });
 
     const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
 
     const { initOrderContext } = useOrder();
+    const { initFavoriteItems } = useData();
 
-    const fetchAndSetToken = async(email: string, password: string) => {
+    const fetchAndSetToken = async (email: string, password: string): Promise<fetchAndSetTokenType>  => {
         const token = await loginUser(email, password);
+        console.log("TOKEN ", token)
         if(token){
             try {
                 setToken(token);
                 navigation("/p");
-                const publicKey = 'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA42s1GTmUx7ZXpuO6SaUCBGEiHqrV8LG3L5QZwqPRiFzkq1z55gbHFVFHvrJsZLfRf9BkZ2CAR1zjRavG1dvYCrbmgkFzZIxNm656e8MaM658ZnrGc2bGnr7L6XxA27VqxIK1N3OwyM+9gzKZqECAViloIwWXtA0AjZipV1EtOTJt7ANYvtLjVyQ4jjCBZ9cS9CdYcWhz7iFwxjlVKzFdU/edZv0A/Eg4m+U3RP/UB6NTw5wmJYIva6CXmqF8yYyV34oMCkbngTg1Gi9Km2BCv0IUOqGHoEOm4gIeAh3NLgDQbP8mHwXoIKdaZA7c52HHpseCN+NhRl97GDmJl/h9nQIDAQAB';
                 const decodedToken: TokenType = decodeToken(token)!;
-                setUserId(Number(decodedToken.upn));
-                const order2: OrderType  = await getOrder(Number(decodedToken.upn));
-                setOrder(order2);
-                setIsAuthenticated(true);
-                initOrderContext(order2.id)
+                
+                //Testing
+                /*
 
+                console.log(decodedToken.upn);
+                console.log("Gŕoups ", decodedToken.groups);
+                console.log("SUB " ,decodedToken.sub)
+                */
+               
+                let id = Number(decodedToken.upn)!
+                setUserId(id);
+                setIsAuthenticated(true);
+
+                return {id, token}; 
             } catch( err : any){
                 console.error("ERROR", err);
+                return {id: 0, token: ""};
             }
+        }else {
+            return {id: 0, token: ""};
         }
     }
-
+    
     const resetToken = () => {
         setToken("");
     }
 
     return (
-        <AuthContext.Provider value={{token, fetchAndSetToken, resetToken, userId, order, isAuthenticated}}>
+        <AuthContext.Provider value={{token, fetchAndSetToken, resetToken, userId, isAuthenticated}}>
             {props.children}
         </AuthContext.Provider>
     );

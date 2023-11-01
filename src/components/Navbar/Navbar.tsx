@@ -16,6 +16,8 @@ import { Box, Divider } from '@mui/material';
 import { useAuth } from '../../context/authContext';
 import { Link, useNavigate, useNavigation } from 'react-router-dom';
 import { useData } from '../../context/dataContext';
+import { useOrder } from '../../context/orderContext';
+import { useInit } from '../../context/initContext';
 
 const logoStyles = css`
   width: 100%;
@@ -35,17 +37,21 @@ function Navbar() {
   const { token, resetToken } = useAuth();
   const [ searchTerm, setSearchTerm ] = useState<string>("");
 
-  const { fetchAndSetProductsByName } = useData();
+  const { test, doSearch } = useInit();
+
+  const { resetCart } = useOrder();
 
   const navigation = useNavigate();
 
   const logout = () => {
+    resetCart();
     resetToken();
-    navigation("/start");
+    navigation("/");
   }
 
   const handleSearch = (e: FormEvent) => {
-    fetchAndSetProductsByName(searchTerm);
+    //fetchAndSetProductsByName(searchTerm);
+    doSearch(searchTerm);
     navigation("/p");
   }
 
@@ -53,21 +59,12 @@ function Navbar() {
     setSearchTerm(e.target.value);
   }
 
-  // 
-  // useEffect(() => {
-  //   keycloak
-  //     .init({ onLoad: 'login-required' })
-  //     .then((authenticated) => {
-  //       setAuthenticated(authenticated);
-  //     })
-  // }, [])
-
   return (
       <AppBar  position='sticky' sx={{backgroundColor: '#f1f1f1'}}>
         <Toolbar>
           <Grid container alignItems="center">
             <Grid item xs={4}>
-              <Link to="/start"><Logo src="/logo.png" alt="Logo" /></Link>
+              <Link to="/"><Logo src="/logo.png" alt="Logo" /></Link>
             </Grid>
             <Grid item xs={8} display={'flex'} justifyContent={'flex-end'}>
               <Grid item>

@@ -1,3 +1,5 @@
+import { Product } from "../context/dataContext";
+
 const getProducts = async () => {
     try {
         const requestOptions = {
@@ -24,7 +26,7 @@ const getProductsByName = async (name: string) => {
             },
         };
 
-        let res = await fetch(`product/get/${name}`, requestOptions);
+        let res = await fetch(`product/getByName/${name}`, requestOptions);
         console.log(res);
         // If not found, return emtpy set
         if(res.status == 404)
@@ -37,12 +39,14 @@ const getProductsByName = async (name: string) => {
     }
 }
 
-const getOrder = async (userId: number) => {
+const getOrder = async (userId: number, token: string) => {
     try {
+        console.log("ORDer token: ", token)
         const requestOptions = {
             method: 'GET',
             headers: {
-                'Accept': 'application/json'
+                'Accept': 'application/json',
+                Authorization: `Bearer ${token}`
             }
         }
 
@@ -86,14 +90,15 @@ const addItem = async (orderItemDTO: {
     productId: number,
     quantity: number,
     price: number
-}) => {
+}, token: string) => {
     console.log("DA", orderItemDTO.productId)
     try {
         const requestHeaders = {
             method: 'POST',
             headers: {
                 'Content-Type': "application/json",
-                'Accept': 'application/json'
+                'Accept': 'application/json',
+                Authorization: `Bearer ${token}`
             },
             body: JSON.stringify({
                 orderId: orderItemDTO.orderId,
@@ -114,7 +119,7 @@ const addItem = async (orderItemDTO: {
 }
 
 
-const getItems = async (orderId: number) => {
+const getOrderItems = async (orderId: number) => {
     try {
         const requestOptions = {
             method: 'GET',
@@ -133,4 +138,111 @@ const getItems = async (orderId: number) => {
     }
 } 
 
-export { getProducts, getProductsByName, getOrder,createOrder, addItem, getItems };
+const getOrderItemProducts = async (orderId: number) => {
+    try {
+        const requestOptions = {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            }
+        }
+
+        let res = await fetch('/order/getOrderProduct/' + orderId, requestOptions);
+        let data = res.json();
+        
+        return data;
+    } catch(err: any) {
+        console.error("Error get Items", err);
+    }
+} 
+
+const createFavoriteItem = async (userId: number, productId: number, token: string) => {
+    try {
+        const requestOptions = {
+            method: 'POST',
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                userId: userId,
+                productId: productId
+            })
+        };
+
+        let res = await fetch('/favoriteItem/', requestOptions);
+        if(res.status === 400)
+            return false;
+        else if(res.status === 201)
+            return res.json();
+    } catch(err: any){
+        console.error("Error creating favorite items. ", err);
+        return false;
+    }
+}
+
+const getFavoriteProductsByUser = async (userId: number, token: string) => {
+    try {
+        const requestOptions = {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                Authorization: `Bearer ${token}`
+            }
+        };
+
+        let res = await fetch('/favoriteItem/getByUser/' + userId, requestOptions);
+        
+        return {
+            status: res.status,
+            data: res.status === 200 ?  await res.json() as Product[] : null
+        }
+
+    } catch(error: any){
+        return {
+            status: 500,
+            data: null
+        }
+    }
+}
+
+const deleteFavoriteProductByUserAndProduct = async (userId: number, productId: number, token: string) => {
+    try {
+        const requestOptions = {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                id: 0,
+                userId: userId,
+                productId: productId
+            })
+        };
+
+        let res = await fetch('/favoriteItem/delete', requestOptions);
+        return {
+            status: res.status,
+            data: true
+        }
+    } catch(err: any){
+        return {
+            status: 500,
+            data: false
+        }
+    }
+}
+export { 
+    getProducts, 
+    getProductsByName, 
+    getOrder,
+    createOrder, 
+    addItem, 
+    getOrderItems,
+    getOrderItemProducts, 
+    createFavoriteItem, 
+    getFavoriteProductsByUser,
+    deleteFavoriteProductByUserAndProduct
+ };
