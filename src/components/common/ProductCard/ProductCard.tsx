@@ -55,7 +55,7 @@ const ProductCard = ({ product, handleBuy } : { product: Product, handleBuy: (id
         >
           <FavoriteIcon color={product.isFavorite ? 'error' : 'action'} />
         </IconButton>
-        <img src={"https://cdn.pixabay.com/photo/2022/08/28/01/32/dreaming-7415565_640.jpg"} alt={product.name} style={{ width: '100%'}} />
+        <img src={"http://85.215.54.122/images/hoodie_01_sm.png"} alt={product.name} style={{ width: '100%'}} />
       </div>
       <CardContent style={{ position: 'relative' }}>
         <Typography variant="h6" component="div">
