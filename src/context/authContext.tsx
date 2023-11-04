@@ -1,9 +1,8 @@
-import { createContext, useContext, useEffect, useState } from "react";
-import { loginUser } from "../api/authApi";
+import { createContext, useContext, useState } from "react";
+import { UserDTO, loginUser, signUp } from "../api/authApi";
 import { useNavigate } from "react-router";
 import { decodeToken } from "react-jwt";
-import { useOrder } from "./orderContext";
-import { useData } from "./dataContext";
+import { createOrder } from "../api/dataApi";
 
 export interface TokenType {
     sub: string,
@@ -31,7 +30,8 @@ interface AuthContextType {
     fetchAndSetToken: (email: string, password: string) => Promise<fetchAndSetTokenType>,
     resetToken: () => void;
     userId: number,
-    isAuthenticated: boolean
+    isAuthenticated: boolean,
+    signUpUser: (user: UserDTO) => void
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -41,7 +41,8 @@ const AuthContext = createContext<AuthContextType>({
     },
     resetToken: () => {},
     userId: 0,
-    isAuthenticated: false
+    isAuthenticated: false,
+    signUpUser: () => {}
 });
 
 export const useAuth = () => useContext(AuthContext);
@@ -55,10 +56,12 @@ export const AuthContextProvider = (props: {
     const [userId, setUserId] = useState<number>(0);
 
     const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-
-    const { initOrderContext } = useOrder();
-    const { initFavoriteItems } = useData();
-
+    /**
+     * Log in a User and retrieve token and Id
+     * @param email 
+     * @param password 
+     * @returns 
+     */
     const fetchAndSetToken = async (email: string, password: string): Promise<fetchAndSetTokenType>  => {
         const token = await loginUser(email, password);
         console.log("TOKEN ", token)
@@ -67,15 +70,6 @@ export const AuthContextProvider = (props: {
                 setToken(token);
                 navigation("/p");
                 const decodedToken: TokenType = decodeToken(token)!;
-                
-                //Testing
-                /*
-
-                console.log(decodedToken.upn);
-                console.log("Gŕoups ", decodedToken.groups);
-                console.log("SUB " ,decodedToken.sub)
-                */
-               
                 let id = Number(decodedToken.upn)!
                 setUserId(id);
                 setIsAuthenticated(true);
@@ -89,13 +83,26 @@ export const AuthContextProvider = (props: {
             return {id: 0, token: ""};
         }
     }
+    /**
+     * SIgn up a User. 
+     * @param user 
+     * @returns 
+     */
+    const signUpUser = async (user: UserDTO) => {
+        try {
+            let signUpResponse = await signUp(user);
+            createOrder(signUpResponse.data!.id, (new Date()), "open")
+        } catch(err: any) {
+            console.log("Could not create.");
+        }
+    }
     
     const resetToken = () => {
         setToken("");
     }
 
     return (
-        <AuthContext.Provider value={{token, fetchAndSetToken, resetToken, userId, isAuthenticated}}>
+        <AuthContext.Provider value={{token, fetchAndSetToken, resetToken, userId, isAuthenticated, signUpUser}}>
             {props.children}
         </AuthContext.Provider>
     );

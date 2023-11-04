@@ -1,10 +1,8 @@
 import React from 'react';
 import { Container, TextField, Button, Grid, Box, Link } from '@mui/material';
-import { useAuth } from '../../context/authContext';
 import { useInit } from '../../context/initContext';
 
 export default function SignIn() {
-  const { fetchAndSetToken } = useAuth();
   const { initLogin } = useInit();
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -12,7 +10,6 @@ export default function SignIn() {
     const data = new FormData(event.currentTarget);
     const email = data.get('email')!.toString();
     const password = data.get('password')!.toString();
-    //fetchAndSetToken(email, password);
     initLogin(email, password);
     console.log({ email, password });
   };

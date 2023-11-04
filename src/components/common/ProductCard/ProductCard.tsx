@@ -1,11 +1,9 @@
-import React, { useState } from 'react';
-import { Box, Card, CardContent, CardHeader, IconButton, Modal, Typography } from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import { Card, CardContent, IconButton, Typography } from '@mui/material';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import ProductModal from '../../ProductModal/ProductModal';
-import { useAuth } from '../../../context/authContext';
-import { createFavoriteItem } from '../../../api/dataApi';
-import { Product, useData } from '../../../context/dataContext';
+import { Product } from '../../../context/dataContext';
 import { useInit } from '../../../context/initContext';
 
 // Style for modal
@@ -45,6 +43,10 @@ const ProductCard = ({ product, handleBuy } : { product: Product, handleBuy: (id
   const handleFavoriteClick = () => {
     doFavorite(product);
   }
+
+  useEffect(() => {
+    console.log("Init Product Card.");
+  }, [])
 
   return (
     <Card >

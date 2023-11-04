@@ -2,9 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Navbar from './components/Navbar/Navbar';
 import { Grid, Theme, createTheme } from '@mui/material';
 import { ThemeProvider } from '@emotion/react';
-import Header from './components/Header/Header';
-import { Outlet, useLocation, useNavigate } from 'react-router';
-import keycloak from './keycloak-config';
+import { Outlet, useLocation } from 'react-router';
 
 
 const theme: Theme = createTheme({
@@ -14,18 +12,6 @@ const theme: Theme = createTheme({
 });
 
 function App() {
-  
-  
-  const [title,setTitle] = useState<string>("");
-
-  const location = useLocation();
-
-  const navigation = useNavigate();
-
-  useEffect(() => {
-    const parsedTitle = location.pathname.replace(/\W/g, ' ');
-    setTitle(parsedTitle);
-  }, [])
 
   return (
     <ThemeProvider theme={theme}>

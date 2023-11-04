@@ -1,16 +1,12 @@
-import { Box, Button, Card, CardActions, CardContent, CardMedia, Collapse, Grid, StepIcon, ToggleButton, ToggleButtonGroup, Typography, useMediaQuery } from "@mui/material";
+import { Box, Button, Card, CardContent, CardMedia, Grid, Typography, useMediaQuery } from "@mui/material";
 import { OrderProductType, useOrder } from "../../context/orderContext";
-import FavoriteIcon from '@mui/icons-material/Favorite';
 import { useState } from "react";
-import IconButton, { IconButtonProps } from '@mui/material/IconButton';
-import AddIcon from '@mui/icons-material/Add';
-import RemoveIcon from '@mui/icons-material/Remove';
-import { Product } from "../../context/dataContext";
+
 
 export default function Cart() {
 
     const { orderItems } = useOrder();
-    const isMobile = useMediaQuery('(max-width: 768px');
+    //const isMobile = useMediaQuery('(max-width: 768px');
 
     return(
         <Grid container display={'flex'} maxWidth='sm' flexDirection={'column'} >
@@ -70,7 +66,6 @@ const CartCard = ({product}: {product: OrderProductType}) => {
       </Card>
     );
   };
-
   const SumCard = ({sum} : {
     sum: number
   }) => {

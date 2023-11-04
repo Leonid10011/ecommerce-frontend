@@ -1,4 +1,21 @@
 import * as jwt from 'jsonwebtoken';
+
+interface CreateUserResponseType {
+    id: number,
+    username: string,
+    password: string,
+    email: string,
+    roleId: number
+
+}
+
+interface SignUpResponseType {
+    data: CreateUserResponseType | null,
+    status: number
+}
+
+const api_path = "http://172.17.0.2:8090";
+
 /**
  * 
  * @param username 
@@ -6,6 +23,7 @@ import * as jwt from 'jsonwebtoken';
  * @returns token on success ot empty string on failure
  */
 export const loginUser = async (username: string, password: string) => {
+    console.log("Login User Debug");
     try {
         const requestOptions = {
             method: "POST",
@@ -37,13 +55,14 @@ export interface UserDTO {
     password: string,
 }
 
-export const signUp = async (userDTO: UserDTO) => {
+export const signUp= async (userDTO: UserDTO): Promise<SignUpResponseType> => {
+    console.log("SignUp User Debug");
     try {
         const requestOptions = {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "Accept": "text/plain"
+                "Accept": "application/json"
             },
             body: JSON.stringify({
                 username: userDTO.username,
@@ -53,13 +72,23 @@ export const signUp = async (userDTO: UserDTO) => {
             }),
         }
 
-        let res = await fetch('/user/create', requestOptions);
-        
-        return res.status;
+        let res: Response = await fetch('/user/', requestOptions)
+
+        let data: CreateUserResponseType = await res.json();
+
+        //console.log("DATA ", data)
+
+        return {
+            data: data,
+            status: res.status,
+        };
 
     } catch(err: any){
         console.error("Error: ", err);
-        return 404;
+        return {
+            data: null,
+            status: 404
+        };
     }
 
 }

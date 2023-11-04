@@ -1,26 +1,18 @@
 import React from 'react';
 import { Container, TextField, Button, Grid, Box } from '@mui/material';
-import { UserDTO, signUp } from '../../api/authApi';
+import { UserDTO } from '../../api/authApi';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/authContext';
 
 function RegisterForm() {
   const navigation = useNavigate();
 
-  const waitResponse = async (user: UserDTO) => {
-    try {
-      const res = await signUp(user);
-      console.log("Code: ", res);
-      if (res === 201) {
-        console.log("Success signup");
-        navigation("/p");
-      } else if (res === 409) {
-        console.log("Username already exists");
-      } else {
-        console.log("Provide a correct Email address and a valid password.");
-      }
-    } catch (error) {
-      console.error("Error during signup:", error);
-    }
+  const {signUpUser} = useAuth();
+
+
+  const handleSignUp = async (user: UserDTO) => {
+      signUpUser(user);
+      navigation("/p");
   };
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -32,7 +24,7 @@ function RegisterForm() {
       password: String(data.get("password") || ""),
     };
 
-    waitResponse(user);
+    handleSignUp(user);
   };
 
   return (

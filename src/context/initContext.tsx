@@ -1,4 +1,6 @@
-
+/**
+ * We us this context to init the other Contexts with token and userId
+ */
 import { OrderType, useAuth } from "./authContext";
 import { createFavoriteItem, deleteFavoriteProductByUserAndProduct, getOrder } from "../api/dataApi";
 import { createContext, useContext, useEffect } from "react";
@@ -65,6 +67,10 @@ export const InitContextProvider = ({children}:{
         addOrderItem(orderItem, token);
         initOrderContext(orderId);
     }
+
+    useEffect(() => {
+        console.log("Init doFavorite");
+    }, []);
 
     return (
         <initContext.Provider value={{initLogin, test, doSearch, doFavorite, doOrder}}>

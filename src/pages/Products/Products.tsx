@@ -1,7 +1,6 @@
-import React from 'react';
-import { Container, Typography, Grid, Paper, useMediaQuery, Card, CardContent, Button } from '@mui/material';
+import React, { useEffect } from 'react';
+import { Container } from '@mui/material';
 import { useData } from '../../context/dataContext';
-import { addItem, createOrder, getOrder } from '../../api/dataApi';
 import { useAuth } from '../../context/authContext';
 import { useNavigate } from 'react-router';
 import { useOrder } from '../../context/orderContext';
@@ -9,7 +8,7 @@ import ProductCard from '../../components/common/ProductCard/ProductCard';
 import { useInit } from '../../context/initContext';
 
 function ProductList() {
-    const isLargeScreen = useMediaQuery('(min-width: 768px');
+    //const isLargeScreen = useMediaQuery('(min-width: 768px');
     const { products } = useData();
     const { isAuthenticated } = useAuth();
     const { doOrder } = useInit();
@@ -32,7 +31,10 @@ function ProductList() {
         navigation("/signin")
       }
     } 
-
+    
+    useEffect(() => {
+      console.log("Init Products.");
+    }, [])
 
     return (
       <Container maxWidth="sm" sx={{ position: 'relative', overflow: 'hidden', minHeight: '300px' }}>

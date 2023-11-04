@@ -8,14 +8,12 @@ import IconButton from '@mui/material/IconButton';
 import SearchIcon from '@mui/icons-material/Search';
 import Grid from '@mui/material//Grid';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import keycloak from '../../keycloak-config';
 
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import LoginIcon from '@mui/icons-material/Login';
-import { Box, Divider, Drawer, List, ListItem, ListItemButton, ListItemText, Typography } from '@mui/material';
+import { Box, Drawer, List, ListItem, ListItemText, Typography } from '@mui/material';
 import { useAuth } from '../../context/authContext';
 import { Link, useNavigate, useNavigation } from 'react-router-dom';
-import { useData } from '../../context/dataContext';
 import { useOrder } from '../../context/orderContext';
 import { useInit } from '../../context/initContext';
 import MenuIcon from '@mui/icons-material/Menu';
@@ -39,7 +37,7 @@ function Navbar() {
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  const { test, doSearch } = useInit();
+  const { doSearch } = useInit();
 
   const { resetCart } = useOrder();
 
@@ -73,6 +71,14 @@ function Navbar() {
     setSearchTerm(e.target.value);
   };
 
+  const links = [
+    {
+      name: "Home",
+      link: "/",
+    },{
+      name: "Products",
+      link: "/p",
+    }];
 
   return (
     <Box width={"100%"}>
@@ -108,7 +114,7 @@ function Navbar() {
                   <IconButton aria-label="Warenkorb" onClick={() => navigation("/cart")}><ShoppingCartIcon/></IconButton>
                 </Grid>
               </Grid>
-                <Grid item xs={12} sx={{display: 'flex', alignContent: 'center'}}>
+                <Grid item xs={12} sx={{display: 'flex', alignContent: 'center', my: 1}}>
                   <button onClick={handleSearch}>
                     <SearchIcon />
                   </button>
@@ -140,10 +146,10 @@ function Navbar() {
         >
           <Typography variant="h6">Menu</Typography>
           <List>
-            {['Start', 'Products', 'Contact'].map((item) => (
-              <ListItem button key={item} onClick={() => setMobileOpen(false)}>
-                <Link to="/p">
-                  <ListItemText primary={item} />
+            {links.map((item) => (
+              <ListItem button key={item.name} onClick={() => setMobileOpen(false)}>
+                <Link to={item.link}>
+                  <ListItemText primary={item.name} />
                 </Link>
               </ListItem>
             ))}

@@ -1,6 +1,8 @@
+/**
+ * We use this Context to retrieve Product realted data 
+ */
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { getFavoriteProductsByUser, getProducts, getProductsByName } from "../api/dataApi";
-import { useAuth } from "./authContext";
 
 export interface Product {
     id: number,
@@ -72,6 +74,7 @@ const DataContextProvider = ({children}: {
      * @param token 
      */
     const fetchAndSetProductsByName = async (name: string, userId: number, token: string) => {
+        console.log("Fetch by Name; dataContext");
         try {
             let data: Product[] = await getProductsByName(name);
             filterFavorites(data, userId, token);

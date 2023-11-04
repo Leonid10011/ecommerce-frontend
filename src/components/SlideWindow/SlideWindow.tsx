@@ -1,9 +1,7 @@
 import React, { useEffect } from 'react';
-import Carousel from 'react-material-ui-carousel';
 import { Paper, Button, Box, Typography, MobileStepper } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { KeyboardArrowLeft, KeyboardArrowRight } from '@mui/icons-material';
-import { Console } from 'console';
 
 
 /**

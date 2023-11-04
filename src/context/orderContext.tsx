@@ -1,7 +1,9 @@
+/**
+ * We use this context to handle the BuyOrder data
+ */
 import React, { createContext, useContext, useState } from "react";
 import { Product } from "./dataContext";
 import { getOrderItems, getOrderItemProducts, addItem } from "../api/dataApi";
-import { OrderType } from "./authContext";
 
 export interface OrderProductType {
     id: number,
@@ -63,7 +65,6 @@ const OrderContextProvider = ({children} : {
                 quantity: item.quantity,
                 price: item.price
               }));
-
             
             setOrderItems(result);
         }catch( err: any) {

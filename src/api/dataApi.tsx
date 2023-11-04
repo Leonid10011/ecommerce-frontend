@@ -1,6 +1,7 @@
 import { Product } from "../context/dataContext";
 
 const getProducts = async () => {
+    console.log("Get Products Debug");
     try {
         const requestOptions = {
             method: 'GET',
@@ -18,6 +19,7 @@ const getProducts = async () => {
 }
 
 const getProductsByName = async (name: string) => {
+    console.log("Get Products By Name Debug");
     try {
         const requestOptions = {
             method: 'GET',
@@ -40,6 +42,7 @@ const getProductsByName = async (name: string) => {
 }
 
 const getOrder = async (userId: number, token: string) => {
+    console.log("Get Order Debug");
     try {
         console.log("ORDer token: ", token)
         const requestOptions = {
@@ -61,6 +64,7 @@ const getOrder = async (userId: number, token: string) => {
 }
 
 const createOrder = async (userId: number, date: Date, status: string) => {
+    console.log("Create Order Debug");
     try {
         const requestOptions = {
             method: 'POST',
@@ -91,6 +95,7 @@ const addItem = async (orderItemDTO: {
     quantity: number,
     price: number
 }, token: string) => {
+    console.log("Add Item Debug");
     console.log("DA", orderItemDTO.productId)
     try {
         const requestHeaders = {
@@ -120,6 +125,7 @@ const addItem = async (orderItemDTO: {
 
 
 const getOrderItems = async (orderId: number) => {
+    console.log("Get Order Items Debug");
     try {
         const requestOptions = {
             method: 'GET',
@@ -139,6 +145,7 @@ const getOrderItems = async (orderId: number) => {
 } 
 
 const getOrderItemProducts = async (orderId: number) => {
+    console.log("Get Order Item Products Debug");
     try {
         const requestOptions = {
             method: 'GET',
@@ -158,6 +165,7 @@ const getOrderItemProducts = async (orderId: number) => {
 } 
 
 const createFavoriteItem = async (userId: number, productId: number, token: string) => {
+    console.log("Create Favorite Item Debug");
     try {
         const requestOptions = {
             method: 'POST',
@@ -183,6 +191,7 @@ const createFavoriteItem = async (userId: number, productId: number, token: stri
 }
 
 const getFavoriteProductsByUser = async (userId: number, token: string) => {
+    console.log("Get Favorite Products By User Debug");
     try {
         const requestOptions = {
             method: 'GET',
@@ -208,6 +217,7 @@ const getFavoriteProductsByUser = async (userId: number, token: string) => {
 }
 
 const deleteFavoriteProductByUserAndProduct = async (userId: number, productId: number, token: string) => {
+    console.log("Delete Favorite Products BY User & Product Debug");
     try {
         const requestOptions = {
             method: 'DELETE',

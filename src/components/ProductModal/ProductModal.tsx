@@ -10,7 +10,6 @@ import {
 } from '@mui/material';
 import RemoveIcon from '@mui/icons-material/Remove';
 import AddIcon from '@mui/icons-material/Add';
-import { PType } from '../common/ProductCard/ProductCard';
 import { Product } from '../../context/dataContext';
 
 const ProductModal = ({ product, open, onClose, handleBuy }: {
@@ -41,7 +40,7 @@ const ProductModal = ({ product, open, onClose, handleBuy }: {
     <Modal open={open} onClose={onClose}>
       <div style={{ width: 300, margin: 'auto', marginTop: 100 }}>
         <Card>
-          <img src={product.imageURL} alt={product.name} style={{ width: '100%' }} />
+          <img src={"http://85.215.54.122/images/hoodie_01_sm.png"} alt={product.name} style={{ width: '100%' }} />
           <CardContent>
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
               <IconButton onClick={handleDecrease}>
