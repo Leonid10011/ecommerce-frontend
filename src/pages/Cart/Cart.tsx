@@ -13,7 +13,7 @@ export default function Cart() {
     const isMobile = useMediaQuery('(max-width: 768px');
 
     return(
-        <Grid container display={'flex'} maxWidth='xs' flexDirection={isMobile ? 'column' : 'row'}>
+        <Grid container display={'flex'} maxWidth='sm' flexDirection={'column'} >
             <Grid item display={'flex'} flexDirection={'column'} sx={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
                 <SumCard  sum={orderItems.reduce((acc, cur) => acc + cur.price, 0)} />
             </Grid>
@@ -48,36 +48,25 @@ const CartCard = ({product}: {product: OrderProductType}) => {
           component="img"
           image="https://cdn.pixabay.com/photo/2022/08/28/01/32/dreaming-7415565_640.jpg"/>
         <CardContent>
-          <Typography variant="h5" component="div" sx={{fontSize: '1rem'}}>
-            {product.name}
-          </Typography>
-          <Typography variant="body2" color="text.secondary" sx={{fontSize: '1rem'}}>
-            {product.description}
-          </Typography>
-          <Typography variant="body2" sx={{fontSize: '1rem'}}>
-            {product.price} €
-          </Typography>
+          <Box display={'flex'} flexDirection={'row'}>
+            <Box>
+              <Typography variant="h5" component="div" sx={{fontSize: '1rem'}}>
+                {product.name}
+              </Typography>
+              <Typography variant="body2" color="text.secondary" sx={{fontSize: '1rem'}}>
+                {product.description}
+              </Typography>
+              <Typography variant="body2" sx={{fontSize: '1rem'}}>
+                {product.price} €
+              </Typography>
+            </Box>
+            <Box flexGrow={1}>
+              <Typography textAlign={'center'}>
+                Anzahl: {product.quantity}
+              </Typography>
+            </Box>
+          </Box>
         </CardContent>
-        <CardActions>
-          <ToggleButtonGroup
-            size="small"
-            value={"center"}
-            >
-              <ToggleButton value={"center"}>
-                <Typography>
-                  {product.quantity}
-                </Typography>
-              </ToggleButton>
-          </ToggleButtonGroup>
-        </CardActions>
-
-        <Collapse in={expanded} timeout="auto" unmountOnExit>
-          <CardContent>
-            <Typography>
-              Cardcontent
-            </Typography>
-          </CardContent>
-        </Collapse>
       </Card>
     );
   };
@@ -90,9 +79,13 @@ const CartCard = ({product}: {product: OrderProductType}) => {
         <Card>
             <CardContent>
             <Typography>
-                {sum.toFixed(2)}
+                TotalSum:
+            </Typography>
+            <Typography>
+            {sum.toFixed(2)}€  
             </Typography>  
             <Button variant="contained" size="small" color="primary"  >
+              {/* Todo */}
                 Checkout
             </Button>
             </CardContent>

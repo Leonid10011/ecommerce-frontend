@@ -98,9 +98,8 @@ function Navbar() {
                 <Grid item>
                   { token === ""
                   ? 
-                  <IconButton aria-label='Login' onClick={() => navigation("/signin")}><LoginIcon/></IconButton>
+                  <IconButton aria-label='Login' onClick={() => { navigation("/signin")}}><LoginIcon/></IconButton>
                   : (
-                  
                   <>
                     <IconButton aria-label='Profile'><AccountCircleIcon/></IconButton>
                     <IconButton aria-label='Logout' onClick={logout}><LogoutIcon/></IconButton>
