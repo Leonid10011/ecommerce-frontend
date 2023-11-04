@@ -3,16 +3,27 @@ import { Container, TextField, Button, Grid, Box } from '@mui/material';
 import { UserDTO } from '../../api/authApi';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/authContext';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function RegisterForm() {
   const navigation = useNavigate();
 
   const {signUpUser} = useAuth();
 
+  const notify = () => {
+    toast("Wow so easy!");
+  };
 
   const handleSignUp = async (user: UserDTO) => {
-      signUpUser(user);
-      navigation("/p");
+      let signUpRes = await signUpUser(user);
+      if(signUpRes === 409){
+        toast.error("Username Already exists.", {
+          position: 'top-center'
+        });
+      } else if(signUpRes === 201){
+        navigation("/p");
+      }
   };
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -48,6 +59,10 @@ function RegisterForm() {
           Register
         </Button>
       </Box>
+      <ToastContainer/>
+      <button onClick={notify}>
+        Test
+      </button>
     </Container>
   );
 }

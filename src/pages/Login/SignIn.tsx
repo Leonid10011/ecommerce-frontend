@@ -1,17 +1,23 @@
 import React from 'react';
 import { Container, TextField, Button, Grid, Box, Link } from '@mui/material';
 import { useInit } from '../../context/initContext';
+import { toast } from 'react-toastify';
 
 export default function SignIn() {
   const { initLogin } = useInit();
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    // Get the data from the fields
+    // Yet to validate
     const data = new FormData(event.currentTarget);
     const email = data.get('email')!.toString();
     const password = data.get('password')!.toString();
     initLogin(email, password);
     console.log({ email, password });
+    toast.success("Logged In", {
+      position: "top-center"
+    })
   };
 
   return (

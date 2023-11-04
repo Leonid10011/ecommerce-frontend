@@ -6,6 +6,7 @@ import { createFavoriteItem, deleteFavoriteProductByUserAndProduct, getOrder } f
 import { createContext, useContext, useEffect } from "react";
 import { Product, useData } from "./dataContext";
 import { OrderItemType, useOrder } from "./orderContext";
+import { toast } from 'react-toastify';
 
 const initData = {
     initLogin: () => {},

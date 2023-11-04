@@ -1,3 +1,4 @@
+import { error } from 'console';
 import * as jwt from 'jsonwebtoken';
 
 interface CreateUserResponseType {
@@ -54,41 +55,53 @@ export interface UserDTO {
     email: string,
     password: string,
 }
-
+/**
+ *  retrive a userDTO after success
+ * @param userDTO 
+ * @returns 
+ */
 export const signUp= async (userDTO: UserDTO): Promise<SignUpResponseType> => {
     console.log("SignUp User Debug");
-    try {
-        const requestOptions = {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Accept": "application/json"
-            },
-            body: JSON.stringify({
-                username: userDTO.username,
-                email: userDTO.email,
-                roleID: 1,
-                password: userDTO.password
-            }),
-        }
-
-        let res: Response = await fetch('/user/', requestOptions)
-
-        let data: CreateUserResponseType = await res.json();
-
-        //console.log("DATA ", data)
-
-        return {
-            data: data,
-            status: res.status,
-        };
-
-    } catch(err: any){
-        console.error("Error: ", err);
-        return {
-            data: null,
-            status: 404
-        };
+    const requestOptions = {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+        },
+        body: JSON.stringify({
+            username: userDTO.username,
+            email: userDTO.email,
+            roleID: 1,
+            password: userDTO.password
+        }),
     }
 
+    let resStatus;
+
+    let res: CreateUserResponseType = await fetch('/user/', requestOptions)
+    .then(response => {
+        if(!response.ok) {
+            resStatus = response.status;
+            throw new Error(`${response.status}`);
+        }
+        resStatus = 201;
+        return response.json();
+    })
+    .catch(error => {
+        if(error.message === '409') {
+            console.error('Konflikt');
+            resStatus = 409;
+        } else {
+            console.error('Ein Fehler');
+            resStatus = error.message;
+        }
+    })
+
+    //console.log("DATA ", data)
+
+    return {
+        data: res,
+        status: Number(resStatus),
+    };
 }
+

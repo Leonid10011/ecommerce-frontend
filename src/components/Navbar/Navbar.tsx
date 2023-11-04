@@ -18,6 +18,7 @@ import { useOrder } from '../../context/orderContext';
 import { useInit } from '../../context/initContext';
 import MenuIcon from '@mui/icons-material/Menu';
 import LogoutIcon from '@mui/icons-material/Logout';
+import { toast } from 'react-toastify';
 
 const logoStyles = css`
   width: 100%;
@@ -46,6 +47,9 @@ function Navbar() {
   const logout = () => {
     resetCart();
     resetToken();
+    toast.info("Logged out", {
+      position: "bottom-center"
+    });
     navigation("/");
   }
 

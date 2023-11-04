@@ -31,7 +31,7 @@ interface AuthContextType {
     resetToken: () => void;
     userId: number,
     isAuthenticated: boolean,
-    signUpUser: (user: UserDTO) => void
+    signUpUser: (user: UserDTO) => Promise<number>
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -42,7 +42,7 @@ const AuthContext = createContext<AuthContextType>({
     resetToken: () => {},
     userId: 0,
     isAuthenticated: false,
-    signUpUser: () => {}
+    signUpUser: async () => 404
 });
 
 export const useAuth = () => useContext(AuthContext);
@@ -60,18 +60,20 @@ export const AuthContextProvider = (props: {
      * Log in a User and retrieve token and Id
      * @param email 
      * @param password 
-     * @returns 
+     * @returns the token and Id, so we can use immediately in the init Context to initilize all other contexts 
      */
     const fetchAndSetToken = async (email: string, password: string): Promise<fetchAndSetTokenType>  => {
         const token = await loginUser(email, password);
-        console.log("TOKEN ", token)
+        console.log("TOKEN test: ", token)
         if(token){
             try {
                 setToken(token);
                 navigation("/p");
+                //decode the token and retrieve useId
                 const decodedToken: TokenType = decodeToken(token)!;
                 let id = Number(decodedToken.upn)!
                 setUserId(id);
+                // notify that the user is authenticated
                 setIsAuthenticated(true);
 
                 return {id, token}; 
@@ -91,9 +93,13 @@ export const AuthContextProvider = (props: {
     const signUpUser = async (user: UserDTO) => {
         try {
             let signUpResponse = await signUp(user);
-            createOrder(signUpResponse.data!.id, (new Date()), "open")
+            if(signUpResponse.status === 201)
+                createOrder(signUpResponse.data!.id, (new Date()), "open")
+            return signUpResponse.status;
         } catch(err: any) {
-            console.log("Could not create.");
+            // 404 is placeholder for now
+            console.error("Could not create.", err);
+            return 404;
         }
     }
     
