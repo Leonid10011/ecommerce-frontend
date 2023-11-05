@@ -60,7 +60,7 @@ const OrderContextProvider = ({children} : {
                 id: data2[index].id,
                 name: data2[index].name,
                 description: data2[index].description,
-                imageURL: data2[index].imageURL,
+                imageURL: data2[index].imgURL,
                 categoryId: data2[index].categoryID,
                 quantity: item.quantity,
                 price: item.price

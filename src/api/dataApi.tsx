@@ -1,5 +1,7 @@
 import { Product } from "../context/dataContext";
 
+const api_path = "http://85.215.54.122";
+
 const getProducts = async () => {
     console.log("Get Products Debug");
     try {
@@ -10,7 +12,7 @@ const getProducts = async () => {
             }
         };
     
-        let res = await fetch('/product/get', requestOptions);
+        let res = await fetch(api_path + '/product/get', requestOptions);
         let data = res.json();
         return data;
     } catch( err: any ){
@@ -28,7 +30,7 @@ const getProductsByName = async (name: string) => {
             },
         };
 
-        let res = await fetch(`product/getByName/${name}`, requestOptions);
+        let res = await fetch(api_path + `product/getByName/${name}`, requestOptions);
         console.log(res);
         // If not found, return emtpy set
         if(res.status == 404)
@@ -53,9 +55,15 @@ const getOrder = async (userId: number, token: string) => {
             }
         }
 
-        let res = await fetch("/order/get/" + userId, requestOptions);
-        let data = res.json();
-        return data;
+        let res = await fetch(api_path + "/order/get/" + userId, requestOptions);
+
+        if(res.ok){
+            let data = res.json();
+            return data;
+
+        }
+
+        return null
 
     } catch( err: any){
         console.error("ERROR");
@@ -79,7 +87,7 @@ const createOrder = async (userId: number, date: Date, status: string) => {
             })
         };
 
-        let res = await fetch("/order/create", requestOptions);
+        let res = await fetch(api_path + "/order/create", requestOptions);
         
         console.log(res);
 
@@ -113,7 +121,7 @@ const addItem = async (orderItemDTO: {
             })
         };
 
-        let res =  await fetch('/order/addItem', requestHeaders);
+        let res =  await fetch(api_path + '/order/addItem', requestHeaders);
         let data = res;
 
         console.log(data);
@@ -135,7 +143,7 @@ const getOrderItems = async (orderId: number) => {
             }
         }
 
-        let res = await fetch('/order/getItems/' + orderId, requestOptions);
+        let res = await fetch(api_path + '/order/getItems/' + orderId, requestOptions);
         let data = res.json();
         
         return data;
@@ -155,7 +163,7 @@ const getOrderItemProducts = async (orderId: number) => {
             }
         }
 
-        let res = await fetch('/order/getOrderProduct/' + orderId, requestOptions);
+        let res = await fetch(api_path + '/order/getOrderProduct/' + orderId, requestOptions);
         let data = res.json();
         
         return data;
@@ -179,7 +187,7 @@ const createFavoriteItem = async (userId: number, productId: number, token: stri
             })
         };
 
-        let res = await fetch('/favoriteItem/', requestOptions);
+        let res = await fetch(api_path + '/favoriteItem/', requestOptions);
         if(res.status === 400)
             return false;
         else if(res.status === 201)
@@ -201,8 +209,10 @@ const getFavoriteProductsByUser = async (userId: number, token: string) => {
             }
         };
 
-        let res = await fetch('/favoriteItem/getByUser/' + userId, requestOptions);
-        
+        let res = await fetch(api_path + '/favoriteItem/getByUser/' + userId, requestOptions)
+
+        console.log("RES ", res)
+
         return {
             status: res.status,
             data: res.status === 200 ?  await res.json() as Product[] : null
@@ -232,7 +242,7 @@ const deleteFavoriteProductByUserAndProduct = async (userId: number, productId: 
             })
         };
 
-        let res = await fetch('/favoriteItem/delete', requestOptions);
+        let res = await fetch(api_path + '/favoriteItem/delete', requestOptions);
         return {
             status: res.status,
             data: true

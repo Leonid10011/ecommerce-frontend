@@ -11,7 +11,7 @@ export interface Product {
     price: number,
     categoryID: number,
     quantity: number,
-    imageURL: "https://cdn.pixabay.com/photo/2022/08/28/01/32/dreaming-7415565_640.jpg",
+    imgURL: string,
     isFavorite: boolean,
 }
 
@@ -57,6 +57,7 @@ const DataContextProvider = ({children}: {
                 }
                 // if no favProducts, then simply set to products
                 setProducts(tmpProducts);
+                console.log("FAv: ", tmpProducts)
             }
         }
         // If no logged in, keep all products
@@ -96,6 +97,7 @@ const DataContextProvider = ({children}: {
      */
     const initProducts = async() => {
         let data = await getProducts();
+        console.log(data)
         setProducts(data);
     }
 

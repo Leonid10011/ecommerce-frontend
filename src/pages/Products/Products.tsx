@@ -33,7 +33,8 @@ function ProductList() {
     } 
     
     useEffect(() => {
-      console.log("Init Products.");
+     // console.log("Init Products.\nProdcuts ", products);
+
     }, [])
 
     return (

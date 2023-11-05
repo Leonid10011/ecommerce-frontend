@@ -6,7 +6,6 @@ import { createFavoriteItem, deleteFavoriteProductByUserAndProduct, getOrder } f
 import { createContext, useContext, useEffect } from "react";
 import { Product, useData } from "./dataContext";
 import { OrderItemType, useOrder } from "./orderContext";
-import { toast } from 'react-toastify';
 
 const initData = {
     initLogin: () => {},
@@ -43,7 +42,8 @@ export const InitContextProvider = ({children}:{
         initFavoriteItems(id, token);
         
         const userOrder: OrderType  = await getOrder(id, token);
-        initOrderContext(userOrder.id)
+        if(userOrder != null)
+            initOrderContext(userOrder.id)
     }
     
     const doSearch = (searchTerm: string) => {
