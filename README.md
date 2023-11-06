@@ -32,7 +32,7 @@ The project is a work in progress, and I'm actively working on improving it. Som
 ### This to implement
 **list**
 
-- [x] A mock transaction with PayPal and others
+- [ ] A mock transaction with PayPal and others
 - [ ] Starting page, where sales and new products are showcased.
 - [ ] Filter products.
 - [ ] User profile
