@@ -1,5 +1,8 @@
 # E-Commerce Frontend in React with Material-UI
 
+# Preview
+http://217.72.204.244/
+
 Welcome to my E-Commerce Frontend project! This project serves as part of my portfolio for job applications. It complements the E-Commerce backend, which is also available on GitHub.
 
 ## Table of Contents
