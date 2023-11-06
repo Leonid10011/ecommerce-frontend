@@ -17,7 +17,6 @@ function ProductList() {
 
     const handleBuy = (id: number, price: number, quantity: number) => {
       if(isAuthenticated){
-
         const item = {
           orderId: orderId, 
           productId: id, 
