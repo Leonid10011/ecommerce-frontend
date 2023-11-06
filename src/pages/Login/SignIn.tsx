@@ -19,6 +19,12 @@ export default function SignIn() {
       position: "top-center"
     })
   };
+  
+  const notify = () => {
+    toast.error("Not implemented yet!", {
+      position: 'top-center'
+    });
+  };
 
   return (
     <Container component="main" maxWidth="xs" sx={{ overflow: 'auto', minHeight: '300px' }}>
@@ -45,7 +51,9 @@ export default function SignIn() {
         <Grid container>
           <Grid item xs>
             <Link href="#" variant="body2">
-              Forgot password?
+              <div onClick={notify}>
+                Forgot password?
+              </div>
             </Link>
           </Grid>
           <Grid item>

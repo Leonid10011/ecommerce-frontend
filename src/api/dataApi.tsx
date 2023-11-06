@@ -30,7 +30,7 @@ const getProductsByName = async (name: string) => {
             },
         };
 
-        let res = await fetch(api_path + `product/getByName/${name}`, requestOptions);
+        let res = await fetch(api_path + `/product/getByName/${name}`, requestOptions);
         console.log(res);
         // If not found, return emtpy set
         if(res.status == 404)
@@ -56,7 +56,7 @@ const getOrder = async (userId: number, token: string) => {
         }
 
         let res = await fetch(api_path + "/order/get/" + userId, requestOptions);
-
+        console.log("getOrder res: ", res);
         if(res.ok){
             let data = res.json();
             return data;

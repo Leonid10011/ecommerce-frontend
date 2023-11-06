@@ -5,20 +5,7 @@ import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import ProductModal from '../../ProductModal/ProductModal';
 import { Product } from '../../../context/dataContext';
 import { useInit } from '../../../context/initContext';
-import { StringMappingType } from 'typescript';
-
-// Style for modal
-const style = {
-    position: 'absolute' as 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: 400,
-    bgcolor: 'background.paper',
-    border: '2px solid #000',
-    boxShadow: 24,
-    p: 4,
-  };
+import { useAuth } from '../../../context/authContext';
 
 export interface PType {
     name: string,
@@ -29,7 +16,7 @@ export interface PType {
 
 const ProductCard = ({ product, handleBuy } : { product: Product, handleBuy: (id: number, price: number, quantity: number) => void}) => {
     const [modal, setModal] = useState<boolean>(false);
-
+    const{ isAuthenticated } = useAuth();
     const { doFavorite } = useInit();
 
   const handleCartClick = () => {
@@ -52,12 +39,14 @@ const ProductCard = ({ product, handleBuy } : { product: Product, handleBuy: (id
   return (
     <Card >
       <div style={{ position: 'relative'}}>
+        { isAuthenticated ?
         <IconButton
           style={{ position: 'absolute', top: 10, right: 10, backgroundColor: 'white' }}
           onClick={handleFavoriteClick}
         >
           <FavoriteIcon color={product.isFavorite ? 'error' : 'action'} />
         </IconButton>
+        : "" }
         <ImageWithFallback src={product.imgURL} alt={product.name} />
       </div>
       <CardContent style={{ position: 'relative' }}>

@@ -11,6 +11,7 @@ import {
 import RemoveIcon from '@mui/icons-material/Remove';
 import AddIcon from '@mui/icons-material/Add';
 import { Product } from '../../context/dataContext';
+import { useInit } from '../../context/initContext';
 
 const ProductModal = ({ product, open, onClose, handleBuy }: {
     product: Product,
@@ -20,6 +21,7 @@ const ProductModal = ({ product, open, onClose, handleBuy }: {
 }) => {
 
   const [quantity, setQuantity] = useState(1);
+  const { doOrderRefresh } = useInit();
 
   const handleDecrease = () => {
     if (quantity > 1) {
@@ -33,6 +35,7 @@ const ProductModal = ({ product, open, onClose, handleBuy }: {
 
   const handleAddToCart = () => {
     handleBuy(quantity);
+    doOrderRefresh();
     onClose();
   };
 
@@ -40,7 +43,7 @@ const ProductModal = ({ product, open, onClose, handleBuy }: {
     <Modal open={open} onClose={onClose}>
       <div style={{ width: 300, margin: 'auto', marginTop: 100 }}>
         <Card>
-          <img src={"http://85.215.54.122/images/hoodie_01_sm.png"} alt={product.name} style={{ width: '100%' }} />
+          <img src={product.imgURL} alt={product.name} style={{ width: '100%' }} />
           <CardContent>
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
               <IconButton onClick={handleDecrease}>

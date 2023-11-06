@@ -12,7 +12,8 @@ const initData = {
     test: () => {},
     doSearch: () => {},
     doFavorite: () => {},
-    doOrder: () => {}
+    doOrder: () => {},
+    doOrderRefresh: () => {}
 };
 
 interface InitContextType {
@@ -20,7 +21,8 @@ interface InitContextType {
     test: () => void,
     doSearch: (searchTerm: string) => void,
     doFavorite: (product: Product) => void,
-    doOrder: (orderItem: OrderItemType) => void
+    doOrder: (orderItem: OrderItemType) => void,
+    doOrderRefresh: () => void
 }
 
 export const initContext = createContext<InitContextType>(initData);
@@ -33,15 +35,17 @@ export const InitContextProvider = ({children}:{
 
     const {token, fetchAndSetToken, userId } = useAuth();
     const { initFavoriteItems, fetchAndSetProductsByName } = useData();
-    const { initOrderContext, addOrderItem, orderId } = useOrder();
+    const { initOrderContext, addOrderItem, orderId, fetchAndSetOrder } = useOrder();
 
     const initLogin = async (name: string, password: string) => {
 
         const {id, token} = await fetchAndSetToken(name, password);
-        console.log("userId: ", id, " sec ", userId)
+        console.log("userId: ", id, " sec ", userId, "token: ", token, " END")
         initFavoriteItems(id, token);
         
-        const userOrder: OrderType  = await getOrder(id, token);
+        //const userOrder: OrderType  = await getOrder(id, token);
+        const userOrder: OrderType = await fetchAndSetOrder(id, token);
+        console.log("UserOrder, ", userOrder);
         if(userOrder != null)
             initOrderContext(userOrder.id)
     }
@@ -68,13 +72,17 @@ export const InitContextProvider = ({children}:{
         addOrderItem(orderItem, token);
         initOrderContext(orderId);
     }
+    // refresh the orderItems, so we can isntantly see them in cart
+    const doOrderRefresh = () => {
+        initOrderContext(orderId);
+    }
 
     useEffect(() => {
         console.log("Init doFavorite");
     }, []);
 
     return (
-        <initContext.Provider value={{initLogin, test, doSearch, doFavorite, doOrder}}>
+        <initContext.Provider value={{initLogin, test, doSearch, doFavorite, doOrder, doOrderRefresh}}>
             {children}
         </initContext.Provider>
     )

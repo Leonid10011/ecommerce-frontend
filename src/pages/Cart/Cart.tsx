@@ -1,7 +1,7 @@
 import { Box, Button, Card, CardContent, CardMedia, Grid, Typography, useMediaQuery } from "@mui/material";
 import { OrderProductType, useOrder } from "../../context/orderContext";
-import { useState } from "react";
-
+import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 
 export default function Cart() {
 
@@ -26,7 +26,6 @@ export default function Cart() {
 }
 
 const CartCard = ({product}: {product: OrderProductType}) => {
-    const [expanded, setExpanded] = useState<boolean>(false);
 
     const [amount, setAmount] = useState<number>(0);
 
@@ -42,7 +41,7 @@ const CartCard = ({product}: {product: OrderProductType}) => {
       <Card sx={{m: 2}}>
         <CardMedia 
           component="img"
-          image="https://cdn.pixabay.com/photo/2022/08/28/01/32/dreaming-7415565_640.jpg"/>
+          image={product.imageURL}/>
         <CardContent>
           <Box display={'flex'} flexDirection={'row'}>
             <Box>
@@ -70,6 +69,12 @@ const CartCard = ({product}: {product: OrderProductType}) => {
     sum: number
   }) => {
     
+    const notify = () => {
+      toast.error("Not implemented yet!", {
+        position: 'top-center'
+      });
+    };
+
     return (
         <Card>
             <CardContent>
@@ -79,7 +84,7 @@ const CartCard = ({product}: {product: OrderProductType}) => {
             <Typography>
             {sum.toFixed(2)}€  
             </Typography>  
-            <Button variant="contained" size="small" color="primary"  >
+            <Button variant="contained" size="small" color="primary" onClick={notify} >
               {/* Todo */}
                 Checkout
             </Button>

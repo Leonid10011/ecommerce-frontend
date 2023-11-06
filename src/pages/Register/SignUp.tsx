@@ -11,10 +11,6 @@ function RegisterForm() {
 
   const {signUpUser} = useAuth();
 
-  const notify = () => {
-    toast("Wow so easy!");
-  };
-
   const handleSignUp = async (user: UserDTO) => {
       let signUpRes = await signUpUser(user);
       if(signUpRes === 409){
@@ -60,9 +56,6 @@ function RegisterForm() {
         </Button>
       </Box>
       <ToastContainer/>
-      <button onClick={notify}>
-        Test
-      </button>
     </Container>
   );
 }
