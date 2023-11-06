@@ -32,6 +32,8 @@ The project is a work in progress, and I'm actively working on improving it. Som
 ### This to implement
 **list**
 
+- [ ] Search bar functionality is very primitve and doesn't work well yet.
+- [ ] Reconstruct and adjust data structur of products, favItems and orderItems.
 - [ ] A mock transaction with PayPal and others
 - [ ] Starting page, where sales and new products are showcased.
 - [ ] Filter products.
