@@ -190,7 +190,10 @@ const getOrderItemProducts = async (orderId: number) => {
 /**
  * FAVORITE ITEM SECTION
  */
-const createFavoriteItem = async (userId: number, productId: number, token: string) => {
+
+
+
+const createFavoriteItem = async (userId: number, productId: number, token: string): Promise<ApiResponse<FavoriteProductDTO>> => {
     console.log("Create Favorite Item Debug");
     try {
         const requestOptions = {
@@ -205,14 +208,20 @@ const createFavoriteItem = async (userId: number, productId: number, token: stri
             })
         };
 
-        let res = await fetch(api_path + '/favoriteItem/', requestOptions);
-        if(res.status === 400)
-            return false;
-        else if(res.status === 201)
-            return res.json();
-    } catch(err: any){
-        console.error("Error creating favorite items. ", err);
-        return false;
+        let res: Response = await fetch(api_path + '/favoriteItem/', requestOptions);
+        if(res.status === 201){
+            const data: FavoriteProductDTO = await res.json() as FavoriteProductDTO;
+            return {
+                data,
+                status: res.status
+            };
+        }
+        else {
+            throw new Error(`HTTP error! status: ${res.status}`);
+        }
+        } catch(error){
+            console.error("Error creating favorite items. ", error);
+            throw error
     }
 }
 /*
