@@ -10,11 +10,11 @@ In this Sectio we will give a detailed introductions of various features of this
 ### 1.1 Favorite Items
 
 #### Favorite Item DTO
-```json
+```typescript
 {
-    "id": number,             // id of the favoriteItem
-    "userId": number,         // id of the user of this favoriteItem
-    "productId": number,      // id of the product that represents this favoriteItem
+    id: number,             // id of the favoriteItem
+    userId: number,         // id of the user of this favoriteItem
+    productId: number,      // id of the product that represents this favoriteItem
 }
 ```
 
