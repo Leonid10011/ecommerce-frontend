@@ -21,7 +21,6 @@ const ProductCard = ({ product, handleBuy, isFavorite } : { product: Product, ha
     const { addFavoriteItem, deleteFavoriteItem} = useData();
 
   const handleCartClick = () => {
-    // Implementiere die Logik zum Hinzufügen des Produkts zum Warenkorb hier
     setModal(true);
   };
 
