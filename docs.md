@@ -1,9 +1,11 @@
 # Ecommerce Frontend Docs
 
 ## Content
-1. [Feature Overvire](#feature-overview)
+1. [Feature Overview](#feature-overview)
     1. [Products](#11-products)
     2. [Favorite Items](#12-favorite-items)
+    3. [Orders and OrderItems](#13-order)
+
 ## Feature Overview
 
 In this Sectio we will give a detailed introductions of various features of this app.
