@@ -20,6 +20,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { toast } from 'react-toastify';
 import { useProduct } from '../../context/productContext';
+import { Toast } from 'react-toastify/dist/components';
 
 const logoStyles = css`
   width: 100%;
@@ -86,6 +87,13 @@ function Navbar() {
       link: "/p",
     }];
 
+
+    const notify = () => {
+      toast.error("Not implemented yet!", {
+        position: 'top-center'
+      });
+    };
+
   return (
     <Box width={"100%"}>
       <AppBar position="sticky" sx={{ backgroundColor: '#f1f1f1' }}>
@@ -135,7 +143,7 @@ function Navbar() {
                       mx: 2
                     }}
                   />
-                <button>
+                <button onClick={notify}>
                   <FilterListIcon/>
                 </button>
                 </Grid>
@@ -175,7 +183,7 @@ function Navbar() {
   );
 }
 
-
+// TODO
 const BasicMenu = (anchor: Element, menuItems: string[], handleClose: () => {}) => {
   
   const handleMenuItemClick = (item: string) => {
