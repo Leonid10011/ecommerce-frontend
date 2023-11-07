@@ -86,7 +86,7 @@ export const AuthContextProvider = (props: {
         }
     }
     /**
-     * SIgn up a User. 
+     * Sign up a User. 
      * @param user 
      * @returns 
      */

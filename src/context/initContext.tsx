@@ -37,13 +37,17 @@ export const InitContextProvider = ({children}:{
     const { initFavoriteItems, fetchAndSetProductsByName } = useData();
     const { initOrderContext, addOrderItem, orderId, fetchAndSetOrder } = useOrder();
 
+    /**
+     * @description Init everything that needs to be done when logged in
+     * @param name 
+     * @param password 
+     */
     const initLogin = async (name: string, password: string) => {
 
         const {id, token} = await fetchAndSetToken(name, password);
         console.log("userId: ", id, " sec ", userId, "token: ", token, " END")
         initFavoriteItems(id, token);
         
-        //const userOrder: OrderType  = await getOrder(id, token);
         const userOrder: OrderType = await fetchAndSetOrder(id, token);
         console.log("UserOrder, ", userOrder);
         if(userOrder != null)
@@ -58,7 +62,10 @@ export const InitContextProvider = ({children}:{
     const test = () => {
         console.log("USERID ", userId);
     }
-
+    /**
+     * @description Handle favoriteItems in the component
+     * @param product 
+     */
     const doFavorite = (product: Product) => {
         if(product.isFavorite){
             deleteFavoriteProductByUserAndProduct(userId, product.id, token);
@@ -67,17 +74,23 @@ export const InitContextProvider = ({children}:{
         }
         initFavoriteItems(userId, token);
     }
-
+    /**
+     * @description Handle order functionality in the component
+     * @param orderItem 
+     */
     const doOrder = (orderItem: OrderItemType) => {
         addOrderItem(orderItem, token);
         initOrderContext(orderId);
     }
-    // refresh the orderItems, so we can isntantly see them in cart
+    /**
+     * @description refresh the orderItems, so we can isntantly see them in cart  
+     */ 
     const doOrderRefresh = () => {
         initOrderContext(orderId);
     }
 
     useEffect(() => {
+        // Just for debugging
         console.log("Init doFavorite");
     }, []);
 

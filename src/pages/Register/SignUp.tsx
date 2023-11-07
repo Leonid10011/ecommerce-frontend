@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container, TextField, Button, Grid, Box } from '@mui/material';
+import { Container, TextField, Button, Grid, Box, Typography } from '@mui/material';
 import { UserDTO } from '../../api/authApi';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/authContext';
@@ -36,6 +36,9 @@ function RegisterForm() {
 
   return (
     <Container maxWidth="sm" sx={{ overflow: "hidden", minHeight: '300px' }}>
+      <Typography>
+        Note: No formal validation yet.
+      </Typography>
       <Box component="form" onSubmit={handleSubmit} sx={{ mt: 8 }}>
         <Grid container spacing={2}>
           {["username", "email", "password", "password2"].map((field) => (

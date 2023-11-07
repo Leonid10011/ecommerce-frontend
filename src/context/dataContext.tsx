@@ -84,7 +84,7 @@ const DataContextProvider = ({children}: {
     }
 
     /**
-     * User the userId and Token to initilize the favorite items, which will take effect when logged in.
+     * @description User the userId and Token to initilize the favorite items, which will take effect when logged in.
      * @param userId 
      * @param token 
      */

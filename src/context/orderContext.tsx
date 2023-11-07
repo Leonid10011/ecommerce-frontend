@@ -59,7 +59,7 @@ const OrderContextProvider = ({children} : {
     const [ order, setOrder ] = useState<OrderType>();
     const rerenderRef = useRef(false);
     /**
-     * Fetch the OrderItem and the corresponding Product and then 
+     * @description Fetch the OrderItem and the corresponding Product and then 
      * combine them into an OrderProduct to have access to all information from both
      * @param orderId 
      * @returns 
@@ -102,7 +102,7 @@ const OrderContextProvider = ({children} : {
         return resOrder;
     }
     /**
-     * Set the orderId for global acces though context and fetch corresponding orderItems for cart
+     * @description Set the orderId for global acces though context and fetch corresponding orderItems for cart
      * @param orderId 
      */
     const initOrderContext = (orderId: number) => {
@@ -111,13 +111,18 @@ const OrderContextProvider = ({children} : {
         fetchAndSetItems(orderId);
         reRender();
     }
-
+    /**
+     * @description Rerender is needed for up to date cart
+     */
     useEffect(() => {
         if(rerenderRef.current){
             rerenderRef.current = false;
         }
     }, [rerenderRef])
-
+    
+    /**
+     * @description When logged off, clean the carts content for client view
+     */
     const resetCart = () => {
         setOrderItems([]);
     }
@@ -142,7 +147,7 @@ const OrderContextProvider = ({children} : {
         }
     }
     /**
-     * Rerender to updated the state for rendering most recent items
+     * @description Rerender to updated the state for rendering most recent items
      */
     const reRender = () => {
         rerenderRef.current = true;

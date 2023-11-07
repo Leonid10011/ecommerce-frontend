@@ -1,7 +1,8 @@
 import React from 'react';
-import { Container, TextField, Button, Grid, Box, Link } from '@mui/material';
+import { Container, TextField, Button, Grid, Box, Typography } from '@mui/material';
 import { useInit } from '../../context/initContext';
 import { toast } from 'react-toastify';
+import { Link } from 'react-router-dom';
 
 export default function SignIn() {
   const { initLogin } = useInit();
@@ -50,14 +51,14 @@ export default function SignIn() {
         </Button>
         <Grid container>
           <Grid item xs>
-            <Link href="#" variant="body2">
+            <Link to="#">
               <div onClick={notify}>
                 Forgot password?
               </div>
             </Link>
           </Grid>
           <Grid item>
-            <Link href="/signup" variant="body2">
+            <Link to="/signup">
               {'Don\'t have an account? Sign Up'}
             </Link>
           </Grid>
