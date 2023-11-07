@@ -10,7 +10,7 @@ import {
 } from '@mui/material';
 import RemoveIcon from '@mui/icons-material/Remove';
 import AddIcon from '@mui/icons-material/Add';
-import { Product } from '../../context/dataContext';
+import { Product } from '../../context/productContext';
 import { useInit } from '../../context/initContext';
 
 const ProductModal = ({ product, open, onClose, handleBuy }: {

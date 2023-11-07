@@ -6,10 +6,18 @@ http://217.72.204.244/
 Welcome to my E-Commerce Frontend project! This project serves as part of my portfolio for job applications. It complements the E-Commerce backend, which is also available on GitHub.
 
 ## Table of Contents
+- [Documentation](#documentation)
 - [Project Description](#project-description)
 - [Features](#features)
 - [Project Status](#project-status)
 - [Todo](#todo)
+
+## Documentation
+
+I write the documentatin parallel while working on the project. As I didn't started it immediatley when I began the project, there is a lot missing. But I try to fill it up consitently while working on the project.
+
+
+Link to docs: [Documentiation](https://www.github.com/Leonid10011/docs.md) 
 
 ## Project Description
 

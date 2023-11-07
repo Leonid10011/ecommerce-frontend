@@ -1,6 +1,22 @@
-import { Product } from "../context/dataContext";
+import { Product } from "../context/productContext";
 
 const api_path = "http://85.215.54.122";
+
+enum HttpStatusCode {
+    OK = 200,
+    created = 201,
+    BadRequest = 400,
+    Unauthorized = 401,
+    Forbidden = 403,
+    NotFound = 404,
+    Conflict = 409,
+    InternalServerError = 500,
+}
+
+interface ApiResponse<T> {
+    data: T,
+    status: HttpStatusCode
+}
 
 const getProducts = async () => {
     console.log("Get Products Debug");
@@ -254,6 +270,38 @@ const deleteFavoriteProductByUserAndProduct = async (userId: number, productId: 
         }
     }
 }
+
+export interface FavoriteProductDTO {
+    id: number,
+    userId: number,
+    productId: number
+}
+
+const getFavoriteItemsByUser = async (userId: number): Promise<ApiResponse<FavoriteProductDTO[]>> => {
+    try {
+        const requestOptions = {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json'
+            }
+        }
+
+        const res:  Response = await fetch(`${api_path}/favoriteItem/getProductIdsByUser/${userId}`, requestOptions); 
+        if(res.ok) {
+            const data: FavoriteProductDTO[] = await res.json() as FavoriteProductDTO[];
+            return {
+                data,
+                status: res.status
+            }
+        } else {
+            throw new Error(`HTTP error! status: ${res.status}` )
+        }
+    } catch (error){
+        console.error('Error requestin favorite items.', error);
+        throw error;
+    }
+}
+
 export { 
     getProducts, 
     getProductsByName, 
@@ -264,5 +312,6 @@ export {
     getOrderItemProducts, 
     createFavoriteItem, 
     getFavoriteProductsByUser,
-    deleteFavoriteProductByUserAndProduct
+    deleteFavoriteProductByUserAndProduct,
+    getFavoriteItemsByUser
  };

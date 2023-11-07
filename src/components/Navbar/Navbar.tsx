@@ -8,10 +8,11 @@ import IconButton from '@mui/material/IconButton';
 import SearchIcon from '@mui/icons-material/Search';
 import Grid from '@mui/material//Grid';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import FilterListIcon from '@mui/icons-material/FilterList';
 
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import LoginIcon from '@mui/icons-material/Login';
-import { Box, Drawer, List, ListItem, ListItemText, Typography } from '@mui/material';
+import { Box, Drawer, List, ListItem, ListItemText, Menu, MenuItem, Typography } from '@mui/material';
 import { useAuth } from '../../context/authContext';
 import { Link, useNavigate, useNavigation } from 'react-router-dom';
 import { useOrder } from '../../context/orderContext';
@@ -126,7 +127,16 @@ function Navbar() {
                     onChange={handleChange}
                     placeholder="Suche..."
                     inputProps={{ 'aria-label': 'search' }}
+                    sx={{
+                      border: "1px solid black",
+                      borderRadius: "5px",
+                      px: 2,
+                      mx: 2
+                    }}
                   />
+                <button>
+                  <FilterListIcon/>
+                </button>
                 </Grid>
             </Grid>
           </Toolbar>
@@ -162,6 +172,28 @@ function Navbar() {
       </Drawer>
     </Box>
   );
+}
+
+
+const BasicMenu = (anchor: Element, menuItems: string[], handleClose: () => {}) => {
+  
+  const handleMenuItemClick = (item: string) => {
+    console.log("Clicked on item: ", item);
+  }
+
+
+
+  return(
+    <Menu
+      anchorEl={anchor}
+      open={Boolean(anchor)}
+      onClose={handleClose}
+    >
+      {
+        menuItems.map((item, i) => <MenuItem onClick={() => handleMenuItemClick(item)}>{item}</MenuItem>)
+      }
+    </Menu>
+  )
 }
 
 export default Navbar;

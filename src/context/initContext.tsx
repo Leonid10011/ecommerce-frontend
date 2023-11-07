@@ -4,7 +4,7 @@
 import { OrderType, useAuth } from "./authContext";
 import { createFavoriteItem, deleteFavoriteProductByUserAndProduct, getOrder } from "../api/dataApi";
 import { createContext, useContext, useEffect } from "react";
-import { Product, useData } from "./dataContext";
+import { Product, useData } from "./productContext";
 import { OrderItemType, useOrder } from "./orderContext";
 
 const initData = {

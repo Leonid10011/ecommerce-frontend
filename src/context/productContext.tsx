@@ -1,8 +1,9 @@
 /**
  * We use this Context to retrieve Product realted data 
  */
-import React, { createContext, useContext, useEffect, useState } from "react";
-import { getFavoriteProductsByUser, getProducts, getProductsByName } from "../api/dataApi";
+import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { FavoriteProductDTO, getFavoriteItemsByUser, getFavoriteProductsByUser, getProducts, getProductsByName } from "../api/dataApi";
+import { useAuth } from "./authContext";
 
 export interface Product {
     id: number,
@@ -36,6 +37,39 @@ const DataContextProvider = ({children}: {
 }) => {
 
     const [products, setProducts] = useState<Product[]>([]);
+    const [favoriteItems, setFavoriteItems] = useState<FavoriteProductDTO[]>([]);
+    const { userId, token, isAuthenticated } = useAuth();
+    /**
+     * 1. fetch favoriteItems
+     * 2. filter Products by favrotieItems and return (memo) 
+     * 3. post newFavoriItem: 
+     *      a. refetch Items
+     */
+    /**
+     * @description Fetch FavoriteItems by userId
+     * @param userId: number
+     */
+    const fetchFavoriteItems = async (userId: number) => {
+        const favoriteItems = await getFavoriteItemsByUser(userId);
+        if(favoriteItems.status === 200){
+            setFavoriteItems(favoriteItems.data);
+        }
+    }
+
+    const filterFavoriteItems = useMemo(() => {
+        const favoriteItemsFiltered = products.filter(
+            item => favoriteItems.find(item2 => item2.productId === item.id)
+        );
+
+        return favoriteItemsFiltered;
+    }, [favoriteItems]);
+
+    useEffect(() => {
+        if(isAuthenticated){
+            fetchFavoriteItems(userId);
+        }
+    },[userId])
+
     /**
      * @description Get favorite products and set "isFavorit" of all fav products to true
      * @param products 

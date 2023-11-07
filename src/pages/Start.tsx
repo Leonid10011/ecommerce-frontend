@@ -1,5 +1,5 @@
 import React from "react";
-import SlidingComponent from "../components/SlideWindow/SlideWindow";
+import SlidingComponent from "../components/SlideWindow/ProductSlider";
 import { Box, Container, Typography } from "@mui/material";
 
 export default function Start(){

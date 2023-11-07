@@ -3,7 +3,7 @@ import { Card, CardContent, IconButton, Typography } from '@mui/material';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import ProductModal from '../../ProductModal/ProductModal';
-import { Product } from '../../../context/dataContext';
+import { Product } from '../../../context/productContext';
 import { useInit } from '../../../context/initContext';
 import { useAuth } from '../../../context/authContext';
 
