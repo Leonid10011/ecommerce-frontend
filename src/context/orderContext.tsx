@@ -1,35 +1,30 @@
 /**
  * We use this context to handle the BuyOrder data
  */
-import React, { createContext, useContext, useEffect, useRef, useState } from "react";
-import { Product } from "./productContext";
-import { getOrderItems, getOrderItemProducts, addItem, getOrder } from "../api/dataApi";
-import { OrderType } from "./authContext";
+import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { getOrderItems, addItem, getOrder, OrderItemDTO, OrderDTO } from "../api/dataApi";
+import { useAuth } from "./authContext";
+import { ApiResponse } from "../types/api/apiTypes";
+import { Product, useProduct } from "./productContext";
 
 export interface OrderProductType {
     id: number,
     name: string,
     description: string,
-    imageURL: string,
+    imgURL: string,
     categoryId: number,
     quantity: number,
     price: number
 };
 
-export interface OrderItemType {
-    orderId: number,
-    productId: number,
-    quantity: number,
-    price: number,
-}
-
 interface OrderContextType {
     initOrderContext: (orderId: number) => void,
-    orderItems: OrderProductType[],
+    orderItems: OrderItemDTO[],
     resetCart: () => void,
-    addOrderItem: (product: OrderItemType, token: string) => void,
-    orderId: number,
-    fetchAndSetOrder: (id: number, token: string) => Promise<OrderType>
+    addOrderItem: (product: OrderItemDTO) => void,
+    fetchAndSetOrder: (id: number, token: string) => void,
+    filterOrderItems: OrderProductType[],
+    order: OrderDTO,
 };
 
 const initData = {
@@ -37,13 +32,14 @@ const initData = {
     orderItems: [],
     resetCart: () => {},
     addOrderItem: () => {},
-    orderId: 0,
-    fetchAndSetOrder: async () => { return {
+    fetchAndSetOrder: async () => {},
+    filterOrderItems: [],
+    order: {
         id: 0,
         userId: 0,
         date: new Date(),
-        status:  ""
-    }}
+        status: "",
+    }
 }
 
 const orderContext = createContext<OrderContextType>(initData);
@@ -54,71 +50,72 @@ const OrderContextProvider = ({children} : {
     children: React.ReactNode
 }) => {
 
-    const [ orderItems, setOrderItems ] = useState<OrderProductType[]>([]);
-    const [ orderId, setOrderId ] = useState<number>(0);
-    const [ order, setOrder ] = useState<OrderType>();
-    const rerenderRef = useRef(false);
-    /**
-     * @description Fetch the OrderItem and the corresponding Product and then 
-     * combine them into an OrderProduct to have access to all information from both
-     * @param orderId 
-     * @returns 
-     */
-    const fetchAndSetItems = async (orderId: number) => {
-        // as we initialize id with 0, we want to avoid working on it
-        if(orderId <= 0)
-            return false;
-        console.log("DATA orericontext")
-        try {
-            let data: OrderItemType[] = await getOrderItems(orderId);
-            
-            let data2: Product[] = await getOrderItemProducts(orderId);
-            
-            const result: OrderProductType[] = data.map((item, index) => ({
-                id: data2[index].id,
-                name: data2[index].name,
-                description: data2[index].description,
-                imageURL: data2[index].imgURL,
-                categoryId: data2[index].categoryID,
-                quantity: item.quantity,
-                price: item.price
-              }));
-            
-            setOrderItems(result);
-        }catch( err: any) {
-            setOrderItems([]);
-        }
-    }
-    /**
-     * Fetch  the order of the user and return in, to use it imediatly
-     * @param id 
-     * @param token 
-     * @returns 
-     */
-    const fetchAndSetOrder = async (id: number, token: string) => {
-        let resOrder = await getOrder(id, token);
-        setOrder(resOrder);
+    const { products } = useProduct();
 
-        return resOrder;
+    const [ orderItems, setOrderItems ] = useState<OrderItemDTO[]>([]);
+    const [ order, setOrder ] = useState<OrderDTO>({
+        id: 0,
+        userId: 0,
+        date: new Date(),
+        status:  ""
+    });
+    
+    const { userId, token, isAuthenticated } = useAuth();
+
+    const filterOrderItems: OrderProductType[] = useMemo(() => {
+        try {
+            const orderProducts = products.filter(
+                item => orderItems.find(item2 => item.id === item2.productId)
+            );
+            if( orderProducts.length != orderItems.length)
+                throw new Error("Number of products not equal to number oder OrdeItems, something went wrong.")
+            
+            // merge the product and orderItem properties
+            const orderProductsMerged: OrderProductType[] = orderProducts.map(
+                (orderProduct, index) => {
+                    const orderItem = orderItems.find( item2 => item2.productId === orderProduct.id)!;
+                    return {
+                        id: orderProduct.id,
+                        name: orderProduct.name,
+                        description: orderProduct.description,
+                        imgURL: orderProduct.imgURL,
+                        categoryId: orderProduct.categoryID,
+                        quantity: orderItem.quantity,
+                        price: orderItem.price,
+                    }
+                }
+            )
+            
+            return orderProductsMerged;
+
+        } catch (error){
+            console.error(`Not able to filter Products: ${error}`);
+            throw error;
+        }
+
+    }, [orderItems]);
+
+    const fetchAndSetOrder = async () => {
+        const resOrder: ApiResponse<OrderDTO> = await getOrder(userId, token);
+        const newOrder = {
+            ...resOrder.data
+        }
+        setOrder(newOrder);
     }
+
+    const fetchAndSetOrderItems = async () => {
+        let resOrderItems: ApiResponse<OrderItemDTO[]> = await getOrderItems(order.id);
+        setOrderItems([...resOrderItems.data]);
+    }
+
     /**
      * @description Set the orderId for global acces though context and fetch corresponding orderItems for cart
      * @param orderId 
      */
-    const initOrderContext = (orderId: number) => {
-        console.log("Init Order Context");
-        setOrderId(orderId);
-        fetchAndSetItems(orderId);
-        reRender();
+    const initOrderContext = () => {
+        fetchAndSetOrder();
+        fetchAndSetOrderItems();
     }
-    /**
-     * @description Rerender is needed for up to date cart
-     */
-    useEffect(() => {
-        if(rerenderRef.current){
-            rerenderRef.current = false;
-        }
-    }, [rerenderRef])
     
     /**
      * @description When logged off, clean the carts content for client view
@@ -132,29 +129,19 @@ const OrderContextProvider = ({children} : {
      * @param product 
      * @param token 
      */
-    const addOrderItem = async (product: OrderItemType, token: string) => {
-        try {
-            let res = await addItem(product, token);
-            if(res === true){
-                // refetch the items with the added Item
-                fetchAndSetItems(orderId);
-                console.log("Added item")
-            } else {
-                console.log("Failed adding item.")
-            }
-        } catch( err: any){
-            console.error(err);
-        }
-    }
-    /**
-     * @description Rerender to updated the state for rendering most recent items
-     */
-    const reRender = () => {
-        rerenderRef.current = true;
+    const addOrderItem = async (product: OrderItemDTO) => {    
+        const resOrderItem = await addItem(product, token);
+        setOrderItems([...orderItems, resOrderItem.data]); 
     }
 
+    useEffect(() => {
+        if(isAuthenticated){
+            initOrderContext();
+        }
+    }, [userId])
+
     return(
-        <orderContext.Provider value={{initOrderContext, orderItems, resetCart, addOrderItem, orderId, fetchAndSetOrder}}>
+        <orderContext.Provider value={{initOrderContext, orderItems, resetCart, addOrderItem, fetchAndSetOrder, filterOrderItems, order}}>
             {children}
         </orderContext.Provider>
     )

@@ -120,13 +120,12 @@ const ProductContextProvider = ({children}: {
         const res: ApiResponse<Product[]> = await getProductsByName(name);
         const newProducts = [...res.data];
         setProducts(newProducts);
-        console.log("ERE " , products)
         // trigger the filterFavoriteItems, in order to init useMemo with nonFilteredProducts
         setFavoriteItems([...favoriteItems]);
     }       
     
     const fetchAndSetProducts = async() => {
-        const res = await getProducts();
+        const res: ApiResponse<Product[]> = await getProducts();
         const newProducts = [...res.data];
         setProducts(newProducts);
         // trigger the filterFavoriteItems, in order to init useMemo with nonFilteredProducts

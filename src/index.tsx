@@ -11,7 +11,7 @@ import ProductList from './pages/Products/Products';
 import { ProductContextProvider } from './context/productContext';
 import Cart from './pages/Cart/Cart';
 import { OrderContextProvider } from './context/orderContext';
-import { InitContextProvider } from './context/initContext';
+//import { InitContextProvider } from './context/initContext';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -20,9 +20,8 @@ const root = ReactDOM.createRoot(
 root.render(
   <BrowserRouter>
   <AuthContextProvider>
-    <OrderContextProvider>
-        <ProductContextProvider>
-          <InitContextProvider>
+      <ProductContextProvider>
+        <OrderContextProvider>
             <Routes>
               <Route path="/" element={<App/>}>
                 <Route path="/" element={<Start/>}/>
@@ -33,9 +32,8 @@ root.render(
                 <Route path='/cart' element={<Cart/>}/>
               </Route>
             </Routes>  
-          </InitContextProvider>
-        </ProductContextProvider>
-    </OrderContextProvider>
+      </OrderContextProvider>
+    </ProductContextProvider>
   </AuthContextProvider>
   </BrowserRouter>
 );

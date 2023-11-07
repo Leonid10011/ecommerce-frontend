@@ -16,7 +16,6 @@ import { Box, Drawer, List, ListItem, ListItemText, Menu, MenuItem, Typography }
 import { useAuth } from '../../context/authContext';
 import { Link, useNavigate, useNavigation } from 'react-router-dom';
 import { useOrder } from '../../context/orderContext';
-import { useInit } from '../../context/initContext';
 import MenuIcon from '@mui/icons-material/Menu';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { toast } from 'react-toastify';
@@ -39,8 +38,6 @@ function Navbar() {
   const { token, resetToken } = useAuth();
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [mobileOpen, setMobileOpen] = useState(false);
-
-  const { doSearch } = useInit();
 
   const { fetchAndSetProductsByName } = useProduct();
 

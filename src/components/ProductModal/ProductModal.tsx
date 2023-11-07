@@ -11,7 +11,6 @@ import {
 import RemoveIcon from '@mui/icons-material/Remove';
 import AddIcon from '@mui/icons-material/Add';
 import { Product } from '../../context/productContext';
-import { useInit } from '../../context/initContext';
 
 const ProductModal = ({ product, open, onClose, handleBuy }: {
     product: Product,
@@ -21,7 +20,6 @@ const ProductModal = ({ product, open, onClose, handleBuy }: {
 }) => {
 
   const [quantity, setQuantity] = useState(1);
-  const { doOrderRefresh } = useInit();
 
   const handleDecrease = () => {
     if (quantity > 1) {
@@ -35,7 +33,6 @@ const ProductModal = ({ product, open, onClose, handleBuy }: {
 
   const handleAddToCart = () => {
     handleBuy(quantity);
-    doOrderRefresh();
     onClose();
   };
 

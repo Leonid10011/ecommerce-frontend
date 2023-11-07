@@ -30,11 +30,11 @@ We initialize the products at the start of the application:
 ```typescript
 // fetch the products and if the favoriteItems are empty, trigger favorite items
 const fetchAndSetProducts = async() => {
-    let res = await getProducts();
-    setProducts(res.data);
+    const res: ApiResponse<Product[]> = await getProducts();
+    const newProducts = [...res.data];
+    setProducts(newProducts);
 
-    if(favoriteItems.length === 0)
-        setFavoriteItems([])
+    setFavoriteItems([...favoriteItems])
 }
 
 // When the productContext is loaded we fetch the products
@@ -46,13 +46,13 @@ useEffect(() => {
 Additionally we also can fetch the products that only contain a specific substring. We avoid filtering the existing products in the state because it could create an overhead if the number of products is to large.
 
 ```typescript
-const fetchAndSetProductsByName = async (name: string, userId: number, token: string) => {
+const fetchAndSetProductsByName = async (name: string) => {
     const res: ApiResponse<Product[]> = await getProductsByName(name);
-    setProducts(res.data);
+    const newProducts = [...res.data];
+    setProducts(newProducts);
 
-    if(favoriteItems.length === 0)
-        setFavoriteItems([]);
-}     
+    setFavoriteItems([...favoriteItems]);
+}       
 ```
 
 ### 1.2 Favorite Items
@@ -149,3 +149,134 @@ const deleteFavoriteItem = async (productId: number) => {
 ```
 
 Both functions update the database at first and then the local state. In that way we avoid refetching the favoriteItems for this user.
+
+### 1.3 Order
+
+#### OrderDTO
+```typescript
+interface OrderDTO {
+    id: number,         // id of order
+    userId: number,     // id the user that this order belongs to
+    date: Date,         // the date it was created
+    status: string,     // the status of the order(finished, in progress etc.)
+}
+```
+
+#### OrderItemDTO
+```typescript
+interface OrderItemDTO {
+    id: number,         // id of the orderItem
+    orderId: number,    // id of the order this orderItem belongs to
+    productId: number,  // id of the corresponding product
+    quantity: number,   // the number that is currently ordered
+    price: number,      // the price (inc. discount but not implemented yet)
+}
+```
+
+#### Method Description
+
+Everytime an product is put into the cart, we create an orderItem that holds the number of products that are being ordered and also a modified price depending on discounts. This information are stored seperatly from the actual product. 
+
+We merge the orderItems and corresponding products into **OrderProductType**
+
+```typescript
+interface OrderProductType {
+    id: number,
+    name: string,
+    description: string,
+    imgURL: string,
+    categoryId: number,
+    quantity: number,
+    price: number
+};
+```
+
+ with the following function:
+
+```typescript
+const filterOrderItems: OrderProductType[] = useMemo(() => {
+        try {
+            const orderProducts = products.filter(
+                item => orderItems.find(item2 => item.id === item2.productId)
+            );
+            if( orderProducts.length != orderItems.length)
+                throw new Error("Number of products not equal to number oder OrdeItems, something went wrong.")
+            
+            // merge the product and orderItem properties
+            const orderProductsMerged: OrderProductType[] = orderProducts.map(
+                (orderProduct, index) => {
+                    const orderItem = orderItems.find( item2 => item2.productId === orderProduct.id)!;
+                    return {
+                        id: orderProduct.id,
+                        name: orderProduct.name,
+                        description: orderProduct.description,
+                        imgURL: orderProduct.imgURL,
+                        categoryId: orderProduct.categoryID,
+                        quantity: orderItem.quantity,
+                        price: orderItem.price,
+                    }
+                }
+            )
+            
+            return orderProductsMerged;
+
+        } catch (error){
+            console.error(`Not able to filter Products: ${error}`);
+            throw error;
+        }
+
+    }, [orderItems]);
+```
+
+This function will throw an error if there is an orderItem with no corresponding product. But this should not happen when the rest is implemented correctly. 
+
+When the app is started we run the following use effect to init the orderContext. But because we only allow cart for logged in users for now, the **initOrderCOntext** will only trigger when a user is logged in.
+
+```typescript
+useEffect(() => {
+    if(isAuthenticated){
+        initOrderContext();
+    }
+}, [userId])
+```
+
+The **initOrderCortext** function will call the following two functions to fetch order and orderItems:
+
+```typescript
+const fetchAndSetOrder = async () => {
+    const resOrder: ApiResponse<OrderDTO> = await getOrder(userId, token);
+    const newOrder = {
+        ...resOrder.data
+    }
+    setOrder(newOrder);
+}
+
+const fetchAndSetOrderItems = async () => {
+    let resOrderItems: ApiResponse<OrderItemDTO[]> = await getOrderItems(order.id);
+    setOrderItems([...resOrderItems.data]);
+}
+
+const initOrderContext = () => {
+    fetchAndSetOrder();
+    fetchAndSetOrderItems();
+}
+```
+
+We use the **filterOrderItems** to render our cartItems:
+
+```typescript
+const { filterFavoriteItems } = useProduct();
+
+                        .
+                        .
+                        .
+
+<Grid item display={'flex'} flexDirection={'column'} >
+    {filterOrderItems.map((item, i) => {
+        return (
+            <CartCard key={item.id} orderProduct={item}/>
+        )
+    })}
+</Grid>
+```
+

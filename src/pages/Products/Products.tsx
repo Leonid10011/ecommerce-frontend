@@ -5,12 +5,10 @@ import { useAuth } from '../../context/authContext';
 import { useNavigate } from 'react-router';
 import { useOrder } from '../../context/orderContext';
 import ProductCard from '../../components/common/ProductCard/ProductCard';
-import { useInit } from '../../context/initContext';
 
 function ProductList() {
     const { isAuthenticated } = useAuth();
-    const { doOrder } = useInit();
-    const { orderId } = useOrder();
+    const { order, addOrderItem } = useOrder();
     const navigation = useNavigate();
 
     const { filterFavoriteItems } = useProduct();
@@ -18,23 +16,18 @@ function ProductList() {
     const handleBuy = (id: number, price: number, quantity: number) => {
       if(isAuthenticated){
         const item = {
-          orderId: orderId, 
+          id: 0,
+          orderId: order.id, 
           productId: id, 
           quantity: quantity, 
           price: price
         }
-        console.log(id)
-        doOrder(item);  
+        addOrderItem(item);
       }
       else {
         navigation("/signin")
       }
     } 
-    
-    useEffect(() => {
-     // console.log("Init Products.\nProdcuts ", products);
-
-    }, [])
 
     const { favoriteItemsFiltered, nonFavoriteItems } = filterFavoriteItems;
 

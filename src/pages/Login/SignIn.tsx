@@ -1,11 +1,12 @@
 import React from 'react';
 import { Container, TextField, Button, Grid, Box, Typography } from '@mui/material';
-import { useInit } from '../../context/initContext';
 import { toast } from 'react-toastify';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../../context/authContext';
 
 export default function SignIn() {
-  const { initLogin } = useInit();
+
+  const { fetchAndSetToken } = useAuth();
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -14,7 +15,7 @@ export default function SignIn() {
     const data = new FormData(event.currentTarget);
     const email = data.get('email')!.toString();
     const password = data.get('password')!.toString();
-    initLogin(email, password);
+    fetchAndSetToken(email, password);
     console.log({ email, password });
     toast.success("Logged In", {
       position: "top-center"
