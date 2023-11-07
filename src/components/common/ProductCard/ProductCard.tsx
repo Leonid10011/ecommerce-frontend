@@ -3,8 +3,7 @@ import { Card, CardContent, IconButton, Typography } from '@mui/material';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import ProductModal from '../../ProductModal/ProductModal';
-import { Product, useData } from '../../../context/productContext';
-import { useInit } from '../../../context/initContext';
+import { Product, useProduct } from '../../../context/productContext';
 import { useAuth } from '../../../context/authContext';
 
 export interface PType {
@@ -17,8 +16,7 @@ export interface PType {
 const ProductCard = ({ product, handleBuy, isFavorite } : { product: Product, handleBuy: (id: number, price: number, quantity: number) => void, isFavorite: boolean} ) => {
     const [modal, setModal] = useState<boolean>(false);
     const{ isAuthenticated } = useAuth();
-    const { doFavorite } = useInit();
-    const { addFavoriteItem, deleteFavoriteItem} = useData();
+    const { addFavoriteItem, deleteFavoriteItem} = useProduct();
 
   const handleCartClick = () => {
     setModal(true);
@@ -29,7 +27,6 @@ const ProductCard = ({ product, handleBuy, isFavorite } : { product: Product, ha
   }
 
   const handleFavoriteClick = () => {
-    //doFavorite(product);
     if(isFavorite)
       deleteFavoriteItem(product.id);
     else

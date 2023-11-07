@@ -20,6 +20,7 @@ import { useInit } from '../../context/initContext';
 import MenuIcon from '@mui/icons-material/Menu';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { toast } from 'react-toastify';
+import { useProduct } from '../../context/productContext';
 
 const logoStyles = css`
   width: 100%;
@@ -40,6 +41,8 @@ function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const { doSearch } = useInit();
+
+  const { fetchAndSetProductsByName } = useProduct();
 
   const { resetCart } = useOrder();
 
@@ -67,8 +70,9 @@ function Navbar() {
   };
 
   const handleSearch = (e: FormEvent) => {
-    //fetchAndSetProductsByName(searchTerm);
-    doSearch(searchTerm);
+    if(searchTerm != "")
+      fetchAndSetProductsByName(searchTerm);
+    //doSearch(searchTerm);
     navigation("/p");
   }
 

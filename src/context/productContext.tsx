@@ -2,8 +2,10 @@
  * We use this Context to retrieve Product related data 
  */
 import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
-import { FavoriteProductDTO, createFavoriteItem, deleteFavoriteProductByUserAndProduct, getFavoriteItemsByUser, getProducts, getProductsByName } from "../api/dataApi";
+import { FavoriteProductDTO, createFavoriteItem, deleteFavoriteProductByUserAndProduct, getFavoriteItemsByUser } from "../api/favoriteItemApi";
 import { useAuth } from "./authContext";
+import { getProducts, getProductsByName } from "../api/productApi";
+import { ApiResponse } from "../types/api/apiTypes";
 
 export interface Product {
     id: number,
@@ -13,7 +15,6 @@ export interface Product {
     categoryID: number,
     quantity: number,
     imgURL: string,
-    isFavorite: boolean,
 }
 
 const initData = {
@@ -24,19 +25,19 @@ const initData = {
     deleteFavoriteItem: () => {},
 
 }
-interface DataContextType {
+interface ProductContextType {
     products: Product[],
-    fetchAndSetProductsByName: (name: string, userId: number, token:string) => void,
+    fetchAndSetProductsByName: (name: string) => void,
     filterFavoriteItems: { favoriteItemsFiltered: Product[], nonFavoriteItems: Product[] },
     addFavoriteItem: (productId: number) => void,
     deleteFavoriteItem: (productId: number) => void, 
 }
 
-const DataContext = createContext<DataContextType>(initData);
+const ProductContext = createContext<ProductContextType>(initData);
 
-const useData = () => useContext(DataContext);
+const useProduct = () => useContext(ProductContext);
 
-const DataContextProvider = ({children}: {
+const ProductContextProvider = ({children}: {
     children: React.ReactNode
 }) => {
 
@@ -61,8 +62,6 @@ const DataContextProvider = ({children}: {
         favoriteItemsFiltered: Product[];
         nonFavoriteItems: Product[];
     } = useMemo(() => {
-        console.log("memo")
-
         const [favoriteItemsFiltered, nonFavoriteItems] = products.reduce<[Product[], Product[]]>(
             ([favorites, nonFavorites], item) => {
                 if (favoriteItems.find(item2 => item2.productId === item.id)) {
@@ -98,12 +97,8 @@ const DataContextProvider = ({children}: {
      */
     const deleteFavoriteItem = async (productId: number) => {
         await deleteFavoriteProductByUserAndProduct(userId, productId, token);
-        console.log("Delete FavoritItzems: ", favoriteItems, " ", userId, " ", productId)
         const updatedfavoriteItems = favoriteItems.filter(item => (item.productId != productId));
-        console.log("updateded delete", updatedfavoriteItems)
         setFavoriteItems(updatedfavoriteItems);
-
-        console.log(favoriteItems)
     }
 
     useEffect(() => {
@@ -120,35 +115,33 @@ const DataContextProvider = ({children}: {
      * @param userId 
      * @param token 
      */
-    const fetchAndSetProductsByName = async (name: string, userId: number, token: string) => {
+    const fetchAndSetProductsByName = async (name: string) => {
         console.log("Fetch by Name; dataContext");
-        try {
-            let data: Product[] = await getProductsByName(name);
-            setProducts(data);
-        } catch( err: any){
-        }
-    }
-    /**
-     * Simple Product initializiation at app start
-     */
-    const initProducts = async() => {
-        let data = await getProducts();
-        console.log("Init Products ", data)
-        setProducts(data);
+        const res: ApiResponse<Product[]> = await getProductsByName(name);
+        const newProducts = [...res.data];
+        setProducts(newProducts);
+        console.log("ERE " , products)
         // trigger the filterFavoriteItems, in order to init useMemo with nonFilteredProducts
-        if(favoriteItems.length === 0)
-            setFavoriteItems([])
+        setFavoriteItems([...favoriteItems]);
+    }       
+    
+    const fetchAndSetProducts = async() => {
+        const res = await getProducts();
+        const newProducts = [...res.data];
+        setProducts(newProducts);
+        // trigger the filterFavoriteItems, in order to init useMemo with nonFilteredProducts
+        setFavoriteItems([...favoriteItems])
     }
 
     useEffect(() => {
-        initProducts();
+        fetchAndSetProducts();
     }, [])
 
     return (
-        <DataContext.Provider value={{products, fetchAndSetProductsByName, filterFavoriteItems, addFavoriteItem, deleteFavoriteItem}}>
+        <ProductContext.Provider value={{products, fetchAndSetProductsByName, filterFavoriteItems, addFavoriteItem, deleteFavoriteItem}}>
             {children}
-        </DataContext.Provider>
+        </ProductContext.Provider>
     )
 }
 
-export { DataContextProvider, useData }
+export { ProductContextProvider, useProduct }

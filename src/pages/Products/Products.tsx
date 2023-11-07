@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { Container } from '@mui/material';
-import { useData } from '../../context/productContext';
+import { useProduct } from '../../context/productContext';
 import { useAuth } from '../../context/authContext';
 import { useNavigate } from 'react-router';
 import { useOrder } from '../../context/orderContext';
@@ -13,7 +13,7 @@ function ProductList() {
     const { orderId } = useOrder();
     const navigation = useNavigate();
 
-    const { filterFavoriteItems } = useData();
+    const { filterFavoriteItems } = useProduct();
 
     const handleBuy = (id: number, price: number, quantity: number) => {
       if(isAuthenticated){

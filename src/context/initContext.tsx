@@ -2,16 +2,14 @@
  * We us this context to init the other Contexts with token and userId
  */
 import { OrderType, useAuth } from "./authContext";
-import { createFavoriteItem, deleteFavoriteProductByUserAndProduct, getOrder } from "../api/dataApi";
 import { createContext, useContext, useEffect } from "react";
-import { Product, useData } from "./productContext";
+import { useProduct } from "./productContext";
 import { OrderItemType, useOrder } from "./orderContext";
 
 const initData = {
     initLogin: () => {},
     test: () => {},
     doSearch: () => {},
-    doFavorite: () => {},
     doOrder: () => {},
     doOrderRefresh: () => {}
 };
@@ -20,7 +18,6 @@ interface InitContextType {
     initLogin: (name: string, password: string) => void;
     test: () => void,
     doSearch: (searchTerm: string) => void,
-    doFavorite: (product: Product) => void,
     doOrder: (orderItem: OrderItemType) => void,
     doOrderRefresh: () => void
 }
@@ -34,7 +31,7 @@ export const InitContextProvider = ({children}:{
 }) => {
 
     const {token, fetchAndSetToken, userId } = useAuth();
-    const { fetchAndSetProductsByName } = useData();
+    const { fetchAndSetProductsByName } = useProduct();
     const { initOrderContext, addOrderItem, orderId, fetchAndSetOrder } = useOrder();
 
     /**
@@ -52,26 +49,16 @@ export const InitContextProvider = ({children}:{
         if(userOrder != null)
             initOrderContext(userOrder.id)
     }
-    
+    //////############################
     const doSearch = (searchTerm: string) => {
         if(searchTerm !== "")
-            fetchAndSetProductsByName(searchTerm, userId, token)
+            fetchAndSetProductsByName(searchTerm)
     }
 
     const test = () => {
         console.log("USERID ", userId);
     }
-    /**
-     * @description Handle favoriteItems in the component
-     * @param product 
-     */
-    const doFavorite = (product: Product) => {
-        if(product.isFavorite){
-            deleteFavoriteProductByUserAndProduct(userId, product.id, token);
-        } else {
-            createFavoriteItem(userId, product.id, token);
-        }
-    }
+    
     /**
      * @description Handle order functionality in the component
      * @param orderItem 
@@ -93,7 +80,7 @@ export const InitContextProvider = ({children}:{
     }, []);
 
     return (
-        <initContext.Provider value={{initLogin, test, doSearch, doFavorite, doOrder, doOrderRefresh}}>
+        <initContext.Provider value={{initLogin, test, doSearch, doOrder, doOrderRefresh}}>
             {children}
         </initContext.Provider>
     )

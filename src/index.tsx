@@ -8,7 +8,7 @@ import { AuthContextProvider } from './context/authContext';
 import SignIn from './pages/Login/SignIn';
 import RegisterForm from './pages/Register/SignUp';
 import ProductList from './pages/Products/Products';
-import { DataContextProvider } from './context/productContext';
+import { ProductContextProvider } from './context/productContext';
 import Cart from './pages/Cart/Cart';
 import { OrderContextProvider } from './context/orderContext';
 import { InitContextProvider } from './context/initContext';
@@ -21,7 +21,7 @@ root.render(
   <BrowserRouter>
   <AuthContextProvider>
     <OrderContextProvider>
-        <DataContextProvider>
+        <ProductContextProvider>
           <InitContextProvider>
             <Routes>
               <Route path="/" element={<App/>}>
@@ -34,7 +34,7 @@ root.render(
               </Route>
             </Routes>  
           </InitContextProvider>
-        </DataContextProvider>
+        </ProductContextProvider>
     </OrderContextProvider>
   </AuthContextProvider>
   </BrowserRouter>

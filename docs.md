@@ -2,14 +2,62 @@
 
 ## Content
 1. [Feature Overvire](#feature-overview)
-    1. [Favorite Items](#11-favorite-items)
+    1. [Products](#11-products)
+    2. [Favorite Items](#12-favorite-items)
 ## Feature Overview
 
 In this Sectio we will give a detailed introductions of various features of this app.
 
-### 1.1 Favorite Items
+### 1.1 Products
 
-#### Favorite Item DTO
+#### ProductDTO
+```typescript
+interface Product {
+    id: number,             // id of product
+    name: string,           // name of the product
+    description: string,    // description of the product
+    price: number,          // price of the product
+    categoryID: number,     // the category that the product belongs to
+    quantity: number,       // the quantity of products available
+    imgURL: string,         // the URL of the image belonging to this product
+}
+```
+
+The products is the main data of the application. It holds various attributes that will help to represent a comprehensible product on the frontend. 
+
+We initialize the products at the start of the application:
+
+```typescript
+// fetch the products and if the favoriteItems are empty, trigger favorite items
+const fetchAndSetProducts = async() => {
+    let res = await getProducts();
+    setProducts(res.data);
+
+    if(favoriteItems.length === 0)
+        setFavoriteItems([])
+}
+
+// When the productContext is loaded we fetch the products
+useEffect(() => {
+    fetchAndSetProducts();
+}, [])
+```
+
+Additionally we also can fetch the products that only contain a specific substring. We avoid filtering the existing products in the state because it could create an overhead if the number of products is to large.
+
+```typescript
+const fetchAndSetProductsByName = async (name: string, userId: number, token: string) => {
+    const res: ApiResponse<Product[]> = await getProductsByName(name);
+    setProducts(res.data);
+
+    if(favoriteItems.length === 0)
+        setFavoriteItems([]);
+}     
+```
+
+### 1.2 Favorite Items
+
+#### FavoriteItemDTO
 ```typescript
 {
     id: number,             // id of the favoriteItem
