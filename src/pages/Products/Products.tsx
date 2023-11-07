@@ -8,12 +8,12 @@ import ProductCard from '../../components/common/ProductCard/ProductCard';
 import { useInit } from '../../context/initContext';
 
 function ProductList() {
-    //const isLargeScreen = useMediaQuery('(min-width: 768px');
-    const { products } = useData();
     const { isAuthenticated } = useAuth();
     const { doOrder } = useInit();
     const { orderId } = useOrder();
     const navigation = useNavigate();
+
+    const { filterFavoriteItems } = useData();
 
     const handleBuy = (id: number, price: number, quantity: number) => {
       if(isAuthenticated){
@@ -36,10 +36,15 @@ function ProductList() {
 
     }, [])
 
+    const { favoriteItemsFiltered, nonFavoriteItems } = filterFavoriteItems;
+
     return (
       <Container maxWidth="sm" sx={{ position: 'relative', overflow: 'hidden', minHeight: '300px' }}>
-          {products.map((product, index) => (
-            <ProductCard key={product.id} product={product} handleBuy={handleBuy}/>
+          {favoriteItemsFiltered.map((product, index) => (
+            <ProductCard key={product.id} product={product} handleBuy={handleBuy} isFavorite/>
+          ))}
+          {nonFavoriteItems.map((product, index) => (
+            <ProductCard key={product.id} product={product} handleBuy={handleBuy} isFavorite={false}/>
           ))}
         
       </Container>

@@ -3,7 +3,7 @@ import { Card, CardContent, IconButton, Typography } from '@mui/material';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import ProductModal from '../../ProductModal/ProductModal';
-import { Product } from '../../../context/productContext';
+import { Product, useData } from '../../../context/productContext';
 import { useInit } from '../../../context/initContext';
 import { useAuth } from '../../../context/authContext';
 
@@ -14,10 +14,11 @@ export interface PType {
     isFavorite: boolean,
 }
 
-const ProductCard = ({ product, handleBuy } : { product: Product, handleBuy: (id: number, price: number, quantity: number) => void}) => {
+const ProductCard = ({ product, handleBuy, isFavorite } : { product: Product, handleBuy: (id: number, price: number, quantity: number) => void, isFavorite: boolean} ) => {
     const [modal, setModal] = useState<boolean>(false);
     const{ isAuthenticated } = useAuth();
     const { doFavorite } = useInit();
+    const { addFavoriteItem, deleteFavoriteItem} = useData();
 
   const handleCartClick = () => {
     // Implementiere die Logik zum Hinzufügen des Produkts zum Warenkorb hier
@@ -29,7 +30,11 @@ const ProductCard = ({ product, handleBuy } : { product: Product, handleBuy: (id
   }
 
   const handleFavoriteClick = () => {
-    doFavorite(product);
+    //doFavorite(product);
+    if(isFavorite)
+      deleteFavoriteItem(product.id);
+    else
+      addFavoriteItem(product.id);
   }
 
   useEffect(() => {
@@ -44,7 +49,7 @@ const ProductCard = ({ product, handleBuy } : { product: Product, handleBuy: (id
           style={{ position: 'absolute', top: 10, right: 10, backgroundColor: 'white' }}
           onClick={handleFavoriteClick}
         >
-          <FavoriteIcon color={product.isFavorite ? 'error' : 'action'} />
+          <FavoriteIcon color={isFavorite ? 'error' : 'action'} />
         </IconButton>
         : "" }
         <ImageWithFallback src={product.imgURL} alt={product.name} />

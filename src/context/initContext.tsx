@@ -34,7 +34,7 @@ export const InitContextProvider = ({children}:{
 }) => {
 
     const {token, fetchAndSetToken, userId } = useAuth();
-    const { initFavoriteItems, fetchAndSetProductsByName } = useData();
+    const { fetchAndSetProductsByName } = useData();
     const { initOrderContext, addOrderItem, orderId, fetchAndSetOrder } = useOrder();
 
     /**
@@ -46,7 +46,6 @@ export const InitContextProvider = ({children}:{
 
         const {id, token} = await fetchAndSetToken(name, password);
         console.log("userId: ", id, " sec ", userId, "token: ", token, " END")
-        initFavoriteItems(id, token);
         
         const userOrder: OrderType = await fetchAndSetOrder(id, token);
         console.log("UserOrder, ", userOrder);
@@ -72,7 +71,6 @@ export const InitContextProvider = ({children}:{
         } else {
             createFavoriteItem(userId, product.id, token);
         }
-        initFavoriteItems(userId, token);
     }
     /**
      * @description Handle order functionality in the component

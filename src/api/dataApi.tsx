@@ -187,7 +187,9 @@ const getOrderItemProducts = async (orderId: number) => {
         console.error("Error get Items", err);
     }
 } 
-
+/**
+ * FAVORITE ITEM SECTION
+ */
 const createFavoriteItem = async (userId: number, productId: number, token: string) => {
     console.log("Create Favorite Item Debug");
     try {
@@ -213,7 +215,7 @@ const createFavoriteItem = async (userId: number, productId: number, token: stri
         return false;
     }
 }
-
+/*
 const getFavoriteProductsByUser = async (userId: number, token: string) => {
     console.log("Get Favorite Products By User Debug");
     try {
@@ -241,6 +243,7 @@ const getFavoriteProductsByUser = async (userId: number, token: string) => {
         }
     }
 }
+*/
 
 const deleteFavoriteProductByUserAndProduct = async (userId: number, productId: number, token: string) => {
     console.log("Delete Favorite Products BY User & Product Debug");
@@ -311,7 +314,6 @@ export {
     getOrderItems,
     getOrderItemProducts, 
     createFavoriteItem, 
-    getFavoriteProductsByUser,
     deleteFavoriteProductByUserAndProduct,
     getFavoriteItemsByUser
  };
