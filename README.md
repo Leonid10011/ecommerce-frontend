@@ -17,7 +17,7 @@ Welcome to my E-Commerce Frontend project! This project serves as part of my por
 I write the documentatin parallel while working on the project. As I didn't started it immediatley when I began the project, there is a lot missing. But I try to fill it up consitently while working on the project.
 
 
-Link to docs: [Documentiation](https://www.github.com/Leonid10011/docs.md) 
+Link to docs: [Documentiation](https://github.com/Leonid10011/ecommerce-frontend/blob/main/docs.md) 
 
 ## Project Description
 
