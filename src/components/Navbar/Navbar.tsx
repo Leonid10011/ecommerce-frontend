@@ -67,9 +67,7 @@ function Navbar() {
   };
 
   const handleSearch = (e: FormEvent) => {
-    if(searchTerm != "")
-      fetchAndSetProductsByName(searchTerm);
-    //doSearch(searchTerm);
+    fetchAndSetProductsByName(searchTerm);
     navigation("/p");
   }
 
@@ -98,7 +96,7 @@ function Navbar() {
       <AppBar position="sticky" sx={{ backgroundColor: '#f1f1f1' }}>
         <Toolbar>
           <Grid container alignItems={"center"}>
-            <Grid item xs={2}>
+            <Grid item xs={1}>
               <IconButton
                 size="large"
                 edge="start"
@@ -110,10 +108,10 @@ function Navbar() {
                 <MenuIcon />
               </IconButton>
             </Grid>
-            <Grid item xs={2}>
+            <Grid item xs={1}>
               <Link to="/"><Logo src="/logo.png" alt="Logo" /></Link>
             </Grid>
-              <Grid item xs={8} display={'flex'} justifyContent={'flex-end'}>
+              <Grid item xs={10} display={'flex'} justifyContent={'flex-end'}>
                 <Grid item>
                   { !isAuthenticated
                   ? 
@@ -127,7 +125,7 @@ function Navbar() {
                   <IconButton aria-label="Warenkorb" onClick={() => navigation("/cart")}><ShoppingCartIcon/></IconButton>
                 </Grid>
               </Grid>
-                <Grid item xs={12} sx={{display: 'flex', alignContent: 'center', my: 1}}>
+                <Grid item xs={12} sx={{display: 'flex', justifyContent: 'center', my: 1}}>
                   <button onClick={handleSearch}>
                     <SearchIcon />
                   </button>

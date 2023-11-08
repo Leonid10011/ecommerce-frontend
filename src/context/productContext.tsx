@@ -45,6 +45,39 @@ const ProductContextProvider = ({children}: {
     const [favoriteItems, setFavoriteItems] = useState<FavoriteProductDTO[]>([]);
     const { userId, token, isAuthenticated } = useAuth();
 
+    const fetchAndSetProducts = async() => {
+        const res: ApiResponse<Product[]> = await getProducts();
+        const newProducts = [...res.data];
+        setProducts(newProducts);
+        // trigger the filterFavoriteItems, in order to init useMemo with nonFilteredProducts
+        setFavoriteItems([...favoriteItems])
+    }
+
+    /**
+     * @description use searchtag name to only get products containing that term. 
+     * filterFAvorite will only affect if there are any favorite items.
+     * if the user is not present, then favorites won't take an effect.
+     * @param name 
+     * @param userId 
+     * @param token 
+     */
+    const fetchAndSetProductsByName = async (name: string) => {
+        console.log("Fetch by Name; dataContext");
+        if(name != ""){
+            const res: ApiResponse<Product[]> = await getProductsByName(name);
+            const newProducts = [...res.data];
+            setProducts(newProducts);
+        } else {
+            fetchAndSetProducts();
+        }
+        // trigger the filterFavoriteItems, in order to init useMemo with nonFilteredProducts
+        setFavoriteItems([...favoriteItems]);
+    }       
+    
+    useEffect(() => {
+        fetchAndSetProducts();
+    }, [])
+
     /**
      * @description Fetch FavoriteItems by userId
      * @param userId: number
@@ -107,34 +140,7 @@ const ProductContextProvider = ({children}: {
         }
     },[userId])
 
-    /**
-     * @description use searchtag name to only get products containing that term. 
-     * filterFAvorite will only affect if there are any favorite items.
-     * if the user is not present, then favorites won't take an effect.
-     * @param name 
-     * @param userId 
-     * @param token 
-     */
-    const fetchAndSetProductsByName = async (name: string) => {
-        console.log("Fetch by Name; dataContext");
-        const res: ApiResponse<Product[]> = await getProductsByName(name);
-        const newProducts = [...res.data];
-        setProducts(newProducts);
-        // trigger the filterFavoriteItems, in order to init useMemo with nonFilteredProducts
-        setFavoriteItems([...favoriteItems]);
-    }       
     
-    const fetchAndSetProducts = async() => {
-        const res: ApiResponse<Product[]> = await getProducts();
-        const newProducts = [...res.data];
-        setProducts(newProducts);
-        // trigger the filterFavoriteItems, in order to init useMemo with nonFilteredProducts
-        setFavoriteItems([...favoriteItems])
-    }
-
-    useEffect(() => {
-        fetchAndSetProducts();
-    }, [])
 
     return (
         <ProductContext.Provider value={{products, fetchAndSetProductsByName, filterFavoriteItems, addFavoriteItem, deleteFavoriteItem}}>

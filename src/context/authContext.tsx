@@ -68,9 +68,10 @@ export const AuthContextProvider = (props: {
     const fetchAndSetToken = async (email: string, password: string): Promise<Boolean>  => {
         const resToken: ApiResponse<string> = await loginUser(email, password);
         if(resToken.status === 200){
+
             setToken(resToken.data);
             //decode the token and retrieve userId
-            const decodedToken: TokenType = decodeToken(token)!;
+            const decodedToken: TokenType = decodeToken(resToken.data)!;
             let id = Number(decodedToken.upn)!
             setUserId(prev => id);
             // notify that the user is authenticated
@@ -104,6 +105,7 @@ export const AuthContextProvider = (props: {
     
     const resetToken = () => {
         setToken("");
+        setIsAuthenticated(false);
     }
 
     return (
