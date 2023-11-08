@@ -6,6 +6,7 @@
     2. [Favorite Items](#12-favorite-items)
     3. [Orders and OrderItems](#13-order)
     4. [User Management](#14-user-management)
+    5. [Filter Products](#15-filter-products)
 2. [Components](#componets)
     1. [Product Card](#productcard)
 3. [Pages](#pages)
@@ -353,6 +354,10 @@ const fetchAndSetToken = async (email: string, password: string): Promise<Boolea
     }
 }
 ```
+
+### 1.5 Filter Products
+
+### Todo next 
 
 ## Componets
 
