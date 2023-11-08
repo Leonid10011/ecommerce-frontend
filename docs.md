@@ -6,6 +6,9 @@
     2. [Favorite Items](#12-favorite-items)
     3. [Orders and OrderItems](#13-order)
     4. [User Management](#14-user-management)
+2. [Components](#componets)
+    1. [Product Card](#productcard)
+3. [Pages](#pages)
 
 ## Feature Overview
 
@@ -351,3 +354,84 @@ const fetchAndSetToken = async (email: string, password: string): Promise<Boolea
 }
 ```
 
+## Componets
+
+### ProductCard
+
+#### Component
+
+```typescript
+const ProductCard = ({ 
+  product, 
+  handleBuy, 
+  isFavorite,
+  isAuthenticated,
+  addFavoriteItem,
+  deleteFavoriteItem 
+} : ProductCardProps ) => {
+    const [modal, setModal] = useState<boolean>(false);
+
+  const handleCartClick = () => {
+    setModal(true);
+  };
+
+  const handleClose = () => {
+    setModal(false);
+  }
+
+  const handleFavoriteClick = () => {
+    if(isFavorite)
+      deleteFavoriteItem(product.id);
+    else
+      addFavoriteItem(product.id);
+  }
+
+  return (
+    <Card >
+      <div style={{position: 'relative'}}>
+        { isAuthenticated ?
+        <IconButton
+        sx={{ position: 'absolute', top: 10, right: 10, backgroundColor: 'white' }}
+          onClick={handleFavoriteClick}
+        >
+          <FavoriteIcon color={isFavorite ? 'error' : 'action'} />
+        </IconButton>
+        : "" }
+        <ImageWithFallback src={product.imgURL} alt={product.name}/>
+      </div>
+      <CardContent style={{ position: 'relative' }}>
+        <Typography variant="h6" component="div">
+          {product.name}
+        </Typography>
+        <Typography variant="body2" color="text.secondary">
+          {product.price}€
+        </Typography>
+        <IconButton
+          style={{ position: 'absolute', bottom: 10, right: 10, backgroundColor: 'white', border: '1px solid grey', padding: "15px" }}
+          onClick={handleCartClick}
+        >
+          <AddShoppingCartIcon />
+        </IconButton>
+      </CardContent>
+      <ProductModal product={product} open={modal} onClose={handleClose} handleBuy={(quantity: number) => handleBuy(product.id, product.price, quantity)}/>
+    </Card>
+  );
+};
+
+```
+#### Props Description
+The Product Card use five props to render a product on the **Products** page.
+- [product](#productdto) 
+    The standard product tha holds **ProductDTO** information.
+- [handleBuy]()
+    This function is drilled from **Products** component and it simply posts an orderItem to the backend.
+- [isFavorite]()
+    indicates whether this item is part of the favorite items
+- [isAuthenticated]()
+    indicates user authentication status. If **false**, dont render favoriteIcon
+- [addFavoriteItem]()
+    function from the **productContext**. It posts a favoriteItem for the user and also adds it to the local state.
+- [deleteFavoriteItem]() 
+    function from the **productContext**. It deltes a favoriteItem of the user and also removes it from the local state.
+
+## Pages

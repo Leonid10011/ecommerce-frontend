@@ -3,7 +3,7 @@ import { OrderProductType, useOrder } from "../../context/orderContext";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { Product } from "../../api/productApi";
-import { OrderItemDTO } from "../../api/dataApi";
+import { OrderItemDTO } from "../../api/orderApi";
 
 export default function Cart() {
 

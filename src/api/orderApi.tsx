@@ -1,7 +1,6 @@
 import {config} from "../config";
 import { ApiResponse } from "../types/api/apiTypes";
 
-const api_path = config.api_path;
 const apiPath = config.api_path;
 
 export interface OrderDTO {
@@ -60,7 +59,7 @@ const getOrder = async (userId: number, token: string): Promise<ApiResponse<Orde
             }
         }
 
-        const res: Response = await fetch(api_path + "/order/get/" + userId, requestOptions);
+        const res: Response = await fetch(`${apiPath}/order/get/${userId}`, requestOptions);
         if(res.ok){
             const data: OrderDTO = await res.json() as OrderDTO;
             return {
@@ -93,7 +92,7 @@ const addItem = async (orderItem: OrderItemDTO, token: string): Promise<ApiRespo
             })
         };
 
-        const res: Response =  await fetch(api_path + '/order/addItem', requestHeaders);
+        const res: Response =  await fetch(`${apiPath}/order/addItem`, requestHeaders);
         if(res.status === 201 || res.ok){
             const data: OrderItemDTO = await res.json() as OrderItemDTO;
             return {
@@ -119,7 +118,7 @@ const getOrderItems = async (orderId: number): Promise<ApiResponse<OrderItemDTO[
             }
         }
 
-        const res: Response = await fetch(api_path + '/order/getItems/' + orderId, requestOptions);
+        const res: Response = await fetch(`${apiPath}/order/getItems/${orderId}`, requestOptions);
         if(res.ok){
             const data:OrderItemDTO[] = await res.json() as OrderItemDTO[];  
             return {
@@ -146,7 +145,7 @@ const getOrderItemProducts = async (orderId: number) => {
             }
         }
 
-        let res = await fetch(api_path + '/order/getOrderProduct/' + orderId, requestOptions);
+        let res = await fetch(`${apiPath}order/getOrderProduct/${orderId}`, requestOptions);
         let data = res.json();
         
         return data;

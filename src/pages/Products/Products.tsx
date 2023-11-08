@@ -4,11 +4,12 @@ import { useProduct } from '../../context/productContext';
 import { useAuth } from '../../context/authContext';
 import { useNavigate } from 'react-router';
 import { useOrder } from '../../context/orderContext';
-import ProductCard from '../../components/common/ProductCard/ProductCard';
+import ProductCard from '../../components/ProductCard/ProductCard';
 
 function ProductList() {
     const { isAuthenticated } = useAuth();
     const { order, addOrderItem } = useOrder();
+    const { addFavoriteItem, deleteFavoriteItem } = useProduct();
     const navigation = useNavigate();
 
     const { filterFavoriteItems } = useProduct();
@@ -34,10 +35,10 @@ function ProductList() {
     return (
       <Container maxWidth="sm" sx={{ position: 'relative', overflow: 'hidden', minHeight: '300px' }}>
           {favoriteItemsFiltered.map((product, index) => (
-            <ProductCard key={product.id} product={product} handleBuy={handleBuy} isFavorite/>
+            <ProductCard key={product.id} product={product} handleBuy={handleBuy} isFavorite isAuthenticated addFavoriteItem={addFavoriteItem} deleteFavoriteItem={deleteFavoriteItem} />
           ))}
           {nonFavoriteItems.map((product, index) => (
-            <ProductCard key={product.id} product={product} handleBuy={handleBuy} isFavorite={false}/>
+            <ProductCard key={product.id} product={product} handleBuy={handleBuy} isFavorite={false} isAuthenticated addFavoriteItem={addFavoriteItem} deleteFavoriteItem={deleteFavoriteItem}/>
           ))}
         
       </Container>

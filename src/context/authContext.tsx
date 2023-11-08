@@ -2,7 +2,7 @@ import { createContext, useContext, useState } from "react";
 import { UserDTO, loginUser, signUp } from "../api/authApi";
 import { useNavigate } from "react-router";
 import { decodeToken } from "react-jwt";
-import { createOrder } from "../api/dataApi";
+import { createOrder } from "../api/orderApi";
 import { ApiResponse } from "../types/api/apiTypes";
 import { create } from "domain";
 import { toast } from "react-toastify";

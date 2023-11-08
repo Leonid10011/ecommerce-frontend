@@ -2,7 +2,7 @@
  * We use this context to handle the BuyOrder data
  */
 import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
-import { getOrderItems, addItem, getOrder, OrderItemDTO, OrderDTO } from "../api/dataApi";
+import { getOrderItems, addItem, getOrder, OrderItemDTO, OrderDTO } from "../api/orderApi";
 import { useAuth } from "./authContext";
 import { ApiResponse } from "../types/api/apiTypes";
 import { Product, useProduct } from "./productContext";
