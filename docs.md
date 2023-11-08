@@ -12,7 +12,7 @@
 
 ## Feature Overview
 
-In this Sectio we will give a detailed introductions of various features of this app.
+In this Section we will give a detailed introductions of various features of this app.
 
 ### 1.1 Products
 

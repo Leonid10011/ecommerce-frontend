@@ -1,11 +1,12 @@
 /**
  * We use this Context to retrieve Product related data 
  */
-import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
+import React, { createContext, useContext, useEffect, useMemo, useReducer, useState } from "react";
 import { FavoriteProductDTO, createFavoriteItem, deleteFavoriteProductByUserAndProduct, getFavoriteItemsByUser } from "../api/favoriteItemApi";
 import { useAuth } from "./authContext";
 import { getProducts, getProductsByName } from "../api/productApi";
 import { ApiResponse } from "../types/api/apiTypes";
+import { FilterActionType, reducer } from "../reducer/filterReducer";
 
 export interface Product {
     id: number,
@@ -23,14 +24,18 @@ const initData = {
     filterFavoriteItems: { favoriteItemsFiltered: [] as Product[], nonFavoriteItems: [] as Product[] },
     addFavoriteItem: () => {},
     deleteFavoriteItem: () => {},
-
+    filterProducts: [],
+    manageFilter: () => {},
 }
+
 interface ProductContextType {
     products: Product[],
     fetchAndSetProductsByName: (name: string) => void,
     filterFavoriteItems: { favoriteItemsFiltered: Product[], nonFavoriteItems: Product[] },
     addFavoriteItem: (productId: number) => void,
     deleteFavoriteItem: (productId: number) => void, 
+    filterProducts: Product[],
+    manageFilter: (action: FilterActionType, filter: Boolean) => void
 }
 
 const ProductContext = createContext<ProductContextType>(initData);
@@ -44,6 +49,34 @@ const ProductContextProvider = ({children}: {
     const [products, setProducts] = useState<Product[]>([]);
     const [favoriteItems, setFavoriteItems] = useState<FavoriteProductDTO[]>([]);
     const { userId, token, isAuthenticated } = useAuth();
+    const [triggerFilter, setTriggerFiter] = useState<Boolean>(false);
+
+    const [state, dispatch] = useReducer(reducer,
+        {
+            category: 0,
+            price: {
+                op: "",
+                value: 0
+            },
+            filter: false,
+        }
+    );
+    
+    const manageFilter = (action: FilterActionType, filter: Boolean) => {
+        dispatch(action);
+        if(filter)
+            setTriggerFiter(prev => !prev);
+    }
+
+    const filterProducts = useMemo(() => {
+        const newProducts = products.filter( item => (
+            item.categoryID != state.category &&
+            (state.price.op === "greater" ? item.price > state.price.value : item.price < state.price.value )
+        ));
+        console.log("STATE ", state);
+        console.log("Old: " + products + "\nNew: " + newProducts)
+        return newProducts;
+    },[triggerFilter])
 
     const fetchAndSetProducts = async() => {
         const res: ApiResponse<Product[]> = await getProducts();
@@ -95,7 +128,12 @@ const ProductContextProvider = ({children}: {
         favoriteItemsFiltered: Product[];
         nonFavoriteItems: Product[];
     } = useMemo(() => {
-        const [favoriteItemsFiltered, nonFavoriteItems] = products.reduce<[Product[], Product[]]>(
+        let newProducts; 
+        if(state.filter)
+            newProducts = [...filterProducts];
+        else 
+            newProducts = [...products];
+        const [favoriteItemsFiltered, nonFavoriteItems] = newProducts.reduce<[Product[], Product[]]>(
             ([favorites, nonFavorites], item) => {
                 if (favoriteItems.find(item2 => item2.productId === item.id)) {
                     favorites.push(item);
@@ -109,7 +147,7 @@ const ProductContextProvider = ({children}: {
         
         return { favoriteItemsFiltered, nonFavoriteItems };
       
-    }, [favoriteItems]);
+    }, [favoriteItems, filterProducts]);
     /**
      * Post a new favoriteItem for the productId. 
      * Afterwards add the favoriteItem to locale state and trigger filterFavoriteItems memo. 
@@ -143,7 +181,7 @@ const ProductContextProvider = ({children}: {
     
 
     return (
-        <ProductContext.Provider value={{products, fetchAndSetProductsByName, filterFavoriteItems, addFavoriteItem, deleteFavoriteItem}}>
+        <ProductContext.Provider value={{products, fetchAndSetProductsByName, filterFavoriteItems, addFavoriteItem, deleteFavoriteItem, filterProducts, manageFilter}}>
             {children}
         </ProductContext.Provider>
     )

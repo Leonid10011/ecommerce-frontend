@@ -1,4 +1,4 @@
-import React, { FormEvent, useState } from 'react';
+import React, { ChangeEvent, FormEvent, FunctionComponent, MouseEventHandler, useEffect, useReducer, useRef, useState } from 'react';
 import { css } from '@emotion/react'; // Importiere css aus @emotion/react
 import styled from '@emotion/styled'; // Importiere styled aus @emotion/styled
 import AppBar from '@mui/material/AppBar';
@@ -12,7 +12,7 @@ import FilterListIcon from '@mui/icons-material/FilterList';
 
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import LoginIcon from '@mui/icons-material/Login';
-import { Box, Drawer, List, ListItem, ListItemText, Menu, MenuItem, Typography } from '@mui/material';
+import { Box, Drawer, Input, List, ListItem, ListItemText, Menu, MenuItem, Popper, Slider, Switch, TextField, Typography } from '@mui/material';
 import { useAuth } from '../../context/authContext';
 import { Link, useNavigate, useNavigation } from 'react-router-dom';
 import { useOrder } from '../../context/orderContext';
@@ -20,7 +20,6 @@ import MenuIcon from '@mui/icons-material/Menu';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { toast } from 'react-toastify';
 import { useProduct } from '../../context/productContext';
-import { Toast } from 'react-toastify/dist/components';
 
 const logoStyles = css`
   width: 60px;
@@ -39,7 +38,7 @@ function Navbar() {
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  const { fetchAndSetProductsByName } = useProduct();
+  const { fetchAndSetProductsByName, filterProducts, manageFilter } = useProduct();
 
   const { resetCart } = useOrder();
 
@@ -91,6 +90,37 @@ function Navbar() {
       });
     };
 
+    const [anchorEL, setAnchorEl] = useState<Element | null>(null);
+
+    const handleClose = () => {
+      setAnchorEl(null);
+    }
+
+    const handleClick = (e: React.FormEvent<HTMLButtonElement>) => {
+      //manageFilter({type: 'SET_PRICE_OP', payload: 'greater'}, false);
+     // manageFilter({type: 'SET_PRICE_VALUE', payload: 50}, false);
+      //manageFilter({type: 'SET_FILTER', payload: false}, true);
+      if(e.currentTarget === anchorEL)
+        setAnchorEl(null)
+      else
+        setAnchorEl(e.currentTarget);
+    }
+
+    const handleItemClick = (item: string) => {
+      console.log("Item Clicked.")
+    }
+
+    const menutItems: MenuItemType[] = [
+      {
+        text: "Nummer 1",
+        value: "test 1"
+      },
+      {
+        text: "Nummer 2",
+        value: "test 2"
+      },
+    ] 
+
   return (
     <Box width={"100%"}>
       <AppBar position="sticky" sx={{ backgroundColor: '#f1f1f1' }}>
@@ -140,9 +170,10 @@ function Navbar() {
                       mx: 2
                     }}
                   />
-                <button onClick={notify}>
+                <IconButton onClick={handleClick}>
                   <FilterListIcon/>
-                </button>
+                </IconButton>
+                <BasicMenu anchor={anchorEL} menuItems={menutItems} handleItem={handleItemClick} handleClose={handleClose} />
                 </Grid>
             </Grid>
           </Toolbar>
@@ -180,26 +211,88 @@ function Navbar() {
   );
 }
 
+interface MenuItemType {
+  text: string,
+  value: string,
+}
+
+interface BasicMenuProps<T, F> {
+  anchor: Element | null,
+  menuItems: T[],
+  handleItem: (p: F) => void,
+  handleClose: () => void
+}
+
 // TODO
-const BasicMenu = (anchor: Element, menuItems: string[], handleClose: () => {}) => {
-  
-  const handleMenuItemClick = (item: string) => {
-    console.log("Clicked on item: ", item);
+const BasicMenu =<T extends { text: string, value: F}, F>({ anchor, menuItems, handleItem, handleClose}: BasicMenuProps<T, F>) => {
+
+  const [anchorEl, setAnchorEl] = useState<Element | null>(null);
+
+  const [openPopup, setOpenPopup] = useState<boolean>(false);
+
+  const handleMenuItemClick = (item: T, e: React.MouseEvent<HTMLLIElement>) => {
+    if(e.currentTarget === anchorEl){
+      setOpenPopup(false);
+      setAnchorEl(null)
+    }
+    else {
+      setOpenPopup(true)
+      setAnchorEl(e.currentTarget);
+    }
+    const valueToPass: F = item.value;
+    handleItem(valueToPass);
   }
 
-
+  const OnClose = () => {
+    setOpenPopup(false);
+    handleClose()
+  }
 
   return(
-    <Menu
-      anchorEl={anchor}
-      open={Boolean(anchor)}
-      onClose={handleClose}
-    >
-      {
-        menuItems.map((item, i) => <MenuItem onClick={() => handleMenuItemClick(item)}>{item}</MenuItem>)
-      }
-    </Menu>
+    <>
+      <Menu
+        anchorEl={anchor}
+        open={Boolean(anchor)}
+        onClose={OnClose}
+        sx={{zIndex: 1}}
+      >
+        <h4>Category</h4>
+        <input type='checkbox'/>
+        <input type='checkbox'/>
+        <input type='checkbox'/>
+        <input type='checkbox'/>
+        <input type='checkbox'/>
+        <h4>Price</h4>
+        <Box maxWidth={150} display={'flex'}>
+          <label htmlFor="">Von</label>
+          <input style={{fontSize: '16px', border: '1px solid black', maxWidth: '20%'}}/>
+          <label>Bis</label>
+          <input style={{fontSize: '16px', border: '1px solid black', maxWidth: '20%'}}/>
+        </Box>
+      </Menu>
+      {openPopup && <BasicPopUp open={openPopup} anchorEl={anchorEl} />}
+    </>
   )
 }
+
+const BasicPopUp = ({ open, anchorEl }: { open: boolean; anchorEl: Element | null }) => {
+  const [currentValue, setCurrentValue] = useState<number>(10);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setCurrentValue(Number(e.currentTarget.value));
+  };
+
+  return (
+    <Popper open={open} anchorEl={anchorEl} sx={{ mr: 5, zIndex: 5, p: 5 }}>
+      <Box width={100} component={'form'}>
+        <TextField
+          value={currentValue}
+          onChange={handleChange}
+          autoFocus
+        />
+      </Box>
+    </Popper>
+  );
+};
 
 export default Navbar;
