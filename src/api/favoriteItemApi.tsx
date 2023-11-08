@@ -26,6 +26,12 @@ const getFavoriteItemsByUser = async (userId: number): Promise<ApiResponse<Favor
                 data,
                 status: res.status
             }
+            // if no favoriteItems fot this user exists, there will be a bad Request
+        } else if(res.status === 404) {
+            return {
+                data: [],
+                status: res.status,
+            }
         } else {
             throw new Error(`HTTP error! status: ${res.status}` )
         }

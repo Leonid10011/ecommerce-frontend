@@ -23,9 +23,9 @@ import { useProduct } from '../../context/productContext';
 import { Toast } from 'react-toastify/dist/components';
 
 const logoStyles = css`
-  width: 100%;
-  height: 50px;
-  margin-right: 2rem; // Wir verwenden hier direkt eine Zahl für den Abstand, um es einfach zu halten
+  width: 60px;
+  height: 60px;
+  margin-right: 2rem; 
 `;
 
 const Logo = styled('img')`
@@ -35,8 +35,7 @@ const Logo = styled('img')`
 
 
 function Navbar() {
-  const [authenticated, setAuthenticated] = useState<boolean>(false);
-  const { token, resetToken } = useAuth();
+  const { resetToken, isAuthenticated } = useAuth();
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -116,7 +115,7 @@ function Navbar() {
             </Grid>
               <Grid item xs={8} display={'flex'} justifyContent={'flex-end'}>
                 <Grid item>
-                  { token === ""
+                  { !isAuthenticated
                   ? 
                   <IconButton aria-label='Login' onClick={() => { navigation("/signin")}}><LoginIcon/></IconButton>
                   : (

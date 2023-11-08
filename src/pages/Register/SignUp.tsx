@@ -12,22 +12,17 @@ function RegisterForm() {
   const {signUpUser} = useAuth();
 
   const handleSignUp = async (user: UserDTO) => {
-      let signUpRes = await signUpUser(user);
-      if(signUpRes === 409){
-        toast.error("Username Already exists.", {
-          position: 'top-center'
-        });
-      } else if(signUpRes === 201){
-        navigation("/p");
-      }
+      await signUpUser(user);
   };
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     const user = {
+      id: 0,
       username: String(data.get("username") || ""),
       email: String(data.get("email") || ""),
+      roleId: 1,
       password: String(data.get("password") || ""),
     };
 

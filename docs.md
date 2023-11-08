@@ -5,6 +5,7 @@
     1. [Products](#11-products)
     2. [Favorite Items](#12-favorite-items)
     3. [Orders and OrderItems](#13-order)
+    4. [User Management](#14-user-management)
 
 ## Feature Overview
 
@@ -280,5 +281,73 @@ const { filterFavoriteItems } = useProduct();
         )
     })}
 </Grid>
+```
+
+### 1.4 User Management
+
+#### UserDTO
+
+```typescript
+export interface UserDTO {
+    id: number,
+    username: string,
+    email: string,
+    roleId: number
+    password: string,
+}
+```
+
+### Functionality
+In order to signup the client has to provide a username, email and a password. The roleId will be set to **1**, as this represnets a normal User in our backend. The **id** will be automatically set in the backend when a user is created and is set when a login request is fetched. 
+
+At signing up a new order is created for the user. This will alow us to fetch the order in the **initOrderContext** on each login because the userId is changed. This functionality is just a placeholder. In future it is desired to create the order after the first item is put into an empty cart.
+
+```typescript
+const signUpUser = async (user: UserDTO): Promise<void> => {
+    let resSignUp: ApiResponse<UserDTO> = await signUp(user);
+    if(resSignUp.status === 201){
+        // create a new order for this use on signup
+        // will be handled differently in future
+        createOrder(resSignUp.data.id, (new Date()), "open");
+        // move to login
+        navigation("/signin");
+    } else if(resSignUp.status === 409){
+        toast.error("Username already exists. Please try again.");
+    } else {
+        toast.error("Unexpected Error.")
+    }
+}
+```
+
+The **initOrderContext** part:
+
+```typescript
+useEffect(() => {
+    if(isAuthenticated){
+        initOrderContext();
+    }
+}, [userId])
+```
+
+When a client signs in, then it fetches a token from the backend. From this token we retrieve the userId and set it in the authContext. The return type indicate a successful login, so we can provide the client with feedback. Might be reworked in future.
+
+```typescript
+const fetchAndSetToken = async (email: string, password: string): Promise<Boolean>  => {
+    const resToken: ApiResponse<string> = await loginUser(email, password);
+    if(resToken.status === 200){
+        setToken(resToken.data);
+        //decode the token and retrieve userId
+        const decodedToken: TokenType = decodeToken(token)!;
+        let id = Number(decodedToken.upn)!
+        setUserId(prev => id);
+        // notify that the user is authenticated
+        setIsAuthenticated(true);
+        navigation("/p");
+
+        return true;
+    } else {
+        return false;
+    }
+}
 ```
 

@@ -1,5 +1,7 @@
 import { error } from 'console';
 import * as jwt from 'jsonwebtoken';
+import { ApiResponse } from '../types/api/apiTypes';
+import { config } from '../config';
 
 interface CreateUserResponseType {
     id: number,
@@ -17,14 +19,15 @@ interface SignUpResponseType {
 
 const api_path = "http://85.215.54.122";
 
+const apiPath = config.api_path;
+
 /**
  * 
  * @param username 
  * @param password 
  * @returns token on success ot empty string on failure
  */
-export const loginUser = async (username: string, password: string) => {
-    console.log("Login User Debug");
+export const loginUser = async (username: string, password: string): Promise<ApiResponse<string>> => {
     try {
         const requestOptions = {
             method: "POST",
@@ -37,20 +40,33 @@ export const loginUser = async (username: string, password: string) => {
                 password: password
             }),
         }
-        let res = await fetch(api_path + "/user/login", requestOptions);
-        let token = res.text();
 
-        console.log("Login: ", token);
+        const res: Response = await fetch(`${apiPath}user/login`, requestOptions);
+        if(res.ok){
+            const data: string = await res.text();
+            return {
+                data,
+                status: res.status
+            }
+        } else {
+            return {
+                data: "",
+                status: res.status
+            }
+        }
         
-        return token;
-    } catch(err: any){
-        console.error("Error: ", err);
+    } catch(error){
+        // netwotk error hadnling
+        console.error("Error log in user ", error)
+        throw error;
     }
 }
 
 export interface UserDTO {
+    id: number,
     username: string,
     email: string,
+    roleId: number
     password: string,
 }
 /**
@@ -58,48 +74,58 @@ export interface UserDTO {
  * @param userDTO 
  * @returns 
  */
-export const signUp= async (userDTO: UserDTO): Promise<SignUpResponseType> => {
-    console.log("SignUp User Debug");
-    const requestOptions = {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "Accept": "application/json"
-        },
-        body: JSON.stringify({
-            username: userDTO.username,
-            email: userDTO.email,
-            roleID: 1,
-            password: userDTO.password
-        }),
-    }
-
-    let resStatus;
-
-    let res: CreateUserResponseType = await fetch(api_path + '/user/', requestOptions)
-    .then(response => {
-        if(!response.ok) {
-            resStatus = response.status;
-            throw new Error(`${response.status}`);
+export const signUp= async (userDTO: UserDTO): Promise<ApiResponse<UserDTO>> => {
+    try {
+        const requestOptions = {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            },
+            body: JSON.stringify({
+                username: userDTO.username,
+                email: userDTO.email,
+                roleId: 1,
+                password: userDTO.password
+            }),
         }
-        resStatus = 201;
-        return response.json();
-    })
-    .catch(error => {
-        if(error.message === '409') {
-            console.error('Konflikt');
-            resStatus = 409;
+    
+        const res: Response = await fetch(`${apiPath}user/`, requestOptions);
+        if(res.status === 201){
+            const data: UserDTO = await res.json() as UserDTO;
+            return {
+                data,
+                status: res.status,
+            }
+        } else if(res.status === 409) {
+            // return a emtpy data. Won't be used anyway. But need to find better solution
+            return {
+                data: {
+                    id: -1,
+                    username: "",
+                    email: "",
+                    roleId: 0,
+                    password: ""
+                },
+                status: res.status,
+            }
         } else {
-            console.error('Ein Fehler');
-            resStatus = error.message;
+            // if not ok or no conflict, we want to notify that some other error occured
+            return {
+                data: {
+                    id: -1,
+                    username: "",
+                    email: "",
+                    roleId: 0,
+                    password: ""
+                },
+                status: res.status,
+            }
         }
-    })
-
-    //console.log("DATA ", data)
-
-    return {
-        data: res,
-        status: Number(resStatus),
-    };
+    } catch( error ){
+        // network error
+        console.error("Unexpected Error ", error);
+        throw error;
+    }
 }
 

@@ -3,6 +3,9 @@ import { UserDTO, loginUser, signUp } from "../api/authApi";
 import { useNavigate } from "react-router";
 import { decodeToken } from "react-jwt";
 import { createOrder } from "../api/dataApi";
+import { ApiResponse } from "../types/api/apiTypes";
+import { create } from "domain";
+import { toast } from "react-toastify";
 
 export interface TokenType {
     sub: string,
@@ -27,22 +30,22 @@ interface fetchAndSetTokenType {
 
 interface AuthContextType {
     token: string,
-    fetchAndSetToken: (email: string, password: string) => Promise<fetchAndSetTokenType>,
+    fetchAndSetToken: (email: string, password: string) => Promise<Boolean>,
     resetToken: () => void;
     userId: number,
     isAuthenticated: boolean,
-    signUpUser: (user: UserDTO) => Promise<number>
+    signUpUser: (user: UserDTO) => Promise<void>
 }
 
 const AuthContext = createContext<AuthContextType>({
     token: "",
     fetchAndSetToken:  async ()  => { 
-        return { id: 0, token: ""} as {id:number; token: string};
+        return false;
     },
     resetToken: () => {},
     userId: 0,
     isAuthenticated: false,
-    signUpUser: async () => 404
+    signUpUser: async () => {}
 });
 
 export const useAuth = () => useContext(AuthContext);
@@ -62,27 +65,21 @@ export const AuthContextProvider = (props: {
      * @param password 
      * @returns the token and Id, so we can use immediately in the init Context to initilize all other contexts 
      */
-    const fetchAndSetToken = async (email: string, password: string): Promise<fetchAndSetTokenType>  => {
-        const token = await loginUser(email, password);
-        console.log("TOKEN test: ", token)
-        if(token){
-            try {
-                setToken(token);
-                navigation("/p");
-                //decode the token and retrieve useId
-                const decodedToken: TokenType = decodeToken(token)!;
-                let id = Number(decodedToken.upn)!
-                setUserId(id);
-                // notify that the user is authenticated
-                setIsAuthenticated(true);
+    const fetchAndSetToken = async (email: string, password: string): Promise<Boolean>  => {
+        const resToken: ApiResponse<string> = await loginUser(email, password);
+        if(resToken.status === 200){
+            setToken(resToken.data);
+            //decode the token and retrieve userId
+            const decodedToken: TokenType = decodeToken(token)!;
+            let id = Number(decodedToken.upn)!
+            setUserId(prev => id);
+            // notify that the user is authenticated
+            setIsAuthenticated(true);
+            navigation("/p");
 
-                return {id, token}; 
-            } catch( err : any){
-                console.error("ERROR", err);
-                return {id: 0, token: ""};
-            }
-        }else {
-            return {id: 0, token: ""};
+            return true;
+        } else {
+            return false;
         }
     }
     /**
@@ -90,16 +87,18 @@ export const AuthContextProvider = (props: {
      * @param user 
      * @returns 
      */
-    const signUpUser = async (user: UserDTO) => {
-        try {
-            let signUpResponse = await signUp(user);
-            if(signUpResponse.status === 201)
-                createOrder(signUpResponse.data!.id, (new Date()), "open")
-            return signUpResponse.status;
-        } catch(err: any) {
-            // 404 is placeholder for now
-            console.error("Could not create.", err);
-            return 404;
+    const signUpUser = async (user: UserDTO): Promise<void> => {
+        let resSignUp: ApiResponse<UserDTO> = await signUp(user);
+        if(resSignUp.status === 201){
+            // create a new order for this use on signup
+            // will be handled differently in future
+            createOrder(resSignUp.data.id, (new Date()), "open");
+            // move to login
+            navigation("/signin");
+        } else if(resSignUp.status === 409){
+            toast.error("Username already exists. Please try again.");
+        } else {
+            toast.error("Unexpected Error.")
         }
     }
     
