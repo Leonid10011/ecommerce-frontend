@@ -76,8 +76,6 @@ const ProductContextProvider = ({children}: {
         }
     );
     
-    
-
     const resetFilter = () => {
         dispatch({type: 'RESET_CATEGORY', payload: void 0});
         dispatch({type: 'RESET_PRICE', payload: void 0});
@@ -137,6 +135,7 @@ const ProductContextProvider = ({children}: {
         }
         // trigger the filterFavoriteItems, in order to init useMemo with nonFilteredProducts
         setFavoriteItems([...favoriteItems]);
+        setTriggerFiter(prev => !prev);
     }       
     
     useEffect(() => {
