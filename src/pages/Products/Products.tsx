@@ -14,6 +14,7 @@ function ProductList() {
 
     const { filterFavoriteItems } = useProduct();
 
+    // Need to be reworked
     const handleBuy = (id: number, price: number, quantity: number) => {
       if(isAuthenticated){
         const item = {

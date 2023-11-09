@@ -1,23 +1,5 @@
-import { error } from 'console';
-import * as jwt from 'jsonwebtoken';
 import { ApiResponse } from '../types/api/apiTypes';
 import { config } from '../config';
-
-interface CreateUserResponseType {
-    id: number,
-    username: string,
-    password: string,
-    email: string,
-    roleId: number
-
-}
-
-interface SignUpResponseType {
-    data: CreateUserResponseType | null,
-    status: number
-}
-
-const api_path = "http://85.215.54.122";
 
 const apiPath = config.api_path;
 

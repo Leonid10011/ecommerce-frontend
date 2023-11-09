@@ -4,6 +4,8 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import ProductModal from '../ProductModal/ProductModal';
 import { Product } from '../../context/productContext';
+import { config } from '../../config';
+
 
 interface ProductCardProps {
   product: Product,
@@ -85,7 +87,7 @@ function ImageWithFallback({ src, alt }: ImageWithFallbakcProps) {
   
   return (
       <img 
-          src={imgSrc} 
+          src={config.image_url + "/"+ imgSrc} 
           alt={alt} 
           style={{ width: '100%' }} 
           onError={handleImgError} 

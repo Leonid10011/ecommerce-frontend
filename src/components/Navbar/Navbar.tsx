@@ -140,8 +140,12 @@ function Navbar() {
             </Grid>
             <Grid item xs={1}>
               <Link to="/"><Logo src="/logo.png" alt="Logo" /></Link>
+              
             </Grid>
-              <Grid item xs={10} display={'flex'} justifyContent={'flex-end'}>
+            <Grid item xs={5} sx={{backgroundColor: 'yellow'}}>
+            </Grid>
+              <Grid item xs={5} display={'flex'} justifyContent={'flex-end'}>
+      
                 <Grid item>
                   { !isAuthenticated
                   ? 
