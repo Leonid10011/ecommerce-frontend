@@ -14,7 +14,7 @@ import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import LoginIcon from '@mui/icons-material/Login';
 import { Box, Drawer, Input, List, ListItem, ListItemText, Menu, MenuItem, Popper, Slider, Switch, TextField, Typography } from '@mui/material';
 import { useAuth } from '../../context/authContext';
-import { Link, useNavigate, useNavigation } from 'react-router-dom';
+import { Link, useAsyncError, useNavigate, useNavigation } from 'react-router-dom';
 import { useOrder } from '../../context/orderContext';
 import MenuIcon from '@mui/icons-material/Menu';
 import LogoutIcon from '@mui/icons-material/Logout';
@@ -38,7 +38,7 @@ function Navbar() {
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  const { fetchAndSetProductsByName, filterProducts, manageFilter } = useProduct();
+  const { fetchAndSetProductsByName, state } = useProduct();
 
   const { resetCart } = useOrder();
 
@@ -177,7 +177,7 @@ function Navbar() {
                 <IconButton onClick={handleClick}>
                   <FilterListIcon/>
                 </IconButton>
-                <BasicMenu anchor={anchorEL} menuItems={menutItems} handleItem={handleItemClick} handleClose={handleClose} />
+                <BasicMenu anchor={anchorEL} menuItems={menutItems} handleItem={handleItemClick} handleClose={handleClose} checks={state.category}/>
                 </Grid>
             </Grid>
           </Toolbar>
@@ -224,32 +224,63 @@ interface BasicMenuProps<T, F> {
   anchor: Element | null,
   menuItems: T[],
   handleItem: (p: F) => void,
-  handleClose: () => void
+  handleClose: () => void,
+  checks: number[]
 }
 
 // TODO
-const BasicMenu =<T extends { text: string, value: F}, F>({ anchor, menuItems, handleItem, handleClose}: BasicMenuProps<T, F>) => {
-
-  const [anchorEl, setAnchorEl] = useState<Element | null>(null);
-
+const BasicMenu =<T extends { text: string, value: F}, F>({ anchor, menuItems, handleItem, handleClose, checks}: BasicMenuProps<T, F>) => {
+  
   const [openPopup, setOpenPopup] = useState<boolean>(false);
-
-  const handleMenuItemClick = (item: T, e: React.MouseEvent<HTMLLIElement>) => {
-    if(e.currentTarget === anchorEl){
-      setOpenPopup(false);
-      setAnchorEl(null)
-    }
-    else {
-      setOpenPopup(true)
-      setAnchorEl(e.currentTarget);
-    }
-    const valueToPass: F = item.value;
-    handleItem(valueToPass);
-  }
 
   const OnClose = () => {
     setOpenPopup(false);
     handleClose()
+  }
+
+  const [currentChecks, setCurrentChecks] = useState<number[]>(checks);
+
+  const navigation = useNavigate();
+
+  const categoriesRef = useRef<HTMLDivElement>(null);
+
+  const { manageFilter, filter, resetFilter, state } = useProduct();
+
+  enum categories {
+    shirt = 1,
+    hoodie = 2,
+    shoes  =3
+  }
+
+
+  const handleCategroyChange = (e: FormEvent<HTMLInputElement>) => {
+    const category: string = e.currentTarget.name;
+    const checked = e.currentTarget.checked;
+
+    let newChecks;
+
+    if (checked) {
+        // Füge die Kategorie hinzu, wenn sie noch nicht in 'checks' ist
+        newChecks = [...checks, categories[category as keyof typeof categories]];
+    } else {
+        // Entferne die Kategorie aus 'checks'
+        newChecks = checks.filter(check => check !== categories[category as keyof typeof categories]);
+    }
+    setCurrentChecks(newChecks);
+
+    // when check is true, add the category to filter, otherwise remove it
+    checked 
+    ? manageFilter({type: 'SET_CATEGORY', payload: categories[category as keyof typeof categories]})
+    : manageFilter({type: 'REMOVE_CATEGORY', payload: categories[category as keyof typeof categories]})
+  }
+
+  const reset = () => {
+    // Get the common parent element of checkboxes 
+    const categoriesCheckboxes = categoriesRef.current!.querySelectorAll('input');
+    // Set check value to false
+    categoriesCheckboxes.forEach(box => {box.checked = false});
+    // apply reset to filer
+    resetFilter()
   }
 
   return(
@@ -261,11 +292,17 @@ const BasicMenu =<T extends { text: string, value: F}, F>({ anchor, menuItems, h
         sx={{zIndex: 1}}
       >
         <h4>Category</h4>
-        <input type='checkbox'/>
-        <input type='checkbox'/>
-        <input type='checkbox'/>
-        <input type='checkbox'/>
-        <input type='checkbox'/>
+        <div ref={categoriesRef}>
+          <div>
+            <label htmlFor="shirt">Shirt </label><input type='checkbox' checked={currentChecks.includes(categories.shirt)} name='shirt' onChange={handleCategroyChange}/>
+          </div>
+          <div>
+            <label htmlFor="hoodie">Hoodie </label><input type='checkbox' checked={currentChecks.includes(categories.hoodie)} name='hoodie'onChange={handleCategroyChange}/>
+          </div>
+          <div>
+            <label htmlFor="shoes">Shoes </label><input type='checkbox' checked={currentChecks.includes(categories.shoes)} name='shoes'onChange={handleCategroyChange}/>
+          </div>
+        </div>
         <h4>Price</h4>
         <Box maxWidth={150} display={'flex'}>
           <label htmlFor="">Von</label>
@@ -273,30 +310,17 @@ const BasicMenu =<T extends { text: string, value: F}, F>({ anchor, menuItems, h
           <label>Bis</label>
           <input style={{fontSize: '16px', border: '1px solid black', maxWidth: '20%'}}/>
         </Box>
+        <Box display={'flex'}>
+          <button onClick={() => {filter(); navigation("/p");}}>
+            Apply
+          </button>
+          <button onClick={reset}>
+            Reset
+          </button>
+        </Box>
       </Menu>
-      {openPopup && <BasicPopUp open={openPopup} anchorEl={anchorEl} />}
     </>
   )
 }
-
-const BasicPopUp = ({ open, anchorEl }: { open: boolean; anchorEl: Element | null }) => {
-  const [currentValue, setCurrentValue] = useState<number>(10);
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setCurrentValue(Number(e.currentTarget.value));
-  };
-
-  return (
-    <Popper open={open} anchorEl={anchorEl} sx={{ mr: 5, zIndex: 5, p: 5 }}>
-      <Box width={100} component={'form'}>
-        <TextField
-          value={currentValue}
-          onChange={handleChange}
-          autoFocus
-        />
-      </Box>
-    </Popper>
-  );
-};
 
 export default Navbar;

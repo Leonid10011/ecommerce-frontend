@@ -33,6 +33,10 @@ function ProductList() {
 
     const { favoriteItemsFiltered, nonFavoriteItems } = filterFavoriteItems;
 
+    useEffect(() => {
+      console.log("FAVORITES", favoriteItemsFiltered.length, "  ", nonFavoriteItems.length);
+    }, [favoriteItemsFiltered])
+
     return (
       <Container maxWidth="sm" sx={{ position: 'relative', overflow: 'hidden', minHeight: '300px' }}>
           {favoriteItemsFiltered.map((product, index) => (
