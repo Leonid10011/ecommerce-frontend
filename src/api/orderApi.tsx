@@ -125,10 +125,16 @@ const getOrderItems = async (orderId: number): Promise<ApiResponse<OrderItemDTO[
                 data,
                 status: res.status,
             }
-        } else {
-            throw new Error(`HTTP Error with status code: ${res.status}`);
+        } else if(res.status === 404){
+            return {
+                data: [],
+                status: res.status
+            }
         }
-    } catch(error) {
+            else {
+                throw new Error(`HTTP Error with status code: ${res.status}`);
+            }
+        } catch(error) {
         console.error(`Error get Items ${error}`);
         throw error;
     }

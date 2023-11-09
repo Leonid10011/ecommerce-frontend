@@ -2,8 +2,7 @@ import { Box, Button, Card, CardContent, CardMedia, Grid, Typography } from "@mu
 import { OrderProductType, useOrder } from "../../context/orderContext";
 import { useState } from "react";
 import { toast } from "react-toastify";
-import { Product } from "../../api/productApi";
-import { OrderItemDTO } from "../../api/orderApi";
+import { config } from "../../config";
 
 export default function Cart() {
 
@@ -42,7 +41,7 @@ const CartCard = ({ orderProduct }: {orderProduct: OrderProductType}) => {
       <Card sx={{m: 2}}>
         <CardMedia 
           component="img"
-          image={orderProduct.imgURL}/>
+          image={config.image_url +  orderProduct.imgURL}/>
         <CardContent>
           <Box display={'flex'} flexDirection={'row'}>
             <Box>
