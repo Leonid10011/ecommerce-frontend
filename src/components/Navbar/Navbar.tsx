@@ -230,7 +230,7 @@ interface BasicMenuProps<T, F> {
 
 // TODO
 const BasicMenu =<T extends { text: string, value: F}, F>({ anchor, menuItems, handleItem, handleClose, checks}: BasicMenuProps<T, F>) => {
-  
+
   const [openPopup, setOpenPopup] = useState<boolean>(false);
 
   const OnClose = () => {
@@ -280,6 +280,7 @@ const BasicMenu =<T extends { text: string, value: F}, F>({ anchor, menuItems, h
     // Set check value to false
     categoriesCheckboxes.forEach(box => {box.checked = false});
     // apply reset to filer
+    setCurrentChecks([]);
     resetFilter()
   }
 
@@ -311,7 +312,14 @@ const BasicMenu =<T extends { text: string, value: F}, F>({ anchor, menuItems, h
           <input style={{fontSize: '16px', border: '1px solid black', maxWidth: '20%'}}/>
         </Box>
         <Box display={'flex'}>
-          <button onClick={() => {filter(); navigation("/p");}}>
+          <button onClick={() => {
+            if(currentChecks.length > 0){
+              filter(); 
+              navigation("/p");
+            } else {
+              reset()
+            }}}
+            >
             Apply
           </button>
           <button onClick={reset}>
