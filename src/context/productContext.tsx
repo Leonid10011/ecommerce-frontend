@@ -135,7 +135,8 @@ const ProductContextProvider = ({children}: {
         }
         // trigger the filterFavoriteItems, in order to init useMemo with nonFilteredProducts
         setFavoriteItems([...favoriteItems]);
-        setTriggerFiter(prev => !prev);
+        //NOt working yet
+        //setTriggerFiter(prev => !prev);
     }       
     
     useEffect(() => {
