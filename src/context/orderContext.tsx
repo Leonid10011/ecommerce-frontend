@@ -50,7 +50,7 @@ const OrderContextProvider = ({children} : {
     children: React.ReactNode
 }) => {
 
-    const { products } = useProduct();
+    const { products, filterProducts } = useProduct();
 
     const [ orderItems, setOrderItems ] = useState<OrderItemDTO[]>([]);
     const [ order, setOrder ] = useState<OrderDTO>({
@@ -63,12 +63,16 @@ const OrderContextProvider = ({children} : {
     const { userId, token, isAuthenticated } = useAuth();
 
     const filterOrderItems: OrderProductType[] = useMemo(() => {
+        console.log("Filer order itemas")
         try {
             const orderProducts = products.filter(
                 item => orderItems.find(item2 => item.id === item2.productId)
             );
             if( orderProducts.length != orderItems.length)
+            {
+                console.log(orderProducts.length, "  ", orderItems.length )
                 throw new Error("Number of products not equal to number oder OrdeItems, something went wrong.")
+            }
             
             // merge the product and orderItem properties
             const orderProductsMerged: OrderProductType[] = orderProducts.map(
@@ -101,10 +105,13 @@ const OrderContextProvider = ({children} : {
             ...resOrder.data
         }
         setOrder(newOrder);
+
+        return newOrder.id
     }
 
-    const fetchAndSetOrderItems = async () => {
-        let resOrderItems: ApiResponse<OrderItemDTO[]> = await getOrderItems(order.id);
+    const fetchAndSetOrderItems = async (orderId: number) => {
+        let resOrderItems: ApiResponse<OrderItemDTO[]> = await getOrderItems(orderId);
+        console.log("ORderitems: ", resOrderItems)
         setOrderItems([...resOrderItems.data]);
     }
 
@@ -112,9 +119,9 @@ const OrderContextProvider = ({children} : {
      * @description Set the orderId for global acces though context and fetch corresponding orderItems for cart
      * @param orderId 
      */
-    const initOrderContext = () => {
-        fetchAndSetOrder();
-        fetchAndSetOrderItems();
+    const initOrderContext = async () => {
+        let orderId = await fetchAndSetOrder();
+        fetchAndSetOrderItems(orderId);
     }
     
     /**
