@@ -126,7 +126,7 @@ function Navbar() {
       <AppBar position="sticky" sx={{ backgroundColor: '#f1f1f1' }}>
         <Toolbar>
           <Grid container alignItems={"center"}>
-            <Grid item xs={1}>
+            <Grid item xs={2}>
               <IconButton
                 size="large"
                 edge="start"
@@ -138,13 +138,10 @@ function Navbar() {
                 <MenuIcon />
               </IconButton>
             </Grid>
-            <Grid item xs={1}>
-              <Link to="/"><Logo src="/logo.png" alt="Logo" /></Link>
-              
+            <Grid item xs={2}>
+              <Link to="/"><Logo src="/logo.png" alt="Logo" /></Link>      
             </Grid>
-            <Grid item xs={5} sx={{backgroundColor: 'yellow'}}>
-            </Grid>
-              <Grid item xs={5} display={'flex'} justifyContent={'flex-end'}>
+              <Grid item xs={8} display={'flex'} justifyContent={'flex-end'}>
       
                 <Grid item>
                   { !isAuthenticated
