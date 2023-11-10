@@ -27,13 +27,12 @@ const initData = {
     deleteFavoriteItem: () => {},
     filterProducts: [],
     manageFilter: () => {},
-    filter: () => {},
     resetFilter:() => {},
     state: {
         category: [],
         price: {
             minValue: 0,
-            maxValue: -1,
+            maxValue: 0,
         },
         filter: false,
     },
@@ -47,7 +46,6 @@ interface ProductContextType {
     deleteFavoriteItem: (productId: number) => void, 
     filterProducts: Product[],
     manageFilter: (action: FilterActionType) => void,
-    filter: () => void,
     resetFilter: () => void,
     state: FilterStateType,
 }
@@ -119,12 +117,7 @@ const ProductContextProvider = ({children}: {
         dispatch({type: 'RESET_PRICE', payload: void 0});
         setTriggerFilter(prev => !prev);
     }
-    /**
-     * @description execute filtering
-     */
-    const filter = () => {
-        setTriggerFilter(prev => !prev);
-    }
+
     /**
      * @description apply filter conditions
      * @param action
@@ -132,13 +125,6 @@ const ProductContextProvider = ({children}: {
     const manageFilter = (action: FilterActionType) => {
         dispatch(action);         
     }
-    /**
-     * @helperFunction
-     * @desciption evalutes xor for two statements
-     */
-    const xor = (s1: boolean, s2: boolean) => {
-        return (s1 && !s2) || (!s1 && s2)
-    } 
 
     /**
      * @description filtering products by filter condition
@@ -248,7 +234,6 @@ const ProductContextProvider = ({children}: {
             deleteFavoriteItem, 
             filterProducts, 
             manageFilter, 
-            filter, 
             resetFilter, 
             state
         }}>

@@ -242,7 +242,7 @@ const BasicMenu =<T extends { text: string, value: F}, F>({ anchor, menuItems, h
 
   const categoriesRef = useRef<HTMLDivElement>(null);
 
-  const { manageFilter, filter, resetFilter, state } = useProduct();
+  const { manageFilter, state } = useProduct();
 
   interface PriceType {
     min: number,
@@ -260,10 +260,6 @@ const BasicMenu =<T extends { text: string, value: F}, F>({ anchor, menuItems, h
     if(element.name === 'min'){
       manageFilter({type: "SET_PRICE_MINVALUE", payload: Number(element.value)})
     } else if(element.name === 'max'){
-        if(element.value === ""){
-          console.log("IF: ", element.value)
-          manageFilter({type: "SET_PRICE_MAXVALUE", payload: 999})
-        }
       manageFilter({type: "SET_PRICE_MAXVALUE", payload: Number(element.value)})
     } else {
       console.log("Unknown error.");
