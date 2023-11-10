@@ -63,7 +63,7 @@ const ProductContextProvider = ({children}: {
     const [products, setProducts] = useState<Product[]>([]);
     const [favoriteItems, setFavoriteItems] = useState<FavoriteProductDTO[]>([]);
     const { userId, token, isAuthenticated } = useAuth();
-    const [triggerFilter, setTriggerFiter] = useState<Boolean>(false);
+    const [triggerFilter, setTriggerFilter] = useState<Boolean>(false);
 
     const [state, dispatch] = useReducer(reducer,
         {
@@ -76,38 +76,9 @@ const ProductContextProvider = ({children}: {
         }
     );
     
-    const resetFilter = () => {
-        dispatch({type: 'RESET_CATEGORY', payload: void 0});
-        dispatch({type: 'RESET_PRICE', payload: void 0});
-        setTriggerFiter(prev => !prev);
-        dispatch({type: 'SET_FILTER', payload: false});
-    }
-
-    const filter = () => {
-        console.log("Trigger")
-        setTriggerFiter(prev => !prev);
-        dispatch({type: 'SET_FILTER', payload: true});
-    }
-
-    const manageFilter = (action: FilterActionType) => {
-        dispatch(action);         
-    }
-
-    const filterProducts = useMemo(() => {
-        const newProducts = products.filter( item => (
-            state.category.includes(item.categoryID) &&
-            item.price > state.price.minValue && 
-            (state.price.maxValue > 0 
-                ? (item.price < state.price.maxValue
-                    ? true : false)
-                    : true
-        )));
-
-        console.log("STATE ", state);
-        console.log("Old: " + products + "\nNew: " + newProducts)
-        return newProducts;
-    },[triggerFilter])
-
+    /**
+     * @description Main fetch for products
+     */
     const fetchAndSetProducts = async() => {
         const res: ApiResponse<Product[]> = await getProducts();
         const newProducts = [...res.data];
@@ -135,14 +106,60 @@ const ProductContextProvider = ({children}: {
         }
         // trigger the filterFavoriteItems, in order to init useMemo with nonFilteredProducts
         setFavoriteItems([...favoriteItems]);
-        //NOt working yet
-        //setTriggerFiter(prev => !prev);
-    }       
-    
+        // filter after changing the Products
+        setTriggerFilter(prev => !prev);
+    } 
+
+    //########### FILTERING ################
+    /**
+     * @description resets the filters and its condition
+     */
+    const resetFilter = () => {
+        dispatch({type: 'RESET_CATEGORY', payload: void 0});
+        dispatch({type: 'RESET_PRICE', payload: void 0});
+        setTriggerFilter(prev => !prev);
+        dispatch({type: 'SET_FILTER', payload: false});
+    }
+    /**
+     * @description execute filtering
+     */
+    const filter = () => {
+        setTriggerFilter(prev => !prev);
+        dispatch({type: 'SET_FILTER', payload: true});
+    }
+    /**
+     * @description apply filter conditions
+     * @param action
+     */
+    const manageFilter = (action: FilterActionType) => {
+        dispatch(action);         
+    }
+    /**
+     * @description filtering products by filter condition
+     */
+    const filterProducts = useMemo(() => {
+        const newProducts = products.filter( item => (
+            state.category.includes(item.categoryID) &&
+            item.price > state.price.minValue && 
+            (state.price.maxValue > 0 
+                ? (item.price < state.price.maxValue
+                    ? true : false)
+                    : true
+        )));
+
+        console.log("STATE ", state);
+        console.log("Old: " + products + "\nNew: " + newProducts)
+        return newProducts;
+    },[triggerFilter])
+
+    /**
+     * @description Initilize products
+     */
     useEffect(() => {
         fetchAndSetProducts();
     }, [])
 
+    // ######## FAVORITE ITEMS #############
     /**
      * @description Fetch FavoriteItems by userId
      * @param userId: number
@@ -208,7 +225,9 @@ const ProductContextProvider = ({children}: {
         const updatedfavoriteItems = favoriteItems.filter(item => (item.productId != productId));
         setFavoriteItems(updatedfavoriteItems);
     }
-
+    /**
+     * @description when the client logs in then fetch the favorite items
+     */
     useEffect(() => {
         if(isAuthenticated){
             fetchFavoriteItems(userId);
@@ -218,7 +237,17 @@ const ProductContextProvider = ({children}: {
     
 
     return (
-        <ProductContext.Provider value={{products, fetchAndSetProductsByName, filterFavoriteItems, addFavoriteItem, deleteFavoriteItem, filterProducts, manageFilter, filter, resetFilter, state}}>
+        <ProductContext.Provider value={{products, 
+            fetchAndSetProductsByName, 
+            filterFavoriteItems, 
+            addFavoriteItem, 
+            deleteFavoriteItem, 
+            filterProducts, 
+            manageFilter, 
+            filter, 
+            resetFilter, 
+            state
+        }}>
             {children}
         </ProductContext.Provider>
     )

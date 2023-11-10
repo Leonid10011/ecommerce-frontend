@@ -33,17 +33,13 @@ function ProductList() {
 
     const { favoriteItemsFiltered, nonFavoriteItems } = filterFavoriteItems;
 
-    useEffect(() => {
-      console.log("FAVORITES", favoriteItemsFiltered.length, "  ", nonFavoriteItems.length);
-    }, [favoriteItemsFiltered])
-
     return (
       <Container maxWidth="sm" sx={{ position: 'relative', overflow: 'hidden', minHeight: '300px' }}>
           {favoriteItemsFiltered.map((product, index) => (
-            <ProductCard key={product.id} product={product} handleBuy={handleBuy} isFavorite isAuthenticated addFavoriteItem={addFavoriteItem} deleteFavoriteItem={deleteFavoriteItem} />
+            <ProductCard key={product.id} product={product} handleBuy={handleBuy} isFavorite isAuthenticated={isAuthenticated} addFavoriteItem={addFavoriteItem} deleteFavoriteItem={deleteFavoriteItem} />
           ))}
           {nonFavoriteItems.map((product, index) => (
-            <ProductCard key={product.id} product={product} handleBuy={handleBuy} isFavorite={false} isAuthenticated addFavoriteItem={addFavoriteItem} deleteFavoriteItem={deleteFavoriteItem}/>
+            <ProductCard key={product.id} product={product} handleBuy={handleBuy} isFavorite={false} isAuthenticated={isAuthenticated} addFavoriteItem={addFavoriteItem} deleteFavoriteItem={deleteFavoriteItem}/>
           ))}
         
       </Container>

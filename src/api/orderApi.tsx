@@ -1,5 +1,6 @@
 import {config} from "../config";
 import { ApiResponse } from "../types/api/apiTypes";
+import { Product } from "./productApi";
 
 const apiPath = config.api_path;
 
@@ -140,8 +141,7 @@ const getOrderItems = async (orderId: number): Promise<ApiResponse<OrderItemDTO[
     }
 }
 
-const getOrderItemProducts = async (orderId: number) => {
-    console.log("Get Order Item Products Debug");
+const getOrderItemProducts = async (orderId: number): Promise<ApiResponse<Product[]>> => {
     try {
         const requestOptions = {
             method: 'GET',
@@ -151,12 +151,25 @@ const getOrderItemProducts = async (orderId: number) => {
             }
         }
 
-        let res = await fetch(`${apiPath}order/getOrderProduct/${orderId}`, requestOptions);
-        let data = res.json();
-        
-        return data;
-    } catch(err: any) {
-        console.error("Error get Items", err);
+        let res: Response = await fetch(`${apiPath}order/getOrderProduct/${orderId}`, requestOptions);
+        if(res.ok){
+            let data: Product[] = await res.json() as Product[];
+            return {
+                data,
+                status: res.status,
+            }
+        }
+        else if(res.status === 404){
+            return {
+                data: [],
+                status: res.status,
+            }
+        } else {
+            throw new Error(`HTTP ERROR with status code: ${res.status}`);
+        }
+    } catch(error) {
+        console.error("Network error ", error);
+        throw error
     }
 } 
 

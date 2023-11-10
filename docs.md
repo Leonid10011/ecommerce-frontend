@@ -7,9 +7,11 @@
     3. [Orders and OrderItems](#13-order)
     4. [User Management](#14-user-management)
     5. [Filter Products](#15-filter-products)
-2. [Components](#componets)
+2. [Data Logic](#data-logic)
+    1. [Products](#11-products-1)
+3. [Components](#componets)
     1. [Product Card](#productcard)
-3. [Pages](#pages)
+4. [Pages](#pages)
 
 ## Feature Overview
 
@@ -358,6 +360,210 @@ const fetchAndSetToken = async (email: string, password: string): Promise<Boolea
 ### 1.5 Filter Products
 
 ### Todo next 
+
+### Data Logic
+In this section we discuss how we use the data, that is fetch from the backend and rendered in the frontend, interacts. We will present the features that the corresponding data belongs to and give a detailed explanation on how the methods work. 
+## 1.1 Products
+#### 1.1.2 Introduction
+The main data of our ecommerce app are the products. When it comes to presenting products to the client, one must fetch each product data point from a backend server and use the retrvied data accrodingly. The main concern arises when the amount of data is to large. This forces us to find efficient ways to only fetch the datapoint, that are required at a specific time of point. For our case, we don't implement yet such an efficient way, instead we retrieve all products data points at startup, because our mock data is very small in size. However, we have different uses for our products, like filtering, favorizing and ordering, which all need a specific approach to represent them.
+
+#### 1.1.1 Sets of Products
+##### 1.1.1.1 Products: 
+This is the main data and comprises of the products in our backend.
+```typescript
+interface Product {
+    id: number,
+    name: string,
+    description: string,
+    price: number,
+    categoryID: number,
+    quantity: number,
+    imgURL: string,
+}
+```
+We have **2** methods to retrieve the products. The first one fetches all products available in the backend and should be reworked in future to only load bulks of data point in combination with breadcrums.
+
+```typescript
+    const fetchAndSetProducts = async() => {
+        const res: ApiResponse<Product[]> = await getProducts();
+        const newProducts = [...res.data];
+        setProducts(newProducts);
+        // trigger the filterFavoriteItems, in order to init useMemo with nonFilteredProducts
+        setFavoriteItems([...favoriteItems])
+    } 
+```
+
+**favoriteItems** is the result of e memiozed function and with the reset we force the favoriteItems to be applied to the newly fetched products.
+
+The  second method to fetch the products, is to fetched only those that contain a certien substring. We specifically use a seperate function for this instead of applying it on the existing products, because we want to prepare efficient data management for large amount of data points.
+
+```typescript
+const fetchAndSetProductsByName = async (name: string) => {
+        console.log("Fetch by Name; dataContext");
+        if(name != ""){
+            const res: ApiResponse<Product[]> = await getProductsByName(name);
+            const newProducts = [...res.data];
+            setProducts(newProducts);
+        } else {
+            fetchAndSetProducts();
+        }
+        // trigger the filterFavoriteItems, in order to init useMemo with nonFilteredProducts
+        setFavoriteItems([...favoriteItems]);
+        // filter after changing the Products
+        setTriggerFilter(prev => !prev);
+    }
+```
+If the searchtag **name** is empty, we simply fetch all products. Afterwards we trigger our filter, so we only show the filtered items from the searched ones.
+
+Now this two methods always manipulate the main products state:
+
+```typescript
+const [products, setProducts] = useState<Product[]>([]);
+```
+
+This data will serve as base for the other methods and is exposed by the **productContext** api.
+
+##### 1.1.1.2 FilteredProducts
+ This is a subset of the products and comprises only of products that met certian condition. In our case we have **category** and **price** as filter condition.
+
+ We use a **memiozed** approach in order to be more efficient. We declare a fucntion that will serve as a pipeline for the products. A pipeline in sense that pass the products at first through the filter method and the result will passed as input to the favoriteItems method. 
+
+ ```typescript
+ const filterProducts = useMemo(() => {
+        const newProducts = products.filter( item => (
+            state.category.includes(item.categoryID) &&
+            item.price > state.price.minValue && 
+            (state.price.maxValue > 0 
+                ? (item.price < state.price.maxValue
+                    ? true : false)
+                    : true
+        )));
+
+        console.log("STATE ", state);
+        console.log("Old: " + products + "\nNew: " + newProducts)
+        return newProducts;
+    },[triggerFilter])
+ ```
+
+This function will only recalculate when we force it with the **triggerFilter**. 
+
+##### 1.1.1.3 FavoriteProducts
+This is a subset of products that were favorized by a client. 
+
+We use a set of products as input and seperate them into two groups, namley **favoriteItemsFiltered** and **nonFavoriteItems**. If out filter is activated that we will apply this to the favoriteItems , otherwise on the base products.
+
+```typescript
+const filterFavoriteItems: {
+        favoriteItemsFiltered: Product[];
+        nonFavoriteItems: Product[];
+    } = useMemo(() => {
+        console.log("Change filterFavoriteItems");
+        let newProducts; 
+        if(state.filter){
+            console.log("IF", state.filter);
+            newProducts = [...filterProducts];
+        }
+        else{
+            console.log("ELSE", state.filter);
+            newProducts = [...products];
+        } 
+        const [favoriteItemsFiltered, nonFavoriteItems] = newProducts.reduce<[Product[], Product[]]>(
+            ([favorites, nonFavorites], item) => {
+                if (favoriteItems.find(item2 => item2.productId === item.id)) {
+                    favorites.push(item);
+                } else {
+                    nonFavorites.push(item);
+                }
+                return [favorites, nonFavorites];
+            },
+            [[], []]
+        );
+        
+        return { favoriteItemsFiltered, nonFavoriteItems };
+      
+```
+
+
+##### 1.1.1.4 OrderProducts[ TO BE REWORKED]
+This a new Type that extends the prodcts type
+
+```typescript
+export interface OrderProduct extends Product {
+    orderQuantity: number,
+    orderPrice: number,
+}
+```
+
+And in order to store this additional information in the database, we introduce an other interface:
+
+```typescript
+export interface OrderItemDTO {
+    id: number,
+    orderId: number,
+    productId: number,
+    quantity: number,
+    price: number,
+}
+```
+
+This object stores the ordered quantiy and the actual price ( after discounts etc.). Both, the products and the orderItem are stored seperatly in the database. Meaning that we need to fetch both data points and merge under the productId them into one Object. As the we make sure that the product Ids are always unique in the database and each orderItem always has a corresponding product ( because it has a foreign key dependancy), we can always make sure that the data is consistent. 
+
+We cannot simply filter our base products depending on the orderItems, because the orderItems are meant to be represented in the cart, which is seperated from the products page. That means if we would have some arbitrary base products (e.g. because of searchTerm), we wouldn't always have all the productId's that correspond to the orderItems that we fetched. This forces us to fetch the products for the orderItems seperately. Therefore we implemented a REST endpoint exclusively to fetch all the products that are also part of the orderItems of a user. 
+
+For now use a naive approach to make the funcitionlity work as expected. In future it is desired to implement a repository call in the backend, that fetches the merged product directly with a proper **SQL** query.
+
+ ```typescript
+const [ orderItems, setOrderItems ] = useState<OrderItemDTO[]>([]);
+
+const fetchAndSetOrderItems = async (orderId: number) => {
+    let resOrderItems: ApiResponse<OrderItemDTO[]> = await getOrderItems(orderId);
+    console.log("ORderitems: ", resOrderItems)
+    setOrderItems([...resOrderItems.data]);
+}
+
+//###############################################################################
+
+const [ orderProducts,setOrderProducts ] = useState<Product[]>([]);
+
+const fetchAndSetOrderProducts = async (orderId: number) => {
+    let resOrderItems: ApiResponse<Product[]> = await getOrderItemProducts(orderId);
+    console.log("ORderitems: ", resOrderItems)
+    setOrderProducts([...resOrderItems.data]);
+}
+ ```
+We use the folling orderFilter function to fetch those datapoints and merge them:
+
+```typescript
+const filterOrderItems: OrderProduct[] = useMemo(() => {
+        try {
+            const orderProductsMerged: OrderProduct[] = orderProducts.map(
+                (orderProduct, index) => {
+                    const orderItem = orderItems.find( item2 => item2.productId === orderProduct.id)!;
+                    return {
+                        id: orderProduct.id,
+                        name: orderProduct.name,
+                        description: orderProduct.description,
+                        imgURL: orderProduct.imgURL,
+                        price: orderProduct.price,
+                        quantity: orderProduct.quantity,
+                        categoryID: orderProduct.categoryID,
+                        orderQuantity: orderItem.quantity,
+                        orderPrice: orderItem.price,
+                    }
+                }
+            )
+            console.log("Merged: ", orderProductsMerged);
+            return orderProductsMerged;
+
+        } catch (error){
+            console.error(`Not able to filter Products: ${error}`);
+            throw error;
+        }
+
+    }, [triggerOrderItems]);
+```
+
+And expose it through the **orderContext** API. 
 
 ## Componets
 

@@ -1,5 +1,5 @@
 import { Box, Button, Card, CardContent, CardMedia, Grid, Typography } from "@mui/material";
-import { OrderProductType, useOrder } from "../../context/orderContext";
+import { OrderProduct, useOrder } from "../../context/orderContext";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { config } from "../../config";
@@ -25,7 +25,7 @@ export default function Cart() {
     )
 }
 
-const CartCard = ({ orderProduct }: {orderProduct: OrderProductType}) => {
+const CartCard = ({ orderProduct }: {orderProduct: OrderProduct}) => {
 
     const [amount, setAmount] = useState<number>(0);
 

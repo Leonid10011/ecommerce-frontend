@@ -2,20 +2,17 @@
  * We use this context to handle the BuyOrder data
  */
 import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
-import { getOrderItems, addItem, getOrder, OrderItemDTO, OrderDTO } from "../api/orderApi";
+import { getOrderItems, addItem, getOrder, OrderItemDTO, OrderDTO, getOrderItemProducts } from "../api/orderApi";
 import { useAuth } from "./authContext";
 import { ApiResponse } from "../types/api/apiTypes";
 import { Product, useProduct } from "./productContext";
 
-export interface OrderProductType {
-    id: number,
-    name: string,
-    description: string,
-    imgURL: string,
-    categoryId: number,
-    quantity: number,
-    price: number
-};
+
+export interface OrderProduct extends Product {
+    orderQuantity: number,
+    orderPrice: number, 
+}
+
 
 interface OrderContextType {
     initOrderContext: (orderId: number) => void,
@@ -23,7 +20,7 @@ interface OrderContextType {
     resetCart: () => void,
     addOrderItem: (product: OrderItemDTO) => void,
     fetchAndSetOrder: (id: number, token: string) => void,
-    filterOrderItems: OrderProductType[],
+    filterOrderItems: OrderProduct[],
     order: OrderDTO,
 };
 
@@ -50,9 +47,11 @@ const OrderContextProvider = ({children} : {
     children: React.ReactNode
 }) => {
 
-    const { products, filterProducts } = useProduct();
-
+    //const { products } = useProduct();
+    const [ orderProducts,setOrderProducts ] = useState<Product[]>([]);
     const [ orderItems, setOrderItems ] = useState<OrderItemDTO[]>([]);
+    const [ triggerOrderItems, setTriggerOrderItems ] = useState<boolean>(false);
+
     const [ order, setOrder ] = useState<OrderDTO>({
         id: 0,
         userId: 0,
@@ -62,20 +61,21 @@ const OrderContextProvider = ({children} : {
     
     const { userId, token, isAuthenticated } = useAuth();
 
-    const filterOrderItems: OrderProductType[] = useMemo(() => {
-        console.log("Filer order itemas")
+
+    const filterOrderItems: OrderProduct[] = useMemo(() => {
+        console.log("Filer order items")
         try {
-            const orderProducts = products.filter(
-                item => orderItems.find(item2 => item.id === item2.productId)
-            );
-            if( orderProducts.length != orderItems.length)
-            {
-                console.log(orderProducts.length, "  ", orderItems.length )
-                throw new Error("Number of products not equal to number oder OrdeItems, something went wrong.")
-            }
+            // const orderProducts = products.filter(
+            //     item => orderItems.find(item2 => item.id === item2.productId)
+            // );
+            // if( orderProducts.length != orderItems.length)
+            // {
+            //     console.log(orderProducts.length, "  ", orderItems.length )
+            //     throw new Error("Number of products not equal to number oder OrdeItems, something went wrong.")
+            // }
             
             // merge the product and orderItem properties
-            const orderProductsMerged: OrderProductType[] = orderProducts.map(
+            const orderProductsMerged: OrderProduct[] = orderProducts.map(
                 (orderProduct, index) => {
                     const orderItem = orderItems.find( item2 => item2.productId === orderProduct.id)!;
                     return {
@@ -83,13 +83,15 @@ const OrderContextProvider = ({children} : {
                         name: orderProduct.name,
                         description: orderProduct.description,
                         imgURL: orderProduct.imgURL,
-                        categoryId: orderProduct.categoryID,
-                        quantity: orderItem.quantity,
-                        price: orderItem.price,
+                        price: orderProduct.price,
+                        quantity: orderProduct.quantity,
+                        categoryID: orderProduct.categoryID,
+                        orderQuantity: orderItem.quantity,
+                        orderPrice: orderItem.price,
                     }
                 }
             )
-            
+            console.log("Merged: ", orderProductsMerged);
             return orderProductsMerged;
 
         } catch (error){
@@ -97,7 +99,7 @@ const OrderContextProvider = ({children} : {
             throw error;
         }
 
-    }, [orderItems]);
+    }, [triggerOrderItems]);
 
     const fetchAndSetOrder = async () => {
         const resOrder: ApiResponse<OrderDTO> = await getOrder(userId, token);
@@ -115,13 +117,21 @@ const OrderContextProvider = ({children} : {
         setOrderItems([...resOrderItems.data]);
     }
 
+    const fetchAndSetOrderProducts = async (orderId: number) => {
+        let resOrderItems: ApiResponse<Product[]> = await getOrderItemProducts(orderId);
+        console.log("ORderitems: ", resOrderItems)
+        setOrderProducts([...resOrderItems.data]);
+    }
+
     /**
      * @description Set the orderId for global acces though context and fetch corresponding orderItems for cart
      * @param orderId 
      */
     const initOrderContext = async () => {
         let orderId = await fetchAndSetOrder();
-        fetchAndSetOrderItems(orderId);
+        await fetchAndSetOrderProducts(orderId);
+        await fetchAndSetOrderItems(orderId);
+        setTriggerOrderItems(prev => !prev);
     }
     
     /**
