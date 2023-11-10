@@ -67,6 +67,7 @@ function Navbar() {
 
   const handleSearch = (e: FormEvent) => {
     fetchAndSetProductsByName(searchTerm);
+
     navigation("/p");
   }
 
@@ -243,12 +244,32 @@ const BasicMenu =<T extends { text: string, value: F}, F>({ anchor, menuItems, h
 
   const { manageFilter, filter, resetFilter, state } = useProduct();
 
+  interface PriceType {
+    min: number,
+    max: number
+  }
+
   enum categories {
     shirt = 1,
     hoodie = 2,
     shoes  =3
   }
 
+  const handlePriceChange = (e: FormEvent<HTMLInputElement>) => {
+    const element = e.currentTarget;
+    if(element.name === 'min'){
+      manageFilter({type: "SET_PRICE_MINVALUE", payload: Number(element.value)})
+    } else if(element.name === 'max'){
+        if(element.value === ""){
+          console.log("IF: ", element.value)
+          manageFilter({type: "SET_PRICE_MAXVALUE", payload: 999})
+        }
+      manageFilter({type: "SET_PRICE_MAXVALUE", payload: Number(element.value)})
+    } else {
+      console.log("Unknown error.");
+    }
+    console.log(element.value, "\n", state.price)
+  }
 
   const handleCategroyChange = (e: FormEvent<HTMLInputElement>) => {
     const category: string = e.currentTarget.name;
@@ -269,16 +290,6 @@ const BasicMenu =<T extends { text: string, value: F}, F>({ anchor, menuItems, h
     checked 
     ? manageFilter({type: 'SET_CATEGORY', payload: categories[category as keyof typeof categories]})
     : manageFilter({type: 'REMOVE_CATEGORY', payload: categories[category as keyof typeof categories]})
-  }
-
-  const reset = () => {
-    // Get the common parent element of checkboxes 
-    const categoriesCheckboxes = categoriesRef.current!.querySelectorAll('input');
-    // Set check value to false
-    categoriesCheckboxes.forEach(box => {box.checked = false});
-    // apply reset to filer
-    setCurrentChecks([]);
-    resetFilter()
   }
 
   return(
@@ -304,24 +315,9 @@ const BasicMenu =<T extends { text: string, value: F}, F>({ anchor, menuItems, h
         <h4>Price</h4>
         <Box maxWidth={150} display={'flex'}>
           <label htmlFor="">Von</label>
-          <input style={{fontSize: '16px', border: '1px solid black', maxWidth: '20%'}}/>
+          <input name={'min'} style={{fontSize: '16px', border: '1px solid black', maxWidth: '20%'}} onChange={handlePriceChange}/>
           <label>Bis</label>
-          <input style={{fontSize: '16px', border: '1px solid black', maxWidth: '20%'}}/>
-        </Box>
-        <Box display={'flex'}>
-          <button onClick={() => {
-            if(currentChecks.length > 0){
-              filter(); 
-              navigation("/p");
-            } else {
-              reset()
-            }}}
-            >
-            Apply
-          </button>
-          <button onClick={reset}>
-            Reset
-          </button>
+          <input name={'max'} style={{fontSize: '16px', border: '1px solid black', maxWidth: '20%'}} onChange={handlePriceChange}/>
         </Box>
       </Menu>
     </>

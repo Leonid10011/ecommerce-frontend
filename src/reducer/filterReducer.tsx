@@ -22,20 +22,18 @@ export type FilterActionType =
 export const reducer = (state: FilterStateType, action: FilterActionType): FilterStateType => {
     switch ( action.type ) {
         case 'SET_CATEGORY':
-            return { ...state, category: [...state.category, action.payload] };
+            return { ...state, category: [...state.category, action.payload]};
         case 'SET_PRICE_MINVALUE':
-            return { ...state, price: { ...state.price, minValue: action.payload}};
+            return { ...state, price: { ...state.price, minValue: Math.max(0, action.payload) }};
         case 'SET_PRICE_MAXVALUE':
-            return { ...state, price: { ...state.price, maxValue: action.payload}};
-        case 'SET_FILTER':
-            return { ...state, filter: action.payload};
+            return { ...state, price: { ...state.price, maxValue: Math.max(action.payload, state.price.minValue) }};
         case 'REMOVE_CATEGORY':
-            return {...state, category: state.category.filter( item => item !== action.payload)}
+            return {...state, category: state.category.filter(item => item !== action.payload)};
         case 'RESET_CATEGORY':
-            return {...state, category: []}
+            return {...state, category: []};
         case 'RESET_PRICE':
-            return {...state, price: {...state.price, minValue: 0, maxValue: -1}}    
+            return {...state, price: { minValue: 0, maxValue: -1 }};
         default:
             throw new Error("Unhandled action type");
     }
-}
+};

@@ -70,9 +70,9 @@ const ProductContextProvider = ({children}: {
             category: [],
             price: {
                 minValue: 0,
-                maxValue: -1,
+                maxValue: 0,
             },
-            filter: false,
+            filter: true,
         }
     );
     
@@ -118,14 +118,12 @@ const ProductContextProvider = ({children}: {
         dispatch({type: 'RESET_CATEGORY', payload: void 0});
         dispatch({type: 'RESET_PRICE', payload: void 0});
         setTriggerFilter(prev => !prev);
-        dispatch({type: 'SET_FILTER', payload: false});
     }
     /**
      * @description execute filtering
      */
     const filter = () => {
         setTriggerFilter(prev => !prev);
-        dispatch({type: 'SET_FILTER', payload: true});
     }
     /**
      * @description apply filter conditions
@@ -135,22 +133,28 @@ const ProductContextProvider = ({children}: {
         dispatch(action);         
     }
     /**
+     * @helperFunction
+     * @desciption evalutes xor for two statements
+     */
+    const xor = (s1: boolean, s2: boolean) => {
+        return (s1 && !s2) || (!s1 && s2)
+    } 
+
+    /**
      * @description filtering products by filter condition
      */
     const filterProducts = useMemo(() => {
-        const newProducts = products.filter( item => (
-            state.category.includes(item.categoryID) &&
-            item.price > state.price.minValue && 
-            (state.price.maxValue > 0 
-                ? (item.price < state.price.maxValue
-                    ? true : false)
-                    : true
-        )));
-
-        console.log("STATE ", state);
-        console.log("Old: " + products + "\nNew: " + newProducts)
-        return newProducts;
-    },[triggerFilter])
+        const isCategorySelected = (catId: number) => state.category.length === 0 || state.category.includes(catId);
+        const isPriceWithinRange = (price: number) => {
+            const isAboveMin = state.price.minValue === 0 || price >= state.price.minValue;
+            const isBelowMax = state.price.maxValue === 0 || price <= state.price.maxValue;
+            return isAboveMin && isBelowMax;
+        };
+    
+        return products.filter(item => isCategorySelected(item.categoryID) && isPriceWithinRange(item.price));
+    }, [state.category, state.price.minValue, state.price.maxValue, products]);
+    
+    
 
     /**
      * @description Initilize products
