@@ -65,16 +65,6 @@ const OrderContextProvider = ({children} : {
     const filterOrderItems: OrderProduct[] = useMemo(() => {
         console.log("Filer order items")
         try {
-            // const orderProducts = products.filter(
-            //     item => orderItems.find(item2 => item.id === item2.productId)
-            // );
-            // if( orderProducts.length != orderItems.length)
-            // {
-            //     console.log(orderProducts.length, "  ", orderItems.length )
-            //     throw new Error("Number of products not equal to number oder OrdeItems, something went wrong.")
-            // }
-            
-            // merge the product and orderItem properties
             const orderProductsMerged: OrderProduct[] = orderProducts.map(
                 (orderProduct, index) => {
                     const orderItem = orderItems.find( item2 => item2.productId === orderProduct.id)!;
@@ -103,24 +93,30 @@ const OrderContextProvider = ({children} : {
 
     const fetchAndSetOrder = async () => {
         const resOrder: ApiResponse<OrderDTO> = await getOrder(userId, token);
-        const newOrder = {
-            ...resOrder.data
+        if(resOrder.data){
+            const newOrder = {
+                ...resOrder.data
+            }
+            setOrder(newOrder);
+    
+            return newOrder.id
         }
-        setOrder(newOrder);
-
-        return newOrder.id
     }
 
     const fetchAndSetOrderItems = async (orderId: number) => {
         let resOrderItems: ApiResponse<OrderItemDTO[]> = await getOrderItems(orderId);
-        console.log("ORderitems: ", resOrderItems)
-        setOrderItems([...resOrderItems.data]);
+        if(resOrderItems.data){
+            console.log("ORderitems: ", resOrderItems)
+            setOrderItems([...resOrderItems.data]);
+        }
     }
 
     const fetchAndSetOrderProducts = async (orderId: number) => {
         let resOrderItems: ApiResponse<Product[]> = await getOrderItemProducts(orderId);
-        console.log("ORderitems: ", resOrderItems)
-        setOrderProducts([...resOrderItems.data]);
+        if(resOrderItems.data){
+            console.log("ORderitems: ", resOrderItems)
+            setOrderProducts([...resOrderItems.data]);
+        }
     }
 
     /**
@@ -129,9 +125,11 @@ const OrderContextProvider = ({children} : {
      */
     const initOrderContext = async () => {
         let orderId = await fetchAndSetOrder();
-        await fetchAndSetOrderProducts(orderId);
-        await fetchAndSetOrderItems(orderId);
-        setTriggerOrderItems(prev => !prev);
+        if(orderId){
+            await fetchAndSetOrderProducts(orderId);
+            await fetchAndSetOrderItems(orderId);
+            setTriggerOrderItems(prev => !prev);
+        }
     }
     
     /**
@@ -148,7 +146,9 @@ const OrderContextProvider = ({children} : {
      */
     const addOrderItem = async (product: OrderItemDTO) => {    
         const resOrderItem = await addItem(product, token);
-        setOrderItems([...orderItems, resOrderItem.data]); 
+        if(resOrderItem.data){
+            setOrderItems([...orderItems, resOrderItem.data]); 
+        }
     }
 
     useEffect(() => {

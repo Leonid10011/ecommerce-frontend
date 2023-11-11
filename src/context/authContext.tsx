@@ -3,7 +3,7 @@ import { loginUser, signUp } from "../api/authApi";
 import { useNavigate } from "react-router";
 import { decodeToken } from "react-jwt";
 import { createOrder } from "../api/orderApi";
-import { ApiResponse, AuthApiResponse, User, UserDTO } from "../types/ApiInterfaces";
+import { ApiResponse, User, UserDTO } from "../types/ApiInterfaces";
 import { create } from "domain";
 import { toast } from "react-toastify";
 
@@ -61,7 +61,7 @@ export const AuthContextProvider = (props: {
      * @returns the token and Id, so we can use immediately in the init Context to initilize all other contexts 
      */
     const fetchAndSetToken = async (email: string, password: string): Promise<Boolean>  => {
-        const resToken: AuthApiResponse<string> = await loginUser(email, password);
+        const resToken: ApiResponse<string> = await loginUser(email, password);
         if(resToken.data){
             setToken(resToken.data);
 
@@ -93,7 +93,7 @@ export const AuthContextProvider = (props: {
      * @returns 
      */
     const signUpUser = async (user: UserDTO): Promise<void> => {
-        let resSignUp: AuthApiResponse<User> = await signUp(user);
+        let resSignUp: ApiResponse<User> = await signUp(user);
         if(resSignUp.data){
             // create a new order for this use on signup
             // will be handled differently in future

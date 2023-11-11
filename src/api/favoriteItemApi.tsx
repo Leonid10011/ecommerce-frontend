@@ -1,6 +1,7 @@
 
 import {config} from "../config";
 import { ApiResponse } from "../types/ApiInterfaces";
+import { ApiError } from "../types/ErrorTypes";
 
 const apiPath = config.api_path;
 
@@ -19,25 +20,25 @@ const getFavoriteItemsByUser = async (userId: number): Promise<ApiResponse<Favor
             }
         }
 
-        const res:  Response = await fetch(`${apiPath}favoriteItem/getProductIdsByUser/${userId}`, requestOptions); 
-        if(res.ok) {
-            const data: FavoriteProductDTO[] = await res.json() as FavoriteProductDTO[];
-            return {
-                data,
-                status: res.status
-            }
-            // if no favoriteItems fot this user exists, there will be a bad Request
-        } else if(res.status === 404) {
-            return {
-                data: [],
-                status: res.status,
-            }
-        } else {
-            throw new Error(`HTTP error! status: ${res.status}` )
+        const res:  Response = await fetch(`${apiPath}favoriteItem/getProductIdsByUser/${userId}`, requestOptions);
+        if(!res.ok){
+            const error: ApiError = new ApiError(`Error getting favorite items: ${res.status} ${res.statusText}`, res.status);
+            error.status = res.status;
+            throw error;
         }
-    } catch (error){
-        console.error('Error requestin favorite items.', error);
-        throw error;
+        return {
+            data: await res.json() as FavoriteProductDTO[],
+            error: null 
+        };
+    } catch(error){
+        console.error(`Error retrieving products by name: ${error}`);
+        if(error instanceof ApiError){
+            return { data: null, error }
+        } else {
+            return {
+                data: null,
+                error: new ApiError(`Unexpected Error occured`, 500)}
+        }
     }
 }
 
@@ -59,23 +60,28 @@ const createFavoriteItem = async (userId: number, productId: number, token: stri
         };
 
         let res: Response = await fetch(`${apiPath}favoriteItem/`, requestOptions);
-        if(res.status === 201){
-            const data: FavoriteProductDTO = await res.json() as FavoriteProductDTO;
+        if(!res.ok){
+            const error: ApiError = new ApiError(`Error getting favorite items: ${res.status} ${res.statusText}`, res.status);
+            error.status = res.status;
+            throw error;
+        }
+        return {
+            data: await res.json() as FavoriteProductDTO,
+            error: null 
+        };
+    } catch(error){
+        console.error(`Error retrieving products by name: ${error}`);
+        if(error instanceof ApiError){
+            return { data: null, error }
+        } else {
             return {
-                data,
-                status: res.status
-            };
+                data: null,
+                error: new ApiError(`Unexpected Error occured`, 500)}
         }
-        else {
-            throw new Error(`HTTP error! status: ${res.status}`);
-        }
-        } catch(error){
-            console.error("Error creating favorite items. ", error);
-            throw error
     }
 }
 
-const deleteFavoriteProductByUserAndProduct = async (userId: number, productId: number, token: string): Promise<ApiResponse<Boolean>> => {
+const deleteFavoriteProductByUserAndProduct = async (userId: number, productId: number, token: string): Promise<ApiResponse<boolean>> => {
     console.log("Delete Favorite Products BY User & Product Debug");
     try {
         const requestOptions = {
@@ -92,14 +98,25 @@ const deleteFavoriteProductByUserAndProduct = async (userId: number, productId: 
         };
 
         let res = await fetch(`${apiPath}favoriteItem/delete`, requestOptions);
-        return {
-            data: true,
-            status: res.status
+        
+        if(!res.ok){
+            const error: ApiError = new ApiError(`Error getting favorite items: ${res.status} ${res.statusText}`, res.status);
+            error.status = res.status;
+            throw error;
         }
-
+        return {
+            data: await res.json() as boolean,
+            error: null 
+        };
     } catch(error){
-        console.error("Error deleting favorite items. ", error);
-        throw error
+        console.error(`Error retrieving products by name: ${error}`);
+        if(error instanceof ApiError){
+            return { data: null, error }
+        } else {
+            return {
+                data: null,
+                error: new ApiError(`Unexpected Error occured`, 500)}
+        }
     }
 }
 

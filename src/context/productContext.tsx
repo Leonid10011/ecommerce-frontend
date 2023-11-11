@@ -79,10 +79,12 @@ const ProductContextProvider = ({children}: {
      */
     const fetchAndSetProducts = async() => {
         const res: ApiResponse<Product[]> = await getProducts();
-        const newProducts = [...res.data];
-        setProducts(newProducts);
-        // trigger the filterFavoriteItems, in order to init useMemo with nonFilteredProducts
-        setFavoriteItems([...favoriteItems])
+        if(res.data){
+            const newProducts = [...res.data];
+            setProducts(newProducts);
+            // trigger the filterFavoriteItems, in order to init useMemo with nonFilteredProducts
+            setFavoriteItems([...favoriteItems])
+        }
     }
 
     /**
@@ -94,11 +96,12 @@ const ProductContextProvider = ({children}: {
      * @param token 
      */
     const fetchAndSetProductsByName = async (name: string) => {
-        console.log("Fetch by Name; dataContext");
         if(name != ""){
             const res: ApiResponse<Product[]> = await getProductsByName(name);
-            const newProducts = [...res.data];
-            setProducts(newProducts);
+            if(res.data){
+                const newProducts = [...res.data];
+                setProducts(newProducts);
+            }
         } else {
             fetchAndSetProducts();
         }
@@ -156,7 +159,7 @@ const ProductContextProvider = ({children}: {
      */
     const fetchFavoriteItems = async (userId: number) => {
         const favoriteItems = await getFavoriteItemsByUser(userId);
-        if(favoriteItems.status === 200){
+        if(favoriteItems.data){
             setFavoriteItems(favoriteItems.data);
         }
     }
@@ -200,9 +203,11 @@ const ProductContextProvider = ({children}: {
      */
     const addFavoriteItem = async (productId: number) => {
         const res = await createFavoriteItem(userId, productId, token);
-        const newFavoriteItem = res.data;
-        const updatedfavoriteItems = [...favoriteItems, newFavoriteItem];
-        setFavoriteItems(updatedfavoriteItems);
+        if(res.data){
+            const newFavoriteItem = res.data;
+            const updatedfavoriteItems = [...favoriteItems, newFavoriteItem];
+            setFavoriteItems(updatedfavoriteItems);
+        }
     }
     /**
      * Delete a favoiteItem from the database. 

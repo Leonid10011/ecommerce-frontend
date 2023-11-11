@@ -1,5 +1,6 @@
 import {config} from "../config";
 import { ApiResponse } from "../types/ApiInterfaces";
+import { ApiError } from "../types/ErrorTypes";
 import { Product } from "./productApi";
 
 const apiPath = config.api_path;
@@ -35,18 +36,24 @@ const createOrder = async (userId: number, date: Date, status: string): Promise<
         };
 
         const res: Response = await fetch(`${apiPath}order/create`, requestOptions);
-        if(res.status === 201){
-            const data: OrderDTO = await res.json() as OrderDTO;
-            return {
-                data,
-                status: res.status,
-            };
-        } else {
-            throw new Error(`HTTP Error with status ${res.status}`);
+        if(!res.ok){
+            const error: ApiError = new ApiError(`Error getting favorite items: ${res.status} ${res.statusText}`, res.status);
+            error.status = res.status;
+            throw error;
         }
-    } catch( error) {
-        console.error(`Error creating Order: ${error}`);
-        throw error;
+        return {
+            data: await res.json() as OrderDTO,
+            error: null 
+        };
+    } catch(error){
+        console.error(`Error retrieving products by name: ${error}`);
+        if(error instanceof ApiError){
+            return { data: null, error }
+        } else {
+            return {
+                data: null,
+                error: new ApiError(`Unexpected Error occured`, 500)}
+        }
     }
 }
 
@@ -61,18 +68,24 @@ const getOrder = async (userId: number, token: string): Promise<ApiResponse<Orde
         }
 
         const res: Response = await fetch(`${apiPath}/order/get/${userId}`, requestOptions);
-        if(res.ok){
-            const data: OrderDTO = await res.json() as OrderDTO;
-            return {
-                data,
-                status: res.status,
-            }
-        } else {
-            throw new Error(`HTTP Error with status code: ${res.status}`);
+        if(!res.ok){
+            const error: ApiError = new ApiError(`Error getting favorite items: ${res.status} ${res.statusText}`, res.status);
+            error.status = res.status;
+            throw error;
+        }
+        return {
+            data: await res.json() as OrderDTO,
+            error: null 
         };
-    } catch( error){
-        console.error(`Error getting Order ${error}`);
-        throw error;
+    } catch(error){
+        console.error(`Error retrieving products by name: ${error}`);
+        if(error instanceof ApiError){
+            return { data: null, error }
+        } else {
+            return {
+                data: null,
+                error: new ApiError(`Unexpected Error occured`, 500)}
+        }
     }
 }
 
@@ -94,18 +107,24 @@ const addItem = async (orderItem: OrderItemDTO, token: string): Promise<ApiRespo
         };
 
         const res: Response =  await fetch(`${apiPath}/order/addItem`, requestHeaders);
-        if(res.status === 201 || res.ok){
-            const data: OrderItemDTO = await res.json() as OrderItemDTO;
-            return {
-                data,
-                status: res.status,
-            };
-        } else {
-            throw new Error(`HTTP Error with status code: ${res.status}`);
+        if(!res.ok){
+            const error: ApiError = new ApiError(`Error getting favorite items: ${res.status} ${res.statusText}`, res.status);
+            error.status = res.status;
+            throw error;
+        }
+        return {
+            data: await res.json() as OrderItemDTO,
+            error: null 
         };
-    } catch(error) {
-        console.error(`Error adding OrderItem ${error}`);
-        throw error;
+    } catch(error){
+        console.error(`Error retrieving products by name: ${error}`);
+        if(error instanceof ApiError){
+            return { data: null, error }
+        } else {
+            return {
+                data: null,
+                error: new ApiError(`Unexpected Error occured`, 500)}
+        }
     }
 }
 
@@ -120,24 +139,24 @@ const getOrderItems = async (orderId: number): Promise<ApiResponse<OrderItemDTO[
         }
 
         const res: Response = await fetch(`${apiPath}/order/getItems/${orderId}`, requestOptions);
-        if(res.ok){
-            const data:OrderItemDTO[] = await res.json() as OrderItemDTO[];  
-            return {
-                data,
-                status: res.status,
-            }
-        } else if(res.status === 404){
-            return {
-                data: [],
-                status: res.status
-            }
+        if(!res.ok){
+            const error: ApiError = new ApiError(`Error getting favorite items: ${res.status} ${res.statusText}`, res.status);
+            error.status = res.status;
+            throw error;
         }
-            else {
-                throw new Error(`HTTP Error with status code: ${res.status}`);
-            }
-        } catch(error) {
-        console.error(`Error get Items ${error}`);
-        throw error;
+        return {
+            data: await res.json() as OrderItemDTO[],
+            error: null 
+        };
+    } catch(error){
+        console.error(`Error retrieving products by name: ${error}`);
+        if(error instanceof ApiError){
+            return { data: null, error }
+        } else {
+            return {
+                data: null,
+                error: new ApiError(`Unexpected Error occured`, 500)}
+        }
     }
 }
 
@@ -152,27 +171,26 @@ const getOrderItemProducts = async (orderId: number): Promise<ApiResponse<Produc
         }
 
         let res: Response = await fetch(`${apiPath}order/getOrderProduct/${orderId}`, requestOptions);
-        if(res.ok){
-            let data: Product[] = await res.json() as Product[];
-            return {
-                data,
-                status: res.status,
-            }
+        if(!res.ok){
+            const error: ApiError = new ApiError(`Error getting favorite items: ${res.status} ${res.statusText}`, res.status);
+            error.status = res.status;
+            throw error;
         }
-        else if(res.status === 404){
-            return {
-                data: [],
-                status: res.status,
-            }
+        return {
+            data: await res.json() as Product[],
+            error: null 
+        };
+    } catch(error){
+        console.error(`Error retrieving products by name: ${error}`);
+        if(error instanceof ApiError){
+            return { data: null, error }
         } else {
-            throw new Error(`HTTP ERROR with status code: ${res.status}`);
+            return {
+                data: null,
+                error: new ApiError(`Unexpected Error occured`, 500)}
         }
-    } catch(error) {
-        console.error("Network error ", error);
-        throw error
     }
-} 
-
+}
 export { 
     getOrder,
     createOrder, 

@@ -12,11 +12,6 @@ export enum HttpStatusCode {
 }
 
 export interface ApiResponse<T> {
-    data: T,
-    status: HttpStatusCode
-}
-
-export interface AuthApiResponse<T> {
     data: T | null,
     error: ApiError | null,
 } 

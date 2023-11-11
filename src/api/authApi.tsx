@@ -1,4 +1,4 @@
-import { ApiResponse, AuthApiResponse, User, UserDTO } from '../types/ApiInterfaces';
+import { ApiResponse, User, UserDTO } from '../types/ApiInterfaces';
 import { config } from '../config';
 import { ApiError } from '../types/ErrorTypes';
 
@@ -12,7 +12,7 @@ const apiPath = config.api_path;
  * @returns An `AuthApiResponse<string>` object containing either a JWT token (as a string) in the `data` field upon successful login, or `null` in the `data` field and an `ApiError` in the `error` field in case of failure.
  *         The `ApiError` includes a descriptive message and the corresponding HTTP status code.
  */
-export const loginUser = async (username: string, password: string): Promise<AuthApiResponse<string>> => {
+export const loginUser = async (username: string, password: string): Promise<ApiResponse<string>> => {
     try {
         const requestOptions = {
             method: "POST",
@@ -53,7 +53,7 @@ export const loginUser = async (username: string, password: string): Promise<Aut
  * @returns An `AuthApiResponse<User>` object containing either the created user with a correct id in the `data` field and null in the `error` field, or null in the `data` field and `ApiError` in the error field.
  *          The `ApiError` includes a descriptive message and the corresponding HTTP status code.
 */
-export const signUp= async (userDTO: UserDTO): Promise<AuthApiResponse<User>> => {
+export const signUp= async (userDTO: UserDTO): Promise<ApiResponse<User>> => {
     try {
         const requestOptions = {
             method: "POST",

@@ -1,7 +1,9 @@
 # E-Commerce Frontend in React with Material-UI
 
 # Currently working on:
-- [] Cleaning and structuring api call methods 
+
+
+- [ ] Cleaning and structuring api call methods 
 - [x] Reorganizing products, orderItems and favoriteItems, such they all interact seamless  with each other. Currently interaction is disturbed due to bad data structure.
 
 # Preview
