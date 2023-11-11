@@ -1,4 +1,5 @@
 
+import { Api } from "@mui/icons-material";
 import {config} from "../config";
 import { ApiResponse } from "../types/ApiInterfaces";
 import { ApiError } from "../types/ErrorTypes";
@@ -100,6 +101,40 @@ const createFavoriteItem = async (userId: number, productId: number, token: stri
     }
 }
 
+const deleteFavoriteProduct = async (favoritProductId: number, token: string): Promise<ApiResponse<boolean>> =>  {
+    try {
+        const requestOptions = {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`
+            }
+        };
+        let res = await fetch(`${apiPath}favoriteItem/delete/${favoritProductId}`);
+
+        if(!res.ok){
+            const error: ApiError = new ApiError(`Deleting favorite product failed ${res.status} ${res.statusText}`, res.status);
+            throw error;
+        } 
+        return { 
+            data: true,
+            error: null,
+        }
+    } catch(error) {
+        if(error instanceof ApiError){
+            return {
+                data:false,
+                error
+            }
+        } else {
+            return {
+                data: false,
+                error: new ApiError(`Unexpected Error occured.`, 500),
+            }
+        }
+    }
+}
+
 /**
  * Deletes a favorite product for a user.
  * 
@@ -113,7 +148,6 @@ const createFavoriteItem = async (userId: number, productId: number, token: stri
  * @returns {Promise<ApiResponse<boolean>>} A promise that resolves to an ApiResponse.
  */
 const deleteFavoriteProductByUserAndProduct = async (userId: number, productId: number, token: string): Promise<ApiResponse<boolean>> => {
-    console.log("Delete Favorite Products BY User & Product Debug");
     try {
         const requestOptions = {
             method: 'DELETE',
@@ -154,5 +188,6 @@ const deleteFavoriteProductByUserAndProduct = async (userId: number, productId: 
 export {
     createFavoriteItem, 
     deleteFavoriteProductByUserAndProduct,
+    deleteFavoriteProduct,
     getFavoriteItemsByUser
 }

@@ -6,7 +6,7 @@ import { FavoriteProduct, createFavoriteItem, deleteFavoriteProductByUserAndProd
 import { useAuth } from "./authContext";
 import { getProducts, getProductsByName } from "../api/productApi";
 import { ApiResponse } from "../types/ApiInterfaces";
-import { FilterActionType, FilterStateType, reducer } from "../reducer/filterReducer";
+import { FilterActionType, FilterStateType, filterReducer } from "../reducer/filterReducer";
 import { stat } from "fs";
 
 export interface Product {
@@ -57,20 +57,19 @@ const useProduct = () => useContext(ProductContext);
 const ProductContextProvider = ({children}: {
     children: React.ReactNode
 }) => {
-    
+
     const [products, setProducts] = useState<Product[]>([]);
     const [favoriteItems, setFavoriteItems] = useState<FavoriteProduct[]>([]);
     const { userId, token, isAuthenticated } = useAuth();
     const [triggerFilter, setTriggerFilter] = useState<Boolean>(false);
 
-    const [state, dispatch] = useReducer(reducer,
+    const [state, dispatch] = useReducer(filterReducer,
         {
             category: [],
             price: {
                 minValue: 0,
                 maxValue: 0,
-            },
-            filter: true,
+            }
         }
     );
     
@@ -115,33 +114,32 @@ const ProductContextProvider = ({children}: {
     /**
      * @description resets the filters and its condition
      */
-    const resetFilter = () => {
-        dispatch({type: 'RESET_CATEGORY', payload: void 0});
-        dispatch({type: 'RESET_PRICE', payload: void 0});
-        setTriggerFilter(prev => !prev);
-    }
+     const resetFilter = () => {
+         dispatch({type: 'RESET_CATEGORY', payload: void 0});
+         dispatch({type: 'RESET_PRICE', payload: void 0});
+         setTriggerFilter(prev => !prev);
+     }
 
     /**
      * @description apply filter conditions
      * @param action
      */
-    const manageFilter = (action: FilterActionType) => {
-        dispatch(action);         
-    }
+     const manageFilter = (action: FilterActionType) => {
+         dispatch(action);         
+     }
 
     /**
      * @description filtering products by filter condition
      */
-    const filterProducts = useMemo(() => {
-        const isCategorySelected = (catId: number) => state.category.length === 0 || state.category.includes(catId);
-        const isPriceWithinRange = (price: number) => {
-            const isAboveMin = state.price.minValue === 0 || price >= state.price.minValue;
-            const isBelowMax = state.price.maxValue === 0 || price <= state.price.maxValue;
-            return isAboveMin && isBelowMax;
-        };
-    
-        return products.filter(item => isCategorySelected(item.categoryID) && isPriceWithinRange(item.price));
-    }, [state.category, state.price.minValue, state.price.maxValue, products]);
+     const filterProducts = useMemo(() => {
+         const isCategorySelected = (catId: number) => state.category.length === 0 || state.category.includes(catId);
+         const isPriceWithinRange = (price: number) => {
+             const isAboveMin = state.price.minValue === 0 || price >= state.price.minValue;
+             const isBelowMax = state.price.maxValue === 0 || price <= state.price.maxValue;
+             return isAboveMin && isBelowMax;
+         };
+         return products.filter(item => isCategorySelected(item.categoryID) && isPriceWithinRange(item.price));
+     }, [state.category, state.price.minValue, state.price.maxValue, products]);
     
     
 
@@ -172,14 +170,8 @@ const ProductContextProvider = ({children}: {
     } = useMemo(() => {
         console.log("Change filterFavoriteItems");
         let newProducts; 
-        if(state.filter){
-            console.log("IF", state.filter);
-            newProducts = [...filterProducts];
-        }
-        else{
-            console.log("ELSE", state.filter);
-            newProducts = [...products];
-        } 
+        newProducts = [...products];
+
         const [favoriteItemsFiltered, nonFavoriteItems] = newProducts.reduce<[Product[], Product[]]>(
             ([favorites, nonFavorites], item) => {
                 if (favoriteItems.find(item2 => item2.productId === item.id)) {
@@ -194,7 +186,7 @@ const ProductContextProvider = ({children}: {
         
         return { favoriteItemsFiltered, nonFavoriteItems };
       
-    }, [favoriteItems, filterProducts]);
+    }, [favoriteItems]);
     /**
      * Post a new favoriteItem for the productId. 
      * Afterwards add the favoriteItem to locale state and trigger filterFavoriteItems memo. 

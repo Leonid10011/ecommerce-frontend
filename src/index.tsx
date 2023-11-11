@@ -11,6 +11,7 @@ import ProductList from './pages/Products/Products';
 import { ProductContextProvider } from './context/productContext';
 import Cart from './pages/Cart/Cart';
 import { OrderContextProvider } from './context/orderContext';
+import { ProductProvider } from './context/ProductContext.tsx/ProductContext';
 //import { InitContextProvider } from './context/initContext';
 
 const root = ReactDOM.createRoot(
@@ -20,6 +21,7 @@ const root = ReactDOM.createRoot(
 root.render(
   <BrowserRouter>
   <AuthContextProvider>
+    <ProductProvider>
       <ProductContextProvider>
         <OrderContextProvider>
             <Routes>
@@ -34,6 +36,7 @@ root.render(
             </Routes>  
       </OrderContextProvider>
     </ProductContextProvider>
+    </ProductProvider>
   </AuthContextProvider>
   </BrowserRouter>
 );

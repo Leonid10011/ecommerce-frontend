@@ -19,7 +19,8 @@ import { useOrder } from '../../context/orderContext';
 import MenuIcon from '@mui/icons-material/Menu';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { toast } from 'react-toastify';
-import { useProduct } from '../../context/productContext';
+import useProductFilter from '../../hooks/useProductFilter';
+import { useProducts } from '../../context/ProductContext.tsx/ProductContext';
 
 const logoStyles = css`
   width: 60px;
@@ -38,8 +39,7 @@ function Navbar() {
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  const { fetchAndSetProductsByName, state } = useProduct();
-
+  const { fetchProductsByName } = useProducts();
   const { resetCart } = useOrder();
 
   const navigation = useNavigate();
@@ -65,8 +65,10 @@ function Navbar() {
     setMobileOpen(open);
   };
 
+  const { filterConditions } = useProducts();
+
   const handleSearch = (e: FormEvent) => {
-    fetchAndSetProductsByName(searchTerm);
+    fetchProductsByName(searchTerm);
 
     navigation("/p");
   }
@@ -83,13 +85,6 @@ function Navbar() {
       name: "Products",
       link: "/p",
     }];
-
-
-    const notify = () => {
-      toast.error("Not implemented yet!", {
-        position: 'top-center'
-      });
-    };
 
     const [anchorEL, setAnchorEl] = useState<Element | null>(null);
 
@@ -175,7 +170,7 @@ function Navbar() {
                 <IconButton onClick={handleClick}>
                   <FilterListIcon/>
                 </IconButton>
-                <BasicMenu anchor={anchorEL} menuItems={menutItems} handleItem={handleItemClick} handleClose={handleClose} checks={state.category}/>
+                <BasicMenu anchor={anchorEL} menuItems={menutItems} handleItem={handleItemClick} handleClose={handleClose} checks={filterConditions.category}/>
                 </Grid>
             </Grid>
           </Toolbar>
@@ -242,7 +237,7 @@ const BasicMenu =<T extends { text: string, value: F}, F>({ anchor, menuItems, h
 
   const categoriesRef = useRef<HTMLDivElement>(null);
 
-  const { manageFilter, state } = useProduct();
+  const { manageFilter } = useProducts();
 
   interface PriceType {
     min: number,
@@ -264,24 +259,23 @@ const BasicMenu =<T extends { text: string, value: F}, F>({ anchor, menuItems, h
     } else {
       console.log("Unknown error.");
     }
-    console.log(element.value, "\n", state.price)
   }
 
   const handleCategroyChange = (e: FormEvent<HTMLInputElement>) => {
     const category: string = e.currentTarget.name;
     const checked = e.currentTarget.checked;
-
     let newChecks;
-
+    
     if (checked) {
-        // Füge die Kategorie hinzu, wenn sie noch nicht in 'checks' ist
-        newChecks = [...checks, categories[category as keyof typeof categories]];
+      // Füge die Kategorie hinzu, wenn sie noch nicht in 'checks' ist
+      newChecks = [...currentChecks, categories[category as keyof typeof categories]];
     } else {
-        // Entferne die Kategorie aus 'checks'
-        newChecks = checks.filter(check => check !== categories[category as keyof typeof categories]);
+      // Entferne die Kategorie aus 'checks'
+      newChecks = currentChecks.filter(check => check !== categories[category as keyof typeof categories]);
     }
     setCurrentChecks(newChecks);
-
+    
+    console.log(currentChecks)
     // when check is true, add the category to filter, otherwise remove it
     checked 
     ? manageFilter({type: 'SET_CATEGORY', payload: categories[category as keyof typeof categories]})

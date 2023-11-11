@@ -1,6 +1,18 @@
-import React, { createContext, useContext } from 'react';
+import React, { createContext, useContext, useEffect } from 'react';
 import useProductApi from '../../hooks/useProductApi';
-import { Product } from '../productContext';
+import useProductFilter from '../../hooks/useProductFilter';
+import useFavoriteProducts from '../../hooks/useFavoriteProducts';
+import { FilterActionType, FilterStateType } from '../../reducer/filterReducer';
+
+export interface Product {
+    id: number,
+    name: string,
+    description: string,
+    price: number,
+    categoryID: number,
+    quantity: number,
+    imgURL: string,
+}
 
 interface ProductContextInterface {
     products: Product[],
@@ -8,6 +20,9 @@ interface ProductContextInterface {
     error: Error | null,
     fetchProducts: () => void,
     fetchProductsByName: (name: string) => void,
+    favoriteProductsFiltered: { favoriteProducts: Product[], nonFavoriteProducts: Product[] },
+    manageFilter: (action: FilterActionType) => void,
+    filterConditions: FilterStateType,
 }
 
 const ProductContext = createContext<ProductContextInterface | null>(null);
@@ -17,12 +32,19 @@ export const ProductProvider = ({ children }: {
 }) => {
     const { products, loading, error, fetchProducts, fetchProductsByName } = useProductApi();
 
+    const { filteredProducts, resetFilter, manageFilter, filterConditions } = useProductFilter(products);
+
+    const { favoriteItems, addFavoriteItem, deleteFavoriteItem, favoriteProductsFiltered } = useFavoriteProducts(filteredProducts);
+
     const value = {
         products,
         loading,
         error,
         fetchProducts,
-        fetchProductsByName
+        fetchProductsByName,
+        favoriteProductsFiltered,
+        manageFilter,
+        filterConditions
     };
 
     return (

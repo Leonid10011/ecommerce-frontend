@@ -7,7 +7,6 @@ export interface FilterStateType {
         minValue: number,
         maxValue: number,
     },
-    filter: Boolean,
 }
 
 export type FilterActionType =
@@ -19,7 +18,7 @@ export type FilterActionType =
 | { type: 'RESET_CATEGORY'; payload: void }
 | { type: 'RESET_PRICE'; payload: void }
   
-export const reducer = (state: FilterStateType, action: FilterActionType): FilterStateType => {
+export const filterReducer = (state: FilterStateType, action: FilterActionType): FilterStateType => {
     switch ( action.type ) {
         case 'SET_CATEGORY':
             return { ...state, category: [...state.category, action.payload]};
