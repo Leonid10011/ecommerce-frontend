@@ -2,8 +2,8 @@
 
 # Currently working on:
 
-
-- [ ] Cleaning and structuring api call methods 
+- [ ] Cleaning and Refactoring ProductContext. Introducing hooks for filtering. Rework docs for product data logic.
+- [x] Cleaning and structuring api call methods 
 - [x] Reorganizing products, orderItems and favoriteItems, such they all interact seamless  with each other. Currently interaction is disturbed due to bad data structure.
 
 # Preview
