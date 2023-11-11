@@ -1,13 +1,13 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { FavoriteProduct, createFavoriteItem, deleteFavoriteProduct, getFavoriteItemsByUser } from "../api/favoriteItemApi";
 import { Product } from "../api/productApi";
 import { ApiResponse } from "../types/ApiInterfaces";
 
-interface FavoriteProductsHookInterface {
-    products: Product[],
+export interface FilteredFavoriteProduct extends Product {
+    favoriteProductId: number
 }
 
-const useFavoriteProducts = (filteredProducts: Product[]) => {
+const useFavoriteProducts = (filteredProducts: Product[], userId: number, token: string) => {
     const [favoriteItems, setFavoriteItems] = useState<FavoriteProduct[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
@@ -26,7 +26,7 @@ const useFavoriteProducts = (filteredProducts: Product[]) => {
 
     }
 
-    const addFavoriteItem = async (userId: number, token: string, productId: number) => {
+    const addFavoriteItem = async (productId: number) => {
         setLoading(true);
         const response = await createFavoriteItem(userId, productId, token);
         setLoading(false);
@@ -38,7 +38,7 @@ const useFavoriteProducts = (filteredProducts: Product[]) => {
         }
     }
 
-    const deleteFavoriteItem = async (favoriteItemId: number, token: string) => {
+    const deleteFavoriteItem = async (favoriteItemId: number) => {
         setLoading(true);
         const response: ApiResponse<boolean> = await deleteFavoriteProduct(favoriteItemId, token);
         setLoading(false);
@@ -51,16 +51,19 @@ const useFavoriteProducts = (filteredProducts: Product[]) => {
     }
 
     const favoriteProductsFiltered: {
-        favoriteProducts: Product[];
+        favoriteProducts: FilteredFavoriteProduct[];
         nonFavoriteProducts: Product[];
     } = useMemo(() => {
         console.log("Favorite Products Filtered memo: ", "test");
         let newProducts = [...filteredProducts];
-
-        const [favoriteProducts, nonFavoriteProducts] = newProducts.reduce<[Product[], Product[]]>(
+        let tmpId: number;
+        const [favoriteProducts, nonFavoriteProducts] = newProducts.reduce<[FilteredFavoriteProduct[], Product[]]>(
             ([favorites, nonFavorites], item) => {
-                if(favoriteItems.find(item2 => item2.productId === item.id)){
-                    favorites.push(item);
+                if(favoriteItems.find(item2 => { 
+                    tmpId = item2.id
+                    return item2.productId === item.id
+                } )){
+                    favorites.push({...item, favoriteProductId: tmpId});
                 } else {
                     nonFavorites.push(item);
                 }
@@ -70,6 +73,10 @@ const useFavoriteProducts = (filteredProducts: Product[]) => {
             console.log("Nonfavorite ", favoriteProducts, nonFavoriteProducts);
         return { favoriteProducts, nonFavoriteProducts }
     }, [filteredProducts ,favoriteItems]);
+
+    useEffect(() => {
+        fetchFavoriteItems(userId)
+    }, [userId])
 
     return { favoriteItems, loading, error, addFavoriteItem, deleteFavoriteItem, favoriteProductsFiltered};
 }

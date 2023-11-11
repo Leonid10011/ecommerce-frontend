@@ -1,18 +1,15 @@
 import React, { useEffect } from 'react';
 import { Container } from '@mui/material';
-import { useProduct } from '../../context/productContext';
 import { useAuth } from '../../context/authContext';
 import { useNavigate } from 'react-router';
 import { useOrder } from '../../context/orderContext';
 import ProductCard from '../../components/ProductCard/ProductCard';
-import useFavoriteProducts from '../../hooks/useFavoriteProducts';
-import useProductFilter from '../../hooks/useProductFilter';
 import { useProducts } from '../../context/ProductContext.tsx/ProductContext';
 
 function ProductList() {
     const { isAuthenticated } = useAuth();
     const { order, addOrderItem } = useOrder();
-    const { addFavoriteItem, deleteFavoriteItem } = useProduct();
+    const { addFavoriteItem, deleteFavoriteItem, favoriteProductsFiltered } = useProducts();
     const navigation = useNavigate();
 
     // Need to be reworked
@@ -31,8 +28,6 @@ function ProductList() {
         navigation("/signin")
       }
     } 
-
-    const { favoriteProductsFiltered, filterConditions } = useProducts();
 
     return (
       <Container maxWidth="sm" sx={{ position: 'relative', overflow: 'hidden', minHeight: '300px' }}>

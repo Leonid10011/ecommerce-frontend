@@ -3,12 +3,13 @@ import { Card, CardContent, IconButton, Typography } from '@mui/material';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import ProductModal from '../ProductModal/ProductModal';
-import { Product } from '../../context/productContext';
 import { config } from '../../config';
+import { Product } from '../../api/productApi';
+import { FilteredFavoriteProduct } from '../../hooks/useFavoriteProducts';
 
 
 interface ProductCardProps {
-  product: Product,
+  product: Product | FilteredFavoriteProduct,
   handleBuy: (id: number, price: number, quantity: number) => void,
   isFavorite: Boolean,
   isAuthenticated: Boolean,
@@ -35,8 +36,10 @@ const ProductCard = ({
   }
 
   const handleFavoriteClick = () => {
-    if(isFavorite)
-      deleteFavoriteItem(product.id);
+    if(isFavorite){
+      if('favoriteProductId' in product)
+        deleteFavoriteItem(product.favoriteProductId);
+    }
     else
       addFavoriteItem(product.id);
   }

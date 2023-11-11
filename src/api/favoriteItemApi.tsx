@@ -110,7 +110,7 @@ const deleteFavoriteProduct = async (favoritProductId: number, token: string): P
                 Authorization: `Bearer ${token}`
             }
         };
-        let res = await fetch(`${apiPath}favoriteItem/delete/${favoritProductId}`);
+        let res = await fetch(`${apiPath}favoriteItem/delete/${favoritProductId}`, requestOptions);
 
         if(!res.ok){
             const error: ApiError = new ApiError(`Deleting favorite product failed ${res.status} ${res.statusText}`, res.status);

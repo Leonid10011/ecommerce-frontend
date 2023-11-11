@@ -3,6 +3,7 @@ import useProductApi from '../../hooks/useProductApi';
 import useProductFilter from '../../hooks/useProductFilter';
 import useFavoriteProducts from '../../hooks/useFavoriteProducts';
 import { FilterActionType, FilterStateType } from '../../reducer/filterReducer';
+import { useAuth } from '../authContext';
 
 export interface Product {
     id: number,
@@ -23,6 +24,8 @@ interface ProductContextInterface {
     favoriteProductsFiltered: { favoriteProducts: Product[], nonFavoriteProducts: Product[] },
     manageFilter: (action: FilterActionType) => void,
     filterConditions: FilterStateType,
+    addFavoriteItem: (productId: number) => Promise<void>,
+    deleteFavoriteItem: (favoritItemId: number) => Promise<void>,
 }
 
 const ProductContext = createContext<ProductContextInterface | null>(null);
@@ -32,9 +35,11 @@ export const ProductProvider = ({ children }: {
 }) => {
     const { products, loading, error, fetchProducts, fetchProductsByName } = useProductApi();
 
+    const { userId, token } = useAuth();
+
     const { filteredProducts, resetFilter, manageFilter, filterConditions } = useProductFilter(products);
 
-    const { favoriteItems, addFavoriteItem, deleteFavoriteItem, favoriteProductsFiltered } = useFavoriteProducts(filteredProducts);
+    const { favoriteItems, addFavoriteItem, deleteFavoriteItem, favoriteProductsFiltered } = useFavoriteProducts(filteredProducts, userId, token);
 
     const value = {
         products,
@@ -44,7 +49,9 @@ export const ProductProvider = ({ children }: {
         fetchProductsByName,
         favoriteProductsFiltered,
         manageFilter,
-        filterConditions
+        filterConditions,
+        addFavoriteItem,
+        deleteFavoriteItem,
     };
 
     return (

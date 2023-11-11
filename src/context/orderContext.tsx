@@ -5,7 +5,7 @@ import React, { createContext, useContext, useEffect, useMemo, useState } from "
 import { getOrderItems, addItem, getOrder, OrderItemDTO, OrderDTO, getOrderItemProducts } from "../api/orderApi";
 import { useAuth } from "./authContext";
 import { ApiResponse } from "../types/ApiInterfaces";
-import { Product, useProduct } from "./productContext";
+import { Product } from "../api/productApi";
 
 
 export interface OrderProduct extends Product {
