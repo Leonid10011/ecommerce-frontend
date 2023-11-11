@@ -14,8 +14,14 @@ export interface Product {
     imgURL: string,
 }
 
-/** Attemps to get all products from the backend.
- * @returns 
+/**
+ * Fetches all products from the backend.
+ * 
+ * This function sends a GET request to the backend to retrieve a list of all products.
+ * It returns an ApiResponse containing either an array of Product objects or an error.
+ * 
+ * @returns Promise<ApiResponse<Product[]>> - A promise that resolves to an ApiResponse, 
+ * containing either the list of products (data) or an error object.
  */
 const getProducts = async (): Promise<ApiResponse<Product[]>> => {
     try {
@@ -28,7 +34,6 @@ const getProducts = async (): Promise<ApiResponse<Product[]>> => {
         const res: Response = await fetch(`${apiPath}product/get/`, requestOptions);
         if(!res.ok){
             const error = new ApiError(`Getting products failed: ${res.status} ${res.statusText}`, res.status);
-            error.status = res.status;
             throw error;
         }
         return {
@@ -52,6 +57,17 @@ const getProducts = async (): Promise<ApiResponse<Product[]>> => {
     }
 }
 
+/**
+ * Fetches products by their name from the backend.
+ * 
+ * This function sends a GET request to the backend to retrieve products matching a specific name.
+ * It takes a 'name' parameter and appends it to the request URL.
+ * The function returns an ApiResponse containing either an array of Product objects or an error.
+ * 
+ * @param {string} name - The name of the products to retrieve.
+ * @returns Promise<ApiResponse<Product[]>> - A promise that resolves to an ApiResponse,
+ * containing either the list of matching products (data) or an error object.
+ */
 const getProductsByName = async (name: string): Promise<ApiResponse<Product[]>> => {
     try {
         const requestOptions = {
@@ -63,7 +79,6 @@ const getProductsByName = async (name: string): Promise<ApiResponse<Product[]>> 
         const res: Response = await fetch(`${apiPath}product/getByName/${name}`, requestOptions);
         if(!res.ok){
             const error: ApiError = new ApiError(`Error getting products by name: ${res.status} ${res.statusText}`, res.status);
-            error.status = res.status;
             throw error;
         }
         return {

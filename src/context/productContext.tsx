@@ -2,7 +2,7 @@
  * We use this Context to retrieve Product related data 
  */
 import React, { createContext, useContext, useEffect, useMemo, useReducer, useState } from "react";
-import { FavoriteProductDTO, createFavoriteItem, deleteFavoriteProductByUserAndProduct, getFavoriteItemsByUser } from "../api/favoriteItemApi";
+import { FavoriteProduct, createFavoriteItem, deleteFavoriteProductByUserAndProduct, getFavoriteItemsByUser } from "../api/favoriteItemApi";
 import { useAuth } from "./authContext";
 import { getProducts, getProductsByName } from "../api/productApi";
 import { ApiResponse } from "../types/ApiInterfaces";
@@ -57,9 +57,9 @@ const useProduct = () => useContext(ProductContext);
 const ProductContextProvider = ({children}: {
     children: React.ReactNode
 }) => {
-
+    
     const [products, setProducts] = useState<Product[]>([]);
-    const [favoriteItems, setFavoriteItems] = useState<FavoriteProductDTO[]>([]);
+    const [favoriteItems, setFavoriteItems] = useState<FavoriteProduct[]>([]);
     const { userId, token, isAuthenticated } = useAuth();
     const [triggerFilter, setTriggerFilter] = useState<Boolean>(false);
 
