@@ -1,15 +1,18 @@
-import { ApiResponse } from '../types/api/apiTypes';
+import { ApiResponse, AuthApiResponse, User, UserDTO } from '../types/ApiInterfaces';
 import { config } from '../config';
+import { ApiError } from '../types/ErrorTypes';
 
 const apiPath = config.api_path;
 
 /**
+ * Attempts to log in a user with the provided username and password.
  * 
- * @param username 
- * @param password 
- * @returns token on success ot empty string on failure
+ * @param username The username of the user attempting to log in.
+ * @param password The password of the user.
+ * @returns An `AuthApiResponse<string>` object containing either a JWT token (as a string) in the `data` field upon successful login, or `null` in the `data` field and an `ApiError` in the `error` field in case of failure.
+ *         The `ApiError` includes a descriptive message and the corresponding HTTP status code.
  */
-export const loginUser = async (username: string, password: string): Promise<ApiResponse<string>> => {
+export const loginUser = async (username: string, password: string): Promise<AuthApiResponse<string>> => {
     try {
         const requestOptions = {
             method: "POST",
@@ -24,39 +27,33 @@ export const loginUser = async (username: string, password: string): Promise<Api
         }
 
         const res: Response = await fetch(`${apiPath}user/login`, requestOptions);
-        if(res.ok){
-            const data: string = await res.text();
-            return {
-                data,
-                status: res.status
-            }
+        if(!res.ok){
+            const error = new ApiError(`Login failed: ${res.status} ${res.statusText}`, res.status);
+            error.status = res.status;
+            throw error;
+        }
+        return { data: await res.text(), error: null }
+    } catch(error){
+        console.error("Error during login:  ", error)
+        if(error instanceof ApiError){
+            return { data: null, error}
         } else {
             return {
-                data: "",
-                status: res.status
+                data: null,
+                error: new ApiError("An unexpected error occurred", 500)
             }
-        }
-        
-    } catch(error){
-        // netwotk error hadnling
-        console.error("Error log in user ", error)
-        throw error;
+        };
     }
 }
 
-export interface UserDTO {
-    id: number,
-    username: string,
-    email: string,
-    roleId: number
-    password: string,
-}
 /**
- *  retrive a userDTO after success
- * @param userDTO 
- * @returns 
- */
-export const signUp= async (userDTO: UserDTO): Promise<ApiResponse<UserDTO>> => {
+ *  Attemps to sign up a user with the provided username, email and passwords
+ * 
+ * @param user Holds user related infomation during sign up 
+ * @returns An `AuthApiResponse<User>` object containing either the created user with a correct id in the `data` field and null in the `error` field, or null in the `data` field and `ApiError` in the error field.
+ *          The `ApiError` includes a descriptive message and the corresponding HTTP status code.
+*/
+export const signUp= async (userDTO: UserDTO): Promise<AuthApiResponse<User>> => {
     try {
         const requestOptions = {
             method: "POST",
@@ -73,41 +70,27 @@ export const signUp= async (userDTO: UserDTO): Promise<ApiResponse<UserDTO>> => 
         }
     
         const res: Response = await fetch(`${apiPath}user/`, requestOptions);
-        if(res.status === 201){
-            const data: UserDTO = await res.json() as UserDTO;
-            return {
-                data,
-                status: res.status,
-            }
-        } else if(res.status === 409) {
-            // return a emtpy data. Won't be used anyway. But need to find better solution
-            return {
-                data: {
-                    id: -1,
-                    username: "",
-                    email: "",
-                    roleId: 0,
-                    password: ""
-                },
-                status: res.status,
-            }
+
+        if(!res.ok){
+            const error = new ApiError(`Signup failed: ${res.status} ${res.statusText}`, res.status);
+            error.status = res.status;
+            throw error;
+        }
+
+        return {
+            data: await res.json() as User,
+            error: null
+        }
+    } catch(error){
+        console.error(`Error during signup ${error}`);
+        if(error instanceof ApiError){
+            return { data: null, error}
         } else {
-            // if not ok or no conflict, we want to notify that some other error occured
             return {
-                data: {
-                    id: -1,
-                    username: "",
-                    email: "",
-                    roleId: 0,
-                    password: ""
-                },
-                status: res.status,
+                data: null,
+                error: new ApiError(`Unexpected Error occured. `, 500)
             }
         }
-    } catch( error ){
-        // network error
-        console.error("Unexpected Error ", error);
-        throw error;
     }
 }
 

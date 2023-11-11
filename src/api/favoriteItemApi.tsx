@@ -1,6 +1,6 @@
 
 import {config} from "../config";
-import { ApiResponse } from "../types/api/apiTypes";
+import { ApiResponse } from "../types/ApiInterfaces";
 
 const apiPath = config.api_path;
 

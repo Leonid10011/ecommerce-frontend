@@ -1,9 +1,9 @@
 import { createContext, useContext, useState } from "react";
-import { UserDTO, loginUser, signUp } from "../api/authApi";
+import { loginUser, signUp } from "../api/authApi";
 import { useNavigate } from "react-router";
 import { decodeToken } from "react-jwt";
 import { createOrder } from "../api/orderApi";
-import { ApiResponse } from "../types/api/apiTypes";
+import { ApiResponse, AuthApiResponse, User, UserDTO } from "../types/ApiInterfaces";
 import { create } from "domain";
 import { toast } from "react-toastify";
 
@@ -21,11 +21,6 @@ export interface OrderType {
     userId: number,
     date: Date,
     status: string
-}
-
-interface fetchAndSetTokenType {
-    id: number,
-    token: string
 }
 
 interface AuthContextType {
@@ -66,43 +61,50 @@ export const AuthContextProvider = (props: {
      * @returns the token and Id, so we can use immediately in the init Context to initilize all other contexts 
      */
     const fetchAndSetToken = async (email: string, password: string): Promise<Boolean>  => {
-        const resToken: ApiResponse<string> = await loginUser(email, password);
-        if(resToken.status === 200){
-
+        const resToken: AuthApiResponse<string> = await loginUser(email, password);
+        if(resToken.data){
             setToken(resToken.data);
-            //decode the token and retrieve userId
-            const decodedToken: TokenType = decodeToken(resToken.data)!;
-            let id = Number(decodedToken.upn)!
-            setUserId(prev => id);
-            // notify that the user is authenticated
-            setIsAuthenticated(true);
-            navigation("/p");
 
-            return true;
+            // Decode the token and retrieve useId
+            const decodedToken: TokenType | null = decodeToken(resToken.data);
+            if(decodedToken){
+                let id = Number(decodedToken.upn)
+                setUserId(prev => id);
+
+                // notify that the user is authenticated
+                setIsAuthenticated(true);
+                navigation("/p");
+                return true
+            } else {
+                // Need to handle the case where the token could not be decoded
+                return false;
+            }
         } else {
+            if(resToken.error){
+                console.error(resToken.error.message);
+            }
             return false;
         }
     }
+
     /**
      * Sign up a User. 
      * @param user 
      * @returns 
      */
     const signUpUser = async (user: UserDTO): Promise<void> => {
-        let resSignUp: ApiResponse<UserDTO> = await signUp(user);
-        if(resSignUp.status === 201){
+        let resSignUp: AuthApiResponse<User> = await signUp(user);
+        if(resSignUp.data){
             // create a new order for this use on signup
             // will be handled differently in future
             createOrder(resSignUp.data.id, (new Date()), "open");
             // move to login
             navigation("/signin");
-        } else if(resSignUp.status === 409){
-            toast.error("Username already exists. Please try again.");
         } else {
-            toast.error("Unexpected Error.")
+            toast.error("Username already exists. Please try again.");
         }
     }
-    
+
     const resetToken = () => {
         setToken("");
         setIsAuthenticated(false);

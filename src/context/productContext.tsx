@@ -5,7 +5,7 @@ import React, { createContext, useContext, useEffect, useMemo, useReducer, useSt
 import { FavoriteProductDTO, createFavoriteItem, deleteFavoriteProductByUserAndProduct, getFavoriteItemsByUser } from "../api/favoriteItemApi";
 import { useAuth } from "./authContext";
 import { getProducts, getProductsByName } from "../api/productApi";
-import { ApiResponse } from "../types/api/apiTypes";
+import { ApiResponse } from "../types/ApiInterfaces";
 import { FilterActionType, FilterStateType, reducer } from "../reducer/filterReducer";
 import { stat } from "fs";
 

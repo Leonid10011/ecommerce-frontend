@@ -4,7 +4,7 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { getOrderItems, addItem, getOrder, OrderItemDTO, OrderDTO, getOrderItemProducts } from "../api/orderApi";
 import { useAuth } from "./authContext";
-import { ApiResponse } from "../types/api/apiTypes";
+import { ApiResponse } from "../types/ApiInterfaces";
 import { Product, useProduct } from "./productContext";
 
 

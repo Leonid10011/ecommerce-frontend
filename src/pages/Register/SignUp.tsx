@@ -1,10 +1,10 @@
 import React from 'react';
 import { Container, TextField, Button, Grid, Box, Typography } from '@mui/material';
-import { UserDTO } from '../../api/authApi';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/authContext';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { UserDTO } from '../../types/ApiInterfaces';
 
 function RegisterForm() {
   const navigation = useNavigate();
