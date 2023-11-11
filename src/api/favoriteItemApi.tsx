@@ -19,7 +19,8 @@ export interface FavoriteProduct {
  * It returns an ApiResponse containing either an array of FavoriteProduct objects or an error.
  *
  * @param {number} userId - The ID of the user whose favorite items are to be fetched.
- * @returns {Promise<ApiResponse<FavoriteProduct[]>>} A promise that resolves to an ApiResponse.
+ * @returns {Promise<ApiResponse<FavoriteProduct[]>>} - A promise that resolves to an ApiResponse,
+ * containing either the list of favorite products (data) or an error object.
  */
 const getFavoriteItemsByUser = async (userId: number): Promise<ApiResponse<FavoriteProduct[]>> => {
     try {
@@ -53,16 +54,17 @@ const getFavoriteItemsByUser = async (userId: number): Promise<ApiResponse<Favor
 }
 
 /**
- * Creates a new favorite item.
+ * Creates a new favorite item for a user.
  * 
- * This function sends a POST request to add a product to a user's favorites list.
- * It takes a user ID, product ID, and an authentication token as parameters.
+ * This function sends a POST request to add a specified product to a user's favorite list.
+ * It requires the user's ID, product ID, and an authentication token.
  * On success, it returns an ApiResponse containing the created FavoriteProduct object.
  *
  * @param {number} userId - The ID of the user.
  * @param {number} productId - The ID of the product to be added to favorites.
  * @param {string} token - The authentication token.
- * @returns {Promise<ApiResponse<FavoriteProduct>>} A promise that resolves to an ApiResponse.
+ * @returns {Promise<ApiResponse<FavoriteProduct>>} - A promise that resolves to an ApiResponse,
+ * containing either the newly created favorite product (data) or an error object.
  */
 const createFavoriteItem = async (userId: number, productId: number, token: string): Promise<ApiResponse<FavoriteProduct>> => {
     console.log("Create Favorite Item Debug");
@@ -101,6 +103,18 @@ const createFavoriteItem = async (userId: number, productId: number, token: stri
     }
 }
 
+/**
+ * Deletes a favorite item by its ID.
+ * 
+ * This function sends a DELETE request to remove a favorite item specified by its ID.
+ * It requires the favorite item's ID and an authentication token.
+ * On success, it returns an ApiResponse indicating whether the deletion was successful.
+ *
+ * @param {number} favoritProductId - The ID of the favorite product to be deleted.
+ * @param {string} token - The authentication token.
+ * @returns {Promise<ApiResponse<boolean>>} - A promise that resolves to an ApiResponse,
+ * indicating the success (data: true) or failure (data: false) of the deletion, or an error object.
+ */
 const deleteFavoriteProduct = async (favoritProductId: number, token: string): Promise<ApiResponse<boolean>> =>  {
     try {
         const requestOptions = {
@@ -139,13 +153,14 @@ const deleteFavoriteProduct = async (favoritProductId: number, token: string): P
  * Deletes a favorite product for a user.
  * 
  * This function sends a DELETE request to remove a product from a user's favorites list.
- * It takes the user's ID, the product's ID, and an authentication token as parameters.
+ * It requires the user's ID, the product's ID, and an authentication token.
  * On success, it returns an ApiResponse indicating whether the deletion was successful.
  *
  * @param {number} userId - The ID of the user.
  * @param {number} productId - The ID of the product to be removed from favorites.
  * @param {string} token - The authentication token.
- * @returns {Promise<ApiResponse<boolean>>} A promise that resolves to an ApiResponse.
+ * @returns {Promise<ApiResponse<boolean>>} - A promise that resolves to an ApiResponse,
+ * indicating the success (data: true) or failure (data: false) of the deletion, or an error object.
  */
 const deleteFavoriteProductByUserAndProduct = async (userId: number, productId: number, token: string): Promise<ApiResponse<boolean>> => {
     try {

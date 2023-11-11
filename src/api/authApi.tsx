@@ -7,10 +7,21 @@ const apiPath = config.api_path;
 /**
  * Attempts to log in a user with the provided username and password.
  * 
- * @param username The username of the user attempting to log in.
- * @param password The password of the user.
- * @returns An `AuthApiResponse<string>` object containing either a JWT token (as a string) in the `data` field upon successful login, or `null` in the `data` field and an `ApiError` in the `error` field in case of failure.
- *         The `ApiError` includes a descriptive message and the corresponding HTTP status code.
+ * @param {string} username - The username of the user attempting to log in.
+ * @param {string} password - The password of the user.
+ * @returns {Promise<ApiResponse<string>>} - A promise that resolves to an ApiResponse object. 
+ *         On success, the ApiResponse's `data` field contains a JWT token as a string. 
+ *         On failure, the `data` field is null, and the `error` field contains an ApiError with a descriptive message and HTTP status code.
+ * 
+ * @example
+ * loginUser('username', 'password123')
+ *   .then(response => {
+ *     if(response.error) {
+ *       console.error(response.error.message);
+ *     } else {
+ *       console.log('Logged in with token:', response.data);
+ *     }
+ *   });
  */
 export const loginUser = async (username: string, password: string): Promise<ApiResponse<string>> => {
     try {
@@ -47,12 +58,30 @@ export const loginUser = async (username: string, password: string): Promise<Api
 }
 
 /**
- *  Attemps to sign up a user with the provided username, email and passwords
+ * Attempts to sign up a new user with the provided user information.
  * 
- * @param user Holds user related infomation during sign up 
- * @returns An `AuthApiResponse<User>` object containing either the created user with a correct id in the `data` field and null in the `error` field, or null in the `data` field and `ApiError` in the error field.
- *          The `ApiError` includes a descriptive message and the corresponding HTTP status code.
-*/
+ * @param {UserDTO} userDTO - An object containing the new user's information. 
+ *        It should include username, email, password, and roleId.
+ *        The `roleId` should be set according to your system's role configuration 
+ *        (e.g., 1 might represent a regular user).
+ * 
+ * @returns {Promise<ApiResponse<User>>} - A promise that resolves to an ApiResponse object.
+ *         On successful signup, the ApiResponse's `data` field contains the newly created User object, 
+ *         including the user's ID and other relevant information.
+ *         On failure, the `data` field is null, and the `error` field contains an ApiError with a 
+ *         descriptive message and the corresponding HTTP status code.
+ * 
+ * @example
+ * const newUser = { username: "newuser", email: "newuser@example.com", password: "password123", roleId: 1 };
+ * signUp(newUser)
+ *   .then(response => {
+ *     if(response.error) {
+ *       console.error(response.error.message);
+ *     } else {
+ *       console.log('User signed up:', response.data);
+ *     }
+ *   });
+ */
 export const signUp= async (userDTO: UserDTO): Promise<ApiResponse<User>> => {
     try {
         const requestOptions = {
