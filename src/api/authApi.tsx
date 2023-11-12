@@ -1,13 +1,10 @@
 import { ApiResponse, User, UserDTO } from '../types/ApiInterfaces';
 import { config } from '../config';
 import { AcceptEnum, apiRequest } from './apiRequest';
+import { LoginRequestBody, SignUpRequestBody } from '../types/RequestBodyInterfaces';
 
 const apiPath = config.api_path;
 
-interface LoginRequestBody {
-    username: string,
-    password: string,
-}
 /**
  * Attempts to log in a user with the provided username and password.
  * 
@@ -35,13 +32,6 @@ export const loginUser = async (username: string, password: string): Promise<Api
     };
 
     return apiRequest(url, 'POST',body, '', AcceptEnum.text);
-}
-
-interface SignUpRequestBody {
-    username: string,
-    email: string,
-    roleId: number,
-    password: string
 }
 /**
  * Attempts to sign up a new user with the provided user information.

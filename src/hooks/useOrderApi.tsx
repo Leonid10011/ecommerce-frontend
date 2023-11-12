@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
-import { OrderItemResponseDTO, addItem, deleteItem, getOrder, getOrderItemsWithProduct } from "../api/orderApi"
-import { ApiResponse, ApiSuccessResponse } from "../types/ApiInterfaces";
+import { addItem, deleteItem, getOrder, getOrderItemsWithProduct } from "../api/orderApi"
+import { ApiResponse, ApiSuccessResponse, OrderItemResponseDTO } from "../types/ApiInterfaces";
 import { toast } from "react-toastify";
 
 export interface OrderDTO {

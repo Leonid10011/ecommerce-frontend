@@ -1,34 +1,11 @@
 import {config} from "../config";
-import { OrderProduct } from "../../misc/orderContext";
-import { ApiResponse, ApiSuccessResponse } from "../types/ApiInterfaces";
-import { ApiError } from "../types/ErrorTypes";
-import { Product } from "./productApi";
+import { ApiResponse, ApiSuccessResponse, Order, OrderItemDTO, OrderItemResponseDTO, Product } from "../types/ApiInterfaces";
 import { AcceptEnum, apiRequest } from "./apiRequest";
+import { AddItemBody, CreateOrderBody } from "../types/RequestBodyInterfaces";
 
 const apiPath = config.api_path;
 
-export interface OrderDTO {
-    id: number,
-    userId: number,
-    date: Date,
-    status: string,
-}
-
-export interface OrderItemDTO {
-    id: number,
-    orderId: number,
-    productId: number,
-    quantity: number,
-    price: number,
-}
-
-interface CreateOrderBody {
-    userId: number,
-    date: Date,
-    status: string
-}
-
-const createOrder = async (userId: number, date: Date, status: string): Promise<ApiResponse<OrderDTO>> => {
+const createOrder = async (userId: number, date: Date, status: string): Promise<ApiResponse<Order>> => {
     const url = `${apiPath}order/create`;
     const body: CreateOrderBody = {
         userId: userId,
@@ -38,16 +15,9 @@ const createOrder = async (userId: number, date: Date, status: string): Promise<
     return apiRequest(url, 'POST', body, undefined, AcceptEnum.json);
 }
 
-const getOrder = async (userId: number, token: string): Promise<ApiResponse<OrderDTO>> => {
+const getOrder = async (userId: number, token: string): Promise<ApiResponse<Order>> => {
     const url = `${apiPath}/order/get/${userId}`;
     return apiRequest(url, 'GET', undefined, token, AcceptEnum.json);
-}
-
-interface AddItemBody {
-    orderId: number,
-    productId: number,
-    quantity: number,
-    price: number
 }
 
 const addItem = async (orderItem: OrderItemDTO, token: string): Promise<ApiResponse<ApiSuccessResponse>> => {
@@ -69,18 +39,6 @@ const getOrderItems = async (orderId: number): Promise<ApiResponse<OrderItemDTO[
 const getOrderItemProducts = async (orderId: number): Promise<ApiResponse<Product[]>> => {
     const url = `${apiPath}order/getOrderProduct/${orderId}`;
     return apiRequest(url, 'GET', undefined, undefined, AcceptEnum.json);
-}
-
-export interface OrderItemResponseDTO {
-    orderItemId: number,
-    orderId: number,
-    productId: number,
-    productName: string,
-    productDescription: string,
-    categoryId: number,
-    imageURL: string,
-    orderedQuantity: number,
-    orderedPrice: number,
 }
 
 const getOrderItemsWithProduct = async (orderId: number): Promise<ApiResponse<OrderItemResponseDTO[]>> => {

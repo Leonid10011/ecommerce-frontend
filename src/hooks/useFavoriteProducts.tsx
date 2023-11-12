@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
-import { FavoriteProduct, createFavoriteItem, deleteFavoriteProduct, getFavoriteItemsByUser } from "../api/favoriteItemApi";
-import { Product } from "../api/productApi";
-import { ApiResponse } from "../types/ApiInterfaces";
+import { createFavoriteItem, deleteFavoriteProduct, getFavoriteItemsByUser } from "../api/favoriteItemApi";
+import { ApiResponse, FavoriteProduct, Product } from "../types/ApiInterfaces";
 
 export interface FilteredFavoriteProduct extends Product {
     favoriteProductId: number

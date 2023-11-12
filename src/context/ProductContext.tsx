@@ -5,35 +5,7 @@ import useFavoriteProducts from '../hooks/useFavoriteProducts';
 import { FilterActionType, FilterStateType } from '../reducer/filterReducer';
 import { useAuth } from './authContext';
 import useOrderApi, { OrderItemRequestDTO } from '../hooks/useOrderApi';
-import { OrderDTO, OrderItemResponseDTO } from '../api/orderApi';
-
-export interface Product {
-    id: number,
-    name: string,
-    description: string,
-    price: number,
-    categoryID: number,
-    quantity: number,
-    imgURL: string,
-}
-
-interface ProductContextInterface {
-    products: Product[],
-    loading: boolean,
-    error: Error | null,
-    fetchProducts: () => void,
-    fetchProductsByName: (name: string) => void,
-    favoriteProductsFiltered: { favoriteProducts: Product[], nonFavoriteProducts: Product[] },
-    manageFilter: (action: FilterActionType) => void,
-    filterConditions: FilterStateType,
-    addFavoriteItem: (productId: number) => Promise<void>,
-    deleteFavoriteItem: (favoritItemId: number) => Promise<void>,
-    orderProducts: OrderItemResponseDTO[],
-    resetCart: () => void,
-    order: OrderDTO | null,
-    addOrderItem: (product: OrderItemRequestDTO) => void,
-    deleteOrderItem: (orderId: number) => void,
-}
+import { Order, OrderItemResponseDTO, Product } from '../types/ApiInterfaces';
 
 const ProductContext = createContext<ProductContextInterface | null>(null);
 
@@ -94,3 +66,21 @@ export const useProducts = () => {
     }
     return context;
 };
+
+interface ProductContextInterface {
+    products: Product[],
+    loading: boolean,
+    error: Error | null,
+    fetchProducts: () => void,
+    fetchProductsByName: (name: string) => void,
+    favoriteProductsFiltered: { favoriteProducts: Product[], nonFavoriteProducts: Product[] },
+    manageFilter: (action: FilterActionType) => void,
+    filterConditions: FilterStateType,
+    addFavoriteItem: (productId: number) => Promise<void>,
+    deleteFavoriteItem: (favoritItemId: number) => Promise<void>,
+    orderProducts: OrderItemResponseDTO[],
+    resetCart: () => void,
+    order: Order | null,
+    addOrderItem: (product: OrderItemRequestDTO) => void,
+    deleteOrderItem: (orderId: number) => void,
+}

@@ -1,17 +1,9 @@
-
-import { Api } from "@mui/icons-material";
 import {config} from "../config";
-import { ApiResponse } from "../types/ApiInterfaces";
-import { ApiError } from "../types/ErrorTypes";
+import { ApiResponse, FavoriteProduct } from "../types/ApiInterfaces";
+import { CreateFavoriteItemBody } from "../types/RequestBodyInterfaces";
 import { AcceptEnum, apiRequest } from "./apiRequest";
 
 const apiPath = config.api_path;
-
-export interface FavoriteProduct {
-    id: number,
-    userId: number,
-    productId: number
-}
 
 /**
  * Retrieves favorite items of a specific user.
@@ -26,10 +18,6 @@ export interface FavoriteProduct {
 const getFavoriteItemsByUser = async (userId: number): Promise<ApiResponse<FavoriteProduct[]>> => {
     const url = `${apiPath}favoriteItem/getProductIdsByUser/${userId}`;
     return apiRequest(url, 'GET', undefined, undefined, AcceptEnum.json);
-}
-interface CreateFavoriteItemBody {
-    userId: number,
-    productId: number
 }
 /**
  * Creates a new favorite item for a user.

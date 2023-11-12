@@ -2,11 +2,11 @@ import { Box, Button, Card, CardContent, CardMedia, Grid, Typography } from "@mu
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { config } from "../../config";
-import { OrderItemResponseDTO } from "../../api/orderApi";
 import { useProducts } from "../../context/ProductContext";
+import { OrderItemResponseDTO } from "../../types/ApiInterfaces";
 
 export default function Cart() {
-  
+
     const { orderProducts } = useProducts();
 
     return(

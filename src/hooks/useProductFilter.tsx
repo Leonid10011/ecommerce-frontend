@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useReducer } from "react";
-import { Product } from "../api/productApi"
 import { FilterActionType, filterReducer } from "../reducer/filterReducer";
+import { Product } from "../types/ApiInterfaces";
 
 const initialFilterConditions = {
     category: [],

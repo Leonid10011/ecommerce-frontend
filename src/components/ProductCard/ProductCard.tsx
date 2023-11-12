@@ -4,8 +4,8 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import ProductModal from '../ProductModal/ProductModal';
 import { config } from '../../config';
-import { Product } from '../../api/productApi';
 import { FilteredFavoriteProduct } from '../../hooks/useFavoriteProducts';
+import { Product } from '../../types/ApiInterfaces';
 
 
 interface ProductCardProps {

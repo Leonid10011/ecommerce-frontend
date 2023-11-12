@@ -1,18 +1,8 @@
 import { config } from "../config";
-import { ApiResponse } from "../types/ApiInterfaces";
+import { ApiResponse, Product } from "../types/ApiInterfaces";
 import { AcceptEnum, apiRequest } from "./apiRequest";
 
 const apiPath = config.api_path;
-
-export interface Product {
-    id: number,
-    name: string,
-    description: string,
-    price: number,
-    categoryID: number,
-    quantity: number,
-    imgURL: string,
-}
 
 /**
  * Fetches all products from the backend.
