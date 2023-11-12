@@ -4,7 +4,7 @@ import { useAuth } from '../../context/authContext';
 import { useNavigate } from 'react-router';
 import { useOrder } from '../../context/orderContext';
 import ProductCard from '../../components/ProductCard/ProductCard';
-import { useProducts } from '../../context/ProductContext.tsx/ProductContext';
+import { useProducts } from '../../context/ProductContext';
 
 function ProductList() {
     const { isAuthenticated } = useAuth();

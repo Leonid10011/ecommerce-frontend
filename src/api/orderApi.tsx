@@ -1,4 +1,5 @@
 import {config} from "../config";
+import { OrderProduct } from "../context/orderContext";
 import { ApiResponse } from "../types/ApiInterfaces";
 import { ApiError } from "../types/ErrorTypes";
 import { Product } from "./productApi";
@@ -38,7 +39,6 @@ const createOrder = async (userId: number, date: Date, status: string): Promise<
         const res: Response = await fetch(`${apiPath}order/create`, requestOptions);
         if(!res.ok){
             const error: ApiError = new ApiError(`Error getting favorite items: ${res.status} ${res.statusText}`, res.status);
-            error.status = res.status;
             throw error;
         }
         return {
@@ -70,7 +70,6 @@ const getOrder = async (userId: number, token: string): Promise<ApiResponse<Orde
         const res: Response = await fetch(`${apiPath}/order/get/${userId}`, requestOptions);
         if(!res.ok){
             const error: ApiError = new ApiError(`Error getting favorite items: ${res.status} ${res.statusText}`, res.status);
-            error.status = res.status;
             throw error;
         }
         return {
@@ -141,7 +140,6 @@ const getOrderItems = async (orderId: number): Promise<ApiResponse<OrderItemDTO[
         const res: Response = await fetch(`${apiPath}/order/getItems/${orderId}`, requestOptions);
         if(!res.ok){
             const error: ApiError = new ApiError(`Error getting favorite items: ${res.status} ${res.statusText}`, res.status);
-            error.status = res.status;
             throw error;
         }
         return {
@@ -173,7 +171,6 @@ const getOrderItemProducts = async (orderId: number): Promise<ApiResponse<Produc
         let res: Response = await fetch(`${apiPath}order/getOrderProduct/${orderId}`, requestOptions);
         if(!res.ok){
             const error: ApiError = new ApiError(`Error getting favorite items: ${res.status} ${res.statusText}`, res.status);
-            error.status = res.status;
             throw error;
         }
         return {
@@ -191,10 +188,59 @@ const getOrderItemProducts = async (orderId: number): Promise<ApiResponse<Produc
         }
     }
 }
+
+export interface OrderItemResponseDTO {
+    orderItemId: number,
+    orderId: number,
+    productId: number,
+    productName: string,
+    productDescription: string,
+    categoryId: number,
+    imageURL: string,
+    orderedQuantity: number,
+    orderedPrice: number,
+}
+
+const getOrderItemsWithProduct = async (orderId: number): Promise<ApiResponse<OrderItemResponseDTO[]>> => {
+    try{
+        const requestOptions = {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+            }
+        }
+
+        const res: Response = await fetch(`${apiPath}/order/getOrderItemsWithProduct/${orderId}`, requestOptions);
+        if(!res.ok) {
+            const error = new ApiError(`Error retrieving orderItemsWithProduct ${res.status} ${res.statusText}`, res.status);
+            throw error;
+            
+        } 
+
+        return {
+            data: await res.json(),
+            error: null 
+        }
+    } catch(error) {
+        if(error instanceof ApiError){
+            return {
+                data: null,
+                error
+            }
+        } else {
+            return {
+                data: null,
+                error: new ApiError(`Unexpected Error occured`, 500)
+            }
+        }
+    }
+}
+
 export { 
     getOrder,
     createOrder, 
     addItem, 
     getOrderItems,
     getOrderItemProducts, 
+    getOrderItemsWithProduct
  };

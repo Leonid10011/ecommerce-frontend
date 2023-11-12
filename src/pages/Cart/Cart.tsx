@@ -3,20 +3,27 @@ import { OrderProduct, useOrder } from "../../context/orderContext";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { config } from "../../config";
+import useOrderApi from "../../hooks/useOrderApi";
+import { OrderItemResponseDTO } from "../../api/orderApi";
+import { useAuth } from "../../context/authContext";
 
 export default function Cart() {
 
-    const { filterOrderItems } = useOrder();
+    //const { filterOrderItems } = useOrder();
+    const { orderProducts } = useAuth();
 
     return(
         <Grid container display={'flex'} maxWidth='sm' flexDirection={'column'} >
+          <button onClick={() => console.log("Products, ", orderProducts)}>
+          Test
+        </button>
             <Grid item display={'flex'} flexDirection={'column'} sx={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
-                <SumCard  sum={filterOrderItems.reduce((acc, cur) => acc + cur.price, 0)} />
+                <SumCard  sum={orderProducts.reduce((acc, cur) => acc + cur.orderedPrice, 0)} />
             </Grid>
             <Grid item display={'flex'} flexDirection={'column'} >
-                {filterOrderItems.map((item, i) => {
+                {orderProducts.map((item, i) => {
                     return (
-                        <CartCard key={item.id} orderProduct={item}/>
+                        <CartCard key={item.imageURL} orderProduct={item}/>
                     )
                 })}
             </Grid>
@@ -25,7 +32,7 @@ export default function Cart() {
     )
 }
 
-const CartCard = ({ orderProduct }: {orderProduct: OrderProduct}) => {
+const CartCard = ({ orderProduct }: {orderProduct: OrderItemResponseDTO}) => {
 
     const [amount, setAmount] = useState<number>(0);
 
@@ -39,25 +46,26 @@ const CartCard = ({ orderProduct }: {orderProduct: OrderProduct}) => {
 
     return (
       <Card sx={{m: 2}}>
+        
         <CardMedia 
           component="img"
-          image={config.image_url +  orderProduct.imgURL}/>
+          image={config.image_url +  orderProduct.imageURL}/>
         <CardContent>
           <Box display={'flex'} flexDirection={'row'}>
             <Box>
               <Typography variant="h5" component="div" sx={{fontSize: '1rem'}}>
-                {orderProduct.name}
+                {orderProduct.productName}
               </Typography>
               <Typography variant="body2" color="text.secondary" sx={{fontSize: '1rem'}}>
-                {orderProduct.description}
+                {orderProduct.productDescription}
               </Typography>
               <Typography variant="body2" sx={{fontSize: '1rem'}}>
-                {orderProduct.price} €
+                {orderProduct.orderedPrice} €
               </Typography>
             </Box>
             <Box flexGrow={1}>
               <Typography textAlign={'center'}>
-                Anzahl: {orderProduct.quantity}
+                Anzahl: {orderProduct.orderedQuantity}
               </Typography>
             </Box>
           </Box>
@@ -82,7 +90,7 @@ const CartCard = ({ orderProduct }: {orderProduct: OrderProduct}) => {
                 TotalSum:
             </Typography>
             <Typography>
-            {sum.toFixed(2)}€  
+            {/* {sum.toFixed(2)}€   */}
             </Typography>  
             <Button variant="contained" size="small" color="primary" onClick={notify} >
               {/* Todo */}

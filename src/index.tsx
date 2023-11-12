@@ -10,7 +10,7 @@ import RegisterForm from './pages/Register/SignUp';
 import ProductList from './pages/Products/Products';
 import Cart from './pages/Cart/Cart';
 import { OrderContextProvider } from './context/orderContext';
-import { ProductProvider } from './context/ProductContext.tsx/ProductContext';
+import { ProductProvider } from './context/ProductContext';
 //import { InitContextProvider } from './context/initContext';
 
 const root = ReactDOM.createRoot(

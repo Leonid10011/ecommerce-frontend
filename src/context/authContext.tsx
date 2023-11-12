@@ -1,11 +1,12 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { loginUser, signUp } from "../api/authApi";
 import { useNavigate } from "react-router";
 import { decodeToken } from "react-jwt";
-import { createOrder } from "../api/orderApi";
+import { OrderItemResponseDTO, createOrder } from "../api/orderApi";
 import { ApiResponse, User, UserDTO } from "../types/ApiInterfaces";
 import { create } from "domain";
 import { toast } from "react-toastify";
+import useOrderApi from "../hooks/useOrderApi";
 
 export interface TokenType {
     sub: string,
@@ -29,7 +30,8 @@ interface AuthContextType {
     resetToken: () => void;
     userId: number,
     isAuthenticated: boolean,
-    signUpUser: (user: UserDTO) => Promise<void>
+    signUpUser: (user: UserDTO) => Promise<void>,
+    orderProducts: OrderItemResponseDTO[]
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -40,7 +42,8 @@ const AuthContext = createContext<AuthContextType>({
     resetToken: () => {},
     userId: 0,
     isAuthenticated: false,
-    signUpUser: async () => {}
+    signUpUser: async () => {},
+    orderProducts: []
 });
 
 export const useAuth = () => useContext(AuthContext);
@@ -110,8 +113,22 @@ export const AuthContextProvider = (props: {
         setIsAuthenticated(false);
     }
 
+    // Just testing
+    const { orderProducts, fetchAndSetOrder } = useOrderApi();
+
+    /**
+     * When client signs in, fetch its orderProducts
+     */
+    useEffect(() => {
+        if(isAuthenticated){
+            console.log("Logged");
+            fetchAndSetOrder(userId, token);          
+        }
+        
+    }, [userId])
+
     return (
-        <AuthContext.Provider value={{token, fetchAndSetToken, resetToken, userId, isAuthenticated, signUpUser}}>
+        <AuthContext.Provider value={{token, fetchAndSetToken, resetToken, userId, isAuthenticated, signUpUser, orderProducts}}>
             {props.children}
         </AuthContext.Provider>
     );

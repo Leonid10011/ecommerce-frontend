@@ -1,9 +1,9 @@
 import React, { createContext, useContext, useEffect } from 'react';
-import useProductApi from '../../hooks/useProductApi';
-import useProductFilter from '../../hooks/useProductFilter';
-import useFavoriteProducts from '../../hooks/useFavoriteProducts';
-import { FilterActionType, FilterStateType } from '../../reducer/filterReducer';
-import { useAuth } from '../authContext';
+import useProductApi from '../hooks/useProductApi';
+import useProductFilter from '../hooks/useProductFilter';
+import useFavoriteProducts from '../hooks/useFavoriteProducts';
+import { FilterActionType, FilterStateType } from '../reducer/filterReducer';
+import { useAuth } from './authContext';
 
 export interface Product {
     id: number,
@@ -53,7 +53,7 @@ export const ProductProvider = ({ children }: {
         addFavoriteItem,
         deleteFavoriteItem,
     };
-
+    
     return (
         <ProductContext.Provider value={value}>
             {children}

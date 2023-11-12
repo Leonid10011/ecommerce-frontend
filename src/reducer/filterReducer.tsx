@@ -1,6 +1,3 @@
-import { Category } from "@mui/icons-material";
-import createTypography from "@mui/material/styles/createTypography";
-
 export interface FilterStateType {
     category: number[],
     price: {
@@ -31,7 +28,7 @@ export const filterReducer = (state: FilterStateType, action: FilterActionType):
         case 'RESET_CATEGORY':
             return {...state, category: []};
         case 'RESET_PRICE':
-            return {...state, price: { minValue: 0, maxValue: -1 }};
+            return {...state, price: { minValue: 0, maxValue: 0 }};
         default:
             throw new Error("Unhandled action type");
     }

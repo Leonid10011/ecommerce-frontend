@@ -20,7 +20,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { toast } from 'react-toastify';
 import useProductFilter from '../../hooks/useProductFilter';
-import { useProducts } from '../../context/ProductContext.tsx/ProductContext';
+import { useProducts } from '../../context/ProductContext';
 
 const logoStyles = css`
   width: 60px;
