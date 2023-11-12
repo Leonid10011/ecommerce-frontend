@@ -1,6 +1,6 @@
 import { config } from "../config";
 import { ApiResponse } from "../types/ApiInterfaces";
-import { ApiError } from "../types/ErrorTypes";
+import { AcceptEnum, apiRequest } from "./apiRequest";
 
 const apiPath = config.api_path;
 
@@ -24,37 +24,8 @@ export interface Product {
  * containing either the list of products (data) or an error object.
  */
 const getProducts = async (): Promise<ApiResponse<Product[]>> => {
-    try {
-        const requestOptions = {
-            method: 'GET',
-            headers: {
-                'Accept': 'application/json'
-            }
-        };
-        const res: Response = await fetch(`${apiPath}product/get/`, requestOptions);
-        if(!res.ok){
-            const error = new ApiError(`Getting products failed: ${res.status} ${res.statusText}`, res.status);
-            throw error;
-        }
-        return {
-            data: await res.json() as Product[],
-            error: null
-        } 
-    } catch(error){
-        console.error(`Error getting products ${error}`);
-        if(error instanceof ApiError){
-            return {
-                data: null,
-                error: error
-            }
-        } else {
-            return {
-                data: null,
-                error: new ApiError(`Unexpected Error occured.`, 500)
-            }
-        }
-
-    }
+    const url = `${apiPath}product/get/`;
+    return apiRequest(url, 'GET', undefined, undefined, AcceptEnum.json);
 }
 
 /**
@@ -69,32 +40,8 @@ const getProducts = async (): Promise<ApiResponse<Product[]>> => {
  * containing either the list of matching products (data) or an error object.
  */
 const getProductsByName = async (name: string): Promise<ApiResponse<Product[]>> => {
-    try {
-        const requestOptions = {
-            method: 'GET',
-            headers: {
-                'Accept': 'application/json',
-            },
-        };
-        const res: Response = await fetch(`${apiPath}product/getByName/${name}`, requestOptions);
-        if(!res.ok){
-            const error: ApiError = new ApiError(`Error getting products by name: ${res.status} ${res.statusText}`, res.status);
-            throw error;
-        }
-        return {
-            data: await res.json() as Product[],
-            error: null 
-        };
-    } catch(error){
-        console.error(`Error retrieving products by name: ${error}`);
-        if(error instanceof ApiError){
-            return { data: null, error }
-        } else {
-            return {
-                data: null,
-                error: new ApiError(`Unexpected Error occured`, 500)}
-        }
-    }
+    const url = `${apiPath}product/getByName/${name}`;
+    return apiRequest(url, 'GET', undefined, undefined, AcceptEnum.json);
 }
 
 export {
