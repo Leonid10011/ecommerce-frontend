@@ -76,7 +76,8 @@ const useOrderApi = (token: string) => {
         const response: ApiResponse<ApiSuccessResponse> = await addItem(product, token);
         setLoading(false);
         if(response.data){
-            // What to add here? Toast success??
+            // refetch order products
+            fetchAndSetOrderProducts();
             toast.success('Added Product to Cart.', {
                 position: 'top-left',
             })
@@ -88,6 +89,8 @@ const useOrderApi = (token: string) => {
         setLoading(true);
         const response: ApiResponse<ApiSuccessResponse> = await deleteItem(orderItemId);
         setLoading(false);
+        // Remove order product from current orderProducts
+        setOrderProducts(orderProducts.filter(item => item.orderItemId !== orderItemId));
         if(!response.data)
             toast.error('Could not remove Product from Cart.', {
         position: 'top-left'});
