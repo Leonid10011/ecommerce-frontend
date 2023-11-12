@@ -26,5 +26,5 @@
   },
   "include": [
     "src"
-, "misc/productContext.tsx"  ]
+, "misc/productContext.tsx", "misc/orderContext.tsx"  ]
 }

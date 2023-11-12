@@ -1,6 +1,6 @@
 import {config} from "../config";
-import { OrderProduct } from "../context/orderContext";
-import { ApiResponse } from "../types/ApiInterfaces";
+import { OrderProduct } from "../../misc/orderContext";
+import { ApiResponse, ApiSuccessResponse } from "../types/ApiInterfaces";
 import { ApiError } from "../types/ErrorTypes";
 import { Product } from "./productApi";
 
@@ -88,7 +88,7 @@ const getOrder = async (userId: number, token: string): Promise<ApiResponse<Orde
     }
 }
 
-const addItem = async (orderItem: OrderItemDTO, token: string): Promise<ApiResponse<OrderItemDTO>> => {
+const addItem = async (orderItem: OrderItemDTO, token: string): Promise<ApiResponse<ApiSuccessResponse>> => {
     try {
         const requestHeaders = {
             method: 'POST',
@@ -108,11 +108,10 @@ const addItem = async (orderItem: OrderItemDTO, token: string): Promise<ApiRespo
         const res: Response =  await fetch(`${apiPath}/order/addItem`, requestHeaders);
         if(!res.ok){
             const error: ApiError = new ApiError(`Error getting favorite items: ${res.status} ${res.statusText}`, res.status);
-            error.status = res.status;
             throw error;
         }
         return {
-            data: await res.json() as OrderItemDTO,
+            data: {message: "Order item added successfully"},
             error: null 
         };
     } catch(error){
@@ -236,11 +235,43 @@ const getOrderItemsWithProduct = async (orderId: number): Promise<ApiResponse<Or
     }
 }
 
+const deleteItem = async (orderItemId: number): Promise<ApiResponse<ApiSuccessResponse>> => {
+    try {
+        const requestOptions = {
+            method: 'DELETE',
+        }
+
+        const res: Response = await fetch(`${apiPath}/order/deleteItem/${orderItemId}`, requestOptions);
+        if(!res.ok) {
+            const error = new ApiError(`Error deleting order item ${res.status} ${res.statusText}`, res.status);
+            throw error;
+            
+        } 
+        return {
+            data: { message: 'Deleting order item successful.'},
+            error: null 
+        }
+    } catch(error) {
+        if(error instanceof ApiError){
+            return {
+                data: null,
+                error
+            }
+        } else {
+            return {
+                data: null,
+                error: new ApiError(`Unexpected Error occured`, 500)
+            }
+        }
+    }
+}
+
 export { 
     getOrder,
     createOrder, 
     addItem, 
     getOrderItems,
     getOrderItemProducts, 
-    getOrderItemsWithProduct
+    getOrderItemsWithProduct,
+    deleteItem
  };

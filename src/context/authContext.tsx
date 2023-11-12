@@ -31,7 +31,6 @@ interface AuthContextType {
     userId: number,
     isAuthenticated: boolean,
     signUpUser: (user: UserDTO) => Promise<void>,
-    orderProducts: OrderItemResponseDTO[]
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -43,7 +42,6 @@ const AuthContext = createContext<AuthContextType>({
     userId: 0,
     isAuthenticated: false,
     signUpUser: async () => {},
-    orderProducts: []
 });
 
 export const useAuth = () => useContext(AuthContext);
@@ -111,24 +109,11 @@ export const AuthContextProvider = (props: {
     const resetToken = () => {
         setToken("");
         setIsAuthenticated(false);
+        setUserId(0);
     }
 
-    // Just testing
-    const { orderProducts, fetchAndSetOrder } = useOrderApi();
-
-    /**
-     * When client signs in, fetch its orderProducts
-     */
-    useEffect(() => {
-        if(isAuthenticated){
-            console.log("Logged");
-            fetchAndSetOrder(userId, token);          
-        }
-        
-    }, [userId])
-
     return (
-        <AuthContext.Provider value={{token, fetchAndSetToken, resetToken, userId, isAuthenticated, signUpUser, orderProducts}}>
+        <AuthContext.Provider value={{token, fetchAndSetToken, resetToken, userId, isAuthenticated, signUpUser }}>
             {props.children}
         </AuthContext.Provider>
     );

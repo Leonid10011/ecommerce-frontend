@@ -1,22 +1,16 @@
 import { Box, Button, Card, CardContent, CardMedia, Grid, Typography } from "@mui/material";
-import { OrderProduct, useOrder } from "../../context/orderContext";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { config } from "../../config";
-import useOrderApi from "../../hooks/useOrderApi";
 import { OrderItemResponseDTO } from "../../api/orderApi";
-import { useAuth } from "../../context/authContext";
+import { useProducts } from "../../context/ProductContext";
 
 export default function Cart() {
-
-    //const { filterOrderItems } = useOrder();
-    const { orderProducts } = useAuth();
+  
+    const { orderProducts } = useProducts();
 
     return(
         <Grid container display={'flex'} maxWidth='sm' flexDirection={'column'} >
-          <button onClick={() => console.log("Products, ", orderProducts)}>
-          Test
-        </button>
             <Grid item display={'flex'} flexDirection={'column'} sx={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
                 <SumCard  sum={orderProducts.reduce((acc, cur) => acc + cur.orderedPrice, 0)} />
             </Grid>

@@ -16,6 +16,10 @@ export interface ApiResponse<T> {
     error: ApiError | null,
 } 
 
+export interface ApiSuccessResponse {
+    message: string
+}
+
 export interface User {
     id: number,
     username: string,

@@ -1,10 +1,27 @@
 import { useEffect, useState } from "react"
-import { OrderDTO, OrderItemResponseDTO, getOrder, getOrderItemsWithProduct } from "../api/orderApi"
-import { ApiResponse } from "../types/ApiInterfaces";
+import { OrderItemResponseDTO, addItem, deleteItem, getOrder, getOrderItemsWithProduct } from "../api/orderApi"
+import { ApiResponse, ApiSuccessResponse } from "../types/ApiInterfaces";
+import { toast } from "react-toastify";
+
+export interface OrderDTO {
+    id: number,
+    userId: number,
+    date: Date,
+    status: string,
+}
+
+export interface OrderItemRequestDTO {
+    id: number,
+    orderId: number,
+    productId: number,
+    quantity: number,
+    price: number,
+}
 
 const useOrderApi = () => {
     const [order, setOrder] = useState<OrderDTO | null>(null);
     const [orderProducts, setOrderProducts] = useState<OrderItemResponseDTO[]>([]);
+    const [orderItems, setOrderItems] = useState<OrderItemRequestDTO[] | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<Error | null>(null);
 
@@ -49,13 +66,49 @@ const useOrderApi = () => {
         }
     }
 
+    /**
+     * Add an OrderItem. This will be shown in the cart
+     * @param product 
+     * @param token 
+     */
+    const addOrderItem = async (product: OrderItemRequestDTO, token: string) => {    
+        setLoading(true);
+        const response: ApiResponse<ApiSuccessResponse> = await addItem(product, token);
+        setLoading(false);
+        if(response.data){
+            // What to add here? Toast success??
+            toast.success('Added Product to Cart.', {
+                position: 'top-left',
+            })
+        }
+
+    }
+
+    const deleteOrderItem = async (orderItemId: number) => {
+        setLoading(true);
+        const response: ApiResponse<ApiSuccessResponse> = await deleteItem(orderItemId);
+        setLoading(false);
+        if(!response.data)
+            toast.error('Could not remove Product from Cart.', {
+        position: 'top-left'});
+    }
+
+    /**
+     * @description When logged off, clean the carts content for client view
+     */
+    const resetCart = () => {
+        setOrderProducts([]);
+        setOrder(null);
+    }
+
     // Fetch orderProducts when the order is changed.
     useEffect(() => {
-        if(order)
+        if(order){
             fetchAndSetOrderProducts();
+        }
     }, [order])
 
-    return { orderProducts, fetchAndSetOrder, fetchAndSetOrderProducts }
+    return { order, orderProducts, fetchAndSetOrder, fetchAndSetOrderProducts, addOrderItem, deleteOrderItem, resetCart }
 }
 
 export default useOrderApi;

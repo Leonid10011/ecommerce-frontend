@@ -1,7 +1,8 @@
 # E-Commerce Frontend in React with Material-UI
 
 # Currently working on:
-- [ ] Rework handling of OrderItems, useOrderApi hook. Next step remove old orderItems code and implement the hook in a proper context. 
+- [ ] Rework handling of authentication. Introduce useAuthApi hook and adjust authContext.
+- [x] Rework handling of OrderItems, useOrderApi hook. Next step remove old orderItems code and implement the hook in product context. 
 - [x] Cleaning and Refactoring ProductContext. Introducing hooks for filtering.
 - [x] Cleaning and structuring api call methods 
 - [x] Reorganizing products, orderItems and favoriteItems, such they all interact seamless  with each other. Currently interaction is disturbed due to bad data structure.

@@ -2,27 +2,26 @@ import React, { useEffect } from 'react';
 import { Container } from '@mui/material';
 import { useAuth } from '../../context/authContext';
 import { useNavigate } from 'react-router';
-import { useOrder } from '../../context/orderContext';
 import ProductCard from '../../components/ProductCard/ProductCard';
 import { useProducts } from '../../context/ProductContext';
+import { OrderItemRequestDTO } from '../../hooks/useOrderApi';
 
 function ProductList() {
     const { isAuthenticated } = useAuth();
-    const { order, addOrderItem } = useOrder();
-    const { addFavoriteItem, deleteFavoriteItem, favoriteProductsFiltered } = useProducts();
+    const { order, addFavoriteItem, deleteFavoriteItem, favoriteProductsFiltered, addOrderItemWithToken } = useProducts();
     const navigation = useNavigate();
 
     // Need to be reworked
     const handleBuy = (id: number, price: number, quantity: number) => {
-      if(isAuthenticated){
-        const item = {
+      if(isAuthenticated && order){
+        const item: OrderItemRequestDTO = {
           id: 0,
           orderId: order.id, 
           productId: id, 
           quantity: quantity, 
           price: price
         }
-        addOrderItem(item);
+        addOrderItemWithToken(item);
       }
       else {
         navigation("/signin")

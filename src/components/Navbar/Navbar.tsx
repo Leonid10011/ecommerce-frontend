@@ -12,14 +12,12 @@ import FilterListIcon from '@mui/icons-material/FilterList';
 
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import LoginIcon from '@mui/icons-material/Login';
-import { Box, Drawer, Input, List, ListItem, ListItemText, Menu, MenuItem, Popper, Slider, Switch, TextField, Typography } from '@mui/material';
+import { Box, Drawer, List, ListItem, ListItemText, Menu, MenuItem, Popper, Slider, Switch, TextField, Typography } from '@mui/material';
 import { useAuth } from '../../context/authContext';
-import { Link, useAsyncError, useNavigate, useNavigation } from 'react-router-dom';
-import { useOrder } from '../../context/orderContext';
+import { Link, useNavigate, useNavigation } from 'react-router-dom';
 import MenuIcon from '@mui/icons-material/Menu';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { toast } from 'react-toastify';
-import useProductFilter from '../../hooks/useProductFilter';
 import { useProducts } from '../../context/ProductContext';
 
 const logoStyles = css`
@@ -39,8 +37,7 @@ function Navbar() {
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  const { fetchProductsByName } = useProducts();
-  const { resetCart } = useOrder();
+  const { fetchProductsByName, resetCart } = useProducts();
 
   const navigation = useNavigate();
 
