@@ -18,7 +18,7 @@ export interface OrderItemRequestDTO {
     price: number,
 }
 
-const useOrderApi = () => {
+const useOrderApi = (token: string) => {
     const [order, setOrder] = useState<OrderDTO | null>(null);
     const [orderProducts, setOrderProducts] = useState<OrderItemResponseDTO[]>([]);
     const [orderItems, setOrderItems] = useState<OrderItemRequestDTO[] | null>(null);
@@ -29,7 +29,7 @@ const useOrderApi = () => {
      * Attempts to get order of user 
      * @returns 
      */
-    const fetchAndSetOrder = async (userId:number, token: string) => {
+    const fetchAndSetOrder = async (userId:number) => {
         setLoading(true);
         const response: ApiResponse<OrderDTO> = await getOrder(userId, token);
         setLoading(false);
@@ -71,7 +71,7 @@ const useOrderApi = () => {
      * @param product 
      * @param token 
      */
-    const addOrderItem = async (product: OrderItemRequestDTO, token: string) => {    
+    const addOrderItem = async (product: OrderItemRequestDTO) => {    
         setLoading(true);
         const response: ApiResponse<ApiSuccessResponse> = await addItem(product, token);
         setLoading(false);

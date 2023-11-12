@@ -8,7 +8,7 @@ import { OrderItemRequestDTO } from '../../hooks/useOrderApi';
 
 function ProductList() {
     const { isAuthenticated } = useAuth();
-    const { order, addFavoriteItem, deleteFavoriteItem, favoriteProductsFiltered, addOrderItemWithToken } = useProducts();
+    const { order, addFavoriteItem, deleteFavoriteItem, favoriteProductsFiltered, addOrderItem } = useProducts();
     const navigation = useNavigate();
 
     // Need to be reworked
@@ -21,7 +21,7 @@ function ProductList() {
           quantity: quantity, 
           price: price
         }
-        addOrderItemWithToken(item);
+        addOrderItem(item);
       }
       else {
         navigation("/signin")

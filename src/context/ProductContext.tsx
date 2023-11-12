@@ -31,7 +31,7 @@ interface ProductContextInterface {
     orderProducts: OrderItemResponseDTO[],
     resetCart: () => void,
     order: OrderDTO | null,
-    addOrderItemWithToken: (product: OrderItemRequestDTO) => void,
+    addOrderItem: (product: OrderItemRequestDTO) => void,
     deleteOrderItem: (orderId: number) => void,
 }
 
@@ -48,7 +48,7 @@ export const ProductProvider = ({ children }: {
 
     const { favoriteItems, addFavoriteItem, deleteFavoriteItem, favoriteProductsFiltered } = useFavoriteProducts(filteredProducts, userId, token);
 
-    const { order, orderProducts, fetchAndSetOrder, fetchAndSetOrderProducts, addOrderItem, deleteOrderItem, resetCart } = useOrderApi();
+    const { order, orderProducts, fetchAndSetOrder, fetchAndSetOrderProducts, addOrderItem, deleteOrderItem, resetCart } = useOrderApi(token);
 
 
     /**
@@ -57,14 +57,10 @@ export const ProductProvider = ({ children }: {
     useEffect(() => {
         console.log("login trigger");
         if(isAuthenticated){
-            fetchAndSetOrder(userId, token);          
+            fetchAndSetOrder(userId);          
         }
         
     }, [userId])
-
-    const addOrderItemWithToken = (product: OrderItemRequestDTO) => {
-        addOrderItem(product, token);
-    }
 
     const value = {
         products,
@@ -80,7 +76,7 @@ export const ProductProvider = ({ children }: {
         orderProducts,
         resetCart,
         order,
-        addOrderItemWithToken,
+        addOrderItem,
         deleteOrderItem,
     };
     

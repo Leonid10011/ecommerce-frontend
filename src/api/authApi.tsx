@@ -1,9 +1,13 @@
 import { ApiResponse, User, UserDTO } from '../types/ApiInterfaces';
 import { config } from '../config';
-import { ApiError } from '../types/ErrorTypes';
+import { AcceptEnum, apiRequest } from './apiRequest';
 
 const apiPath = config.api_path;
 
+interface LoginRequestBody {
+    username: string,
+    password: string,
+}
 /**
  * Attempts to log in a user with the provided username and password.
  * 
@@ -24,39 +28,21 @@ const apiPath = config.api_path;
  *   });
  */
 export const loginUser = async (username: string, password: string): Promise<ApiResponse<string>> => {
-    try {
-        const requestOptions = {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Accept": "text/plain",
-            },
-            body: JSON.stringify({
-                username: username,
-                password: password
-            }),
-        }
+    const url = `${apiPath}user/login`;
+    const body: LoginRequestBody = {
+        username: username,
+        password: password
+    };
 
-        const res: Response = await fetch(`${apiPath}user/login`, requestOptions);
-        if(!res.ok){
-            const error = new ApiError(`Login failed: ${res.status} ${res.statusText}`, res.status);
-            error.status = res.status;
-            throw error;
-        }
-        return { data: await res.text(), error: null }
-    } catch(error){
-        console.error("Error during login:  ", error)
-        if(error instanceof ApiError){
-            return { data: null, error}
-        } else {
-            return {
-                data: null,
-                error: new ApiError("An unexpected error occurred", 500)
-            }
-        };
-    }
+    return apiRequest(url, 'POST',body, '', AcceptEnum.text);
 }
 
+interface SignUpRequestBody {
+    username: string,
+    email: string,
+    roleId: number,
+    password: string
+}
 /**
  * Attempts to sign up a new user with the provided user information.
  * 
@@ -83,43 +69,13 @@ export const loginUser = async (username: string, password: string): Promise<Api
  *   });
  */
 export const signUp= async (userDTO: UserDTO): Promise<ApiResponse<User>> => {
-    try {
-        const requestOptions = {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Accept": "application/json"
-            },
-            body: JSON.stringify({
-                username: userDTO.username,
-                email: userDTO.email,
-                roleId: 1,
-                password: userDTO.password
-            }),
-        }
-    
-        const res: Response = await fetch(`${apiPath}user/`, requestOptions);
-
-        if(!res.ok){
-            const error = new ApiError(`Signup failed: ${res.status} ${res.statusText}`, res.status);
-            error.status = res.status;
-            throw error;
-        }
-
-        return {
-            data: await res.json() as User,
-            error: null
-        }
-    } catch(error){
-        console.error(`Error during signup ${error}`);
-        if(error instanceof ApiError){
-            return { data: null, error}
-        } else {
-            return {
-                data: null,
-                error: new ApiError(`Unexpected Error occured. `, 500)
-            }
-        }
-    }
+    const url = `${apiPath}user/`;
+    const body: SignUpRequestBody = {
+        username: userDTO.username,
+        email: userDTO.email,
+        roleId: 1,
+        password: userDTO.password
+    };
+    return apiRequest(url, 'POST', body,'',AcceptEnum.json);
 }
 
