@@ -57,6 +57,7 @@
     ]
   },
   "devDependencies": {
-    "@types/jsonwebtoken": "^9.0.4"
+    "@types/jsonwebtoken": "^9.0.4",
+    "typedoc": "^0.25.3"
   }
 }

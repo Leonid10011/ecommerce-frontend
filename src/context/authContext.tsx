@@ -3,22 +3,6 @@ import { UserDTO } from "../types/ApiInterfaces";
 
 import { useAuthApi } from "../hooks/useAuthApi";
 
-export interface TokenInterface {
-    sub: string,
-    groups: string[],
-    upn: string,
-    iat: number,
-    exp: number,
-    jti: string
-}
-
-export interface Order {
-    id: number,
-    userId: number,
-    date: Date,
-    status: string
-}
-
 interface AuthContextType {
     token: string,
     fetchAndSetToken: (email: string, password: string) => Promise<Boolean>,
