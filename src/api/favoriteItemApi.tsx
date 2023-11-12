@@ -3,6 +3,7 @@ import { Api } from "@mui/icons-material";
 import {config} from "../config";
 import { ApiResponse } from "../types/ApiInterfaces";
 import { ApiError } from "../types/ErrorTypes";
+import { AcceptEnum, apiRequest } from "./apiRequest";
 
 const apiPath = config.api_path;
 
@@ -23,36 +24,13 @@ export interface FavoriteProduct {
  * containing either the list of favorite products (data) or an error object.
  */
 const getFavoriteItemsByUser = async (userId: number): Promise<ApiResponse<FavoriteProduct[]>> => {
-    try {
-        const requestOptions = {
-            method: 'GET',
-            headers: {
-                'Accept': 'application/json'
-            }
-        }
-
-        const res:  Response = await fetch(`${apiPath}favoriteItem/getProductIdsByUser/${userId}`, requestOptions);
-        if(!res.ok){
-            const error: ApiError = new ApiError(`Error getting favorite items: ${res.status} ${res.statusText}`, res.status);
-            error.status = res.status;
-            throw error;
-        }
-        return {
-            data: await res.json() as FavoriteProduct[],
-            error: null 
-        };
-    } catch(error){
-        console.error(`Error retrieving products by name: ${error}`);
-        if(error instanceof ApiError){
-            return { data: null, error }
-        } else {
-            return {
-                data: null,
-                error: new ApiError(`Unexpected Error occured`, 500)}
-        }
-    }
+    const url = `${apiPath}favoriteItem/getProductIdsByUser/${userId}`;
+    return apiRequest(url, 'GET', undefined, undefined, AcceptEnum.json);
 }
-
+interface CreateFavoriteItemBody {
+    userId: number,
+    productId: number
+}
 /**
  * Creates a new favorite item for a user.
  * 
@@ -67,40 +45,12 @@ const getFavoriteItemsByUser = async (userId: number): Promise<ApiResponse<Favor
  * containing either the newly created favorite product (data) or an error object.
  */
 const createFavoriteItem = async (userId: number, productId: number, token: string): Promise<ApiResponse<FavoriteProduct>> => {
-    console.log("Create Favorite Item Debug");
-    try {
-        const requestOptions = {
-            method: 'POST',
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`
-            },
-            body: JSON.stringify({
-                userId: userId,
-                productId: productId
-            })
-        };
-
-        let res: Response = await fetch(`${apiPath}favoriteItem/`, requestOptions);
-        if(!res.ok){
-            const error: ApiError = new ApiError(`Error getting favorite items: ${res.status} ${res.statusText}`, res.status);
-            error.status = res.status;
-            throw error;
-        }
-        return {
-            data: await res.json() as FavoriteProduct,
-            error: null 
-        };
-    } catch(error){
-        console.error(`Error retrieving products by name: ${error}`);
-        if(error instanceof ApiError){
-            return { data: null, error }
-        } else {
-            return {
-                data: null,
-                error: new ApiError(`Unexpected Error occured`, 500)}
-        }
-    }
+    const url = `${apiPath}favoriteItem/`;
+    const body: CreateFavoriteItemBody = {
+        userId: userId,
+        productId: productId
+    };
+    return apiRequest(url, 'POST', body, token, AcceptEnum.json);
 }
 
 /**
@@ -110,99 +60,18 @@ const createFavoriteItem = async (userId: number, productId: number, token: stri
  * It requires the favorite item's ID and an authentication token.
  * On success, it returns an ApiResponse indicating whether the deletion was successful.
  *
- * @param {number} favoritProductId - The ID of the favorite product to be deleted.
+ * @param {number} favoriteProductId - The ID of the favorite product to be deleted.
  * @param {string} token - The authentication token.
  * @returns {Promise<ApiResponse<boolean>>} - A promise that resolves to an ApiResponse,
  * indicating the success (data: true) or failure (data: false) of the deletion, or an error object.
  */
-const deleteFavoriteProduct = async (favoritProductId: number, token: string): Promise<ApiResponse<boolean>> =>  {
-    try {
-        const requestOptions = {
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${token}`
-            }
-        };
-        let res = await fetch(`${apiPath}favoriteItem/delete/${favoritProductId}`, requestOptions);
-
-        if(!res.ok){
-            const error: ApiError = new ApiError(`Deleting favorite product failed ${res.status} ${res.statusText}`, res.status);
-            throw error;
-        } 
-        return { 
-            data: true,
-            error: null,
-        }
-    } catch(error) {
-        if(error instanceof ApiError){
-            return {
-                data:false,
-                error
-            }
-        } else {
-            return {
-                data: false,
-                error: new ApiError(`Unexpected Error occured.`, 500),
-            }
-        }
-    }
-}
-
-/**
- * Deletes a favorite product for a user.
- * 
- * This function sends a DELETE request to remove a product from a user's favorites list.
- * It requires the user's ID, the product's ID, and an authentication token.
- * On success, it returns an ApiResponse indicating whether the deletion was successful.
- *
- * @param {number} userId - The ID of the user.
- * @param {number} productId - The ID of the product to be removed from favorites.
- * @param {string} token - The authentication token.
- * @returns {Promise<ApiResponse<boolean>>} - A promise that resolves to an ApiResponse,
- * indicating the success (data: true) or failure (data: false) of the deletion, or an error object.
- */
-const deleteFavoriteProductByUserAndProduct = async (userId: number, productId: number, token: string): Promise<ApiResponse<boolean>> => {
-    try {
-        const requestOptions = {
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${token}`
-            },
-            body: JSON.stringify({
-                id: 0,
-                userId: userId,
-                productId: productId
-            })
-        };
-
-        let res = await fetch(`${apiPath}favoriteItem/delete`, requestOptions);
-        
-        if(!res.ok){
-            const error: ApiError = new ApiError(`Error getting favorite items: ${res.status} ${res.statusText}`, res.status);
-            error.status = res.status;
-            throw error;
-        }
-        return {
-            data: await res.json() as boolean,
-            error: null 
-        };
-    } catch(error){
-        console.error(`Error retrieving products by name: ${error}`);
-        if(error instanceof ApiError){
-            return { data: null, error }
-        } else {
-            return {
-                data: null,
-                error: new ApiError(`Unexpected Error occured`, 500)}
-        }
-    }
+const deleteFavoriteProduct = async (favoriteProductId: number, token: string): Promise<ApiResponse<boolean>> =>  {
+    const url = `${apiPath}favoriteItem/delete/${favoriteProductId}`;
+    return apiRequest(url, 'DELETE', undefined, token, undefined);
 }
 
 export {
     createFavoriteItem, 
-    deleteFavoriteProductByUserAndProduct,
     deleteFavoriteProduct,
     getFavoriteItemsByUser
 }
