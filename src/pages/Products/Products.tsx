@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Container } from '@mui/material';
+import { AppBar, Box, Container, Toolbar, Typography } from '@mui/material';
 import { useAuth } from '../../context/authContext';
 import { useNavigate } from 'react-router';
 import ProductCard from '../../components/ProductCard/ProductCard';

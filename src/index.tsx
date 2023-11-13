@@ -18,20 +18,20 @@ const root = ReactDOM.createRoot(
 
 root.render(
   <BrowserRouter>
-  <AuthContextProvider>
-    <ProductProvider>
-            <Routes>
-              <Route path="/" element={<App/>}>
-                <Route path="/" element={<Start/>}/>
-                <Route path="/signin" element={<SignIn/>}/>
-                <Route path="/signup" element={<RegisterForm/>}/>
-                <Route path="/test" element={<RegisterForm/>} />
-                <Route path='/p' element={<ProductList/>} />
-                <Route path='/cart' element={<Cart/>}/>
-              </Route>
-            </Routes>  
-    </ProductProvider>
-  </AuthContextProvider>
+    <AuthContextProvider>
+      <ProductProvider>
+              <Routes>
+                <Route path="/" element={<App/>}>
+                  <Route path="/" element={<Start/>}/>
+                  <Route path="/signin" element={<SignIn/>}/>
+                  <Route path="/signup" element={<RegisterForm/>}/>
+                  <Route path="/test" element={<RegisterForm/>} />
+                  <Route path='/p' element={<ProductList/>} />
+                  <Route path='/cart' element={<Cart/>}/>
+                </Route>
+              </Routes>  
+      </ProductProvider>
+    </AuthContextProvider>
   </BrowserRouter>
 );
 

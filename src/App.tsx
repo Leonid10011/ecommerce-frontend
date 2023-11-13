@@ -1,15 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import Navbar from './components/Navbar/Navbar';
-import { Grid, Theme, createTheme } from '@mui/material';
+import { Box, Grid, Theme, createTheme } from '@mui/material';
 import { ThemeProvider } from '@emotion/react';
 import { Outlet, useLocation } from 'react-router';
 import { ToastContainer } from 'react-toastify';
 
 
 const theme: Theme = createTheme({
-  typography: {
-    fontSize: 30,
-  }
+
 });
 
 function App() {
