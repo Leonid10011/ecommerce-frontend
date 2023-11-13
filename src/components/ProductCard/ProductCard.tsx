@@ -3,14 +3,15 @@ import React, { useState } from 'react';
 import styled from '@emotion/styled';
 import { Card, CardContent, Typography } from '@mui/material';
 import ProductModal from '../ProductModal/ProductModal';
-import { Product } from '../../types/ApiInterfaces';
+import { FavoriteProduct, Product } from '../../types/ApiInterfaces';
 import CustomIconButton from '../common/CustomIconButton';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import { config } from '../../config';
+import { FilteredFavoriteProduct } from '../../hooks/useFavoriteProducts';
 
 interface ProductCardProps {
-  product: Product,
+  product: Product | FilteredFavoriteProduct,
   handleBuy: (id: number, price: number, quantity: number) => void,
   isFavorite: boolean,
   isAuthenticated: boolean,
@@ -19,7 +20,10 @@ interface ProductCardProps {
 }
 
 const StyledCard = styled(Card)`
-  
+  border: 2px solid black;
+  backgroundColor: black;
+  margin-bottom: 5px;
+  margin-top: 5px;
 `;
 
 const ImageContainer = styled.div`
@@ -28,6 +32,7 @@ const ImageContainer = styled.div`
 
 const StyledCardContent = styled(CardContent)`
   position: relative;
+  border-top: 1px solid grey;
   // Additional styles for card content
 `;
 
@@ -42,7 +47,12 @@ const ProductCard: React.FC<ProductCardProps> = ({
   const [modalOpen, setModalOpen] = useState(false);
 
   const handleFavoriteClick = () => {
-    isFavorite ? deleteFavoriteItem(product.id) : addFavoriteItem(product.id);
+    if(isFavorite){
+      if('favoriteProductId' in product)
+        deleteFavoriteItem(product.favoriteProductId);
+    }
+    else
+      addFavoriteItem(product.id);
   }
 
   const handleAddToCartClick = () => {
@@ -68,8 +78,11 @@ const ProductCard: React.FC<ProductCardProps> = ({
       />
       </ImageContainer>
       <StyledCardContent>
-        <Typography variant="h6" component="div">
+        <Typography variant={'h1'} gutterBottom paragraph sx={{fontSize: '1.5rem'}}>
           {product.name}
+        </Typography>
+        <Typography variant={'h1'} component="div" gutterBottom paragraph sx={{fontSize: '1rem'}}>
+          {product.description}
         </Typography>
         <Typography variant="body2" color="text.secondary">
           {product.price}€

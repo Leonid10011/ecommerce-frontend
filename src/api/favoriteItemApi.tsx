@@ -55,7 +55,7 @@ const createFavoriteItem = async (userId: number, productId: number, token: stri
  */
 const deleteFavoriteProduct = async (favoriteProductId: number, token: string): Promise<ApiResponse<boolean>> =>  {
     const url = `${apiPath}favoriteItem/delete/${favoriteProductId}`;
-    return apiRequest(url, 'DELETE', undefined, token, undefined);
+    return apiRequest(url, 'DELETE', undefined, token, AcceptEnum.text);
 }
 
 export {

@@ -49,6 +49,7 @@ const useFavoriteProducts = (filteredProducts: Product[], userId: number, token:
         if (response.error) {
             setError(response.error.message);
         } else if (response.data) {
+            console.log("AddFAve: ", favoriteItems)
             setFavoriteItems([...favoriteItems, response.data]);
         }
     };
@@ -64,7 +65,8 @@ const useFavoriteProducts = (filteredProducts: Product[], userId: number, token:
         setLoading(false);
         if (response.error) {
             setError(response.error.message);
-        } else if (response.data) {
+            // On success data is null, therefore if no error occurred error is null.
+        } else if (!response.error) {
             const newItems = favoriteItems.filter(item => item.id !== favoriteItemId);
             setFavoriteItems([...newItems]);
         }

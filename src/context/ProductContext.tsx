@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useEffect } from 'react';
 import useProductApi from '../hooks/useProductApi';
 import useProductFilter from '../hooks/useProductFilter';
-import useFavoriteProducts from '../hooks/useFavoriteProducts';
+import useFavoriteProducts, { FilteredFavoriteProduct } from '../hooks/useFavoriteProducts';
 import { FilterActionType, FilterStateType } from '../reducer/filterReducer';
 import { useAuth } from './authContext';
 import useOrderApi from '../hooks/useOrderApi';
@@ -73,7 +73,7 @@ interface ProductContextInterface {
     error: Error | null,
     fetchProducts: () => void,
     fetchProductsByName: (name: string) => void,
-    favoriteProductsFiltered: { favoriteProducts: Product[], nonFavoriteProducts: Product[] },
+    favoriteProductsFiltered: { favoriteProducts: FilteredFavoriteProduct[], nonFavoriteProducts: Product[] },
     manageFilter: (action: FilterActionType) => void,
     filterConditions: FilterStateType,
     addFavoriteItem: (productId: number) => Promise<void>,
