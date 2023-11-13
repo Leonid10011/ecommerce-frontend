@@ -2,7 +2,7 @@ import { ApiResponse, User, UserDTO } from '../types/ApiInterfaces';
 import { config } from '../config';
 import { AcceptEnum, apiRequest } from './apiRequest';
 import { LoginRequestBody, SignUpRequestBody } from '../types/RequestBodyInterfaces';
-
+// Api url stored in config file
 const apiPath = config.api_path;
 
 /**
@@ -63,7 +63,7 @@ export const signUp= async (userDTO: UserDTO): Promise<ApiResponse<User>> => {
     const body: SignUpRequestBody = {
         username: userDTO.username,
         email: userDTO.email,
-        roleId: 1,
+        roleId: 1,  // New users are always are assigned to the this role 
         password: userDTO.password
     };
     return apiRequest(url, 'POST', body,'',AcceptEnum.json);

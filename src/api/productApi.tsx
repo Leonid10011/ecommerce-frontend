@@ -1,9 +1,8 @@
 import { config } from "../config";
 import { ApiResponse, Product } from "../types/ApiInterfaces";
 import { AcceptEnum, apiRequest } from "./apiRequest";
-
+// Api url stored in config file
 const apiPath = config.api_path;
-
 /**
  * Fetches all products from the backend.
  * 

@@ -1,7 +1,8 @@
 # E-Commerce Frontend in React with Material-UI
 
 # Currently working on:
-- [ ] Create Documentation with typedoc
+- [ ] Rework UI components for products
+- [x] Create Documentation with typedoc
 - [x] Rework handling of authentication. Introduce useAuthApi hook and adjust authContext.
 - [x] Rework handling of OrderItems, useOrderApi hook. Next step remove old orderItems code and implement the hook in product context. 
 - [x] Cleaning and Refactoring ProductContext. Introducing hooks for filtering.

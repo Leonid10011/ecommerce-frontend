@@ -4,7 +4,7 @@ import { useAuth } from '../../context/authContext';
 import { useNavigate } from 'react-router';
 import ProductCard from '../../components/ProductCard/ProductCard';
 import { useProducts } from '../../context/ProductContext';
-import { OrderItemRequestDTO } from '../../hooks/useOrderApi';
+import { OrderItemRequestDTO } from '../../types/ApiInterfaces';
 
 function ProductList() {
     const { isAuthenticated } = useAuth();

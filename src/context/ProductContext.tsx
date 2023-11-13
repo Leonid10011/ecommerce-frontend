@@ -4,8 +4,8 @@ import useProductFilter from '../hooks/useProductFilter';
 import useFavoriteProducts from '../hooks/useFavoriteProducts';
 import { FilterActionType, FilterStateType } from '../reducer/filterReducer';
 import { useAuth } from './authContext';
-import useOrderApi, { OrderItemRequestDTO } from '../hooks/useOrderApi';
-import { Order, OrderItemResponseDTO, Product } from '../types/ApiInterfaces';
+import useOrderApi from '../hooks/useOrderApi';
+import { Order, OrderItemRequestDTO, OrderItemResponseDTO, Product } from '../types/ApiInterfaces';
 
 const ProductContext = createContext<ProductContextInterface | null>(null);
 

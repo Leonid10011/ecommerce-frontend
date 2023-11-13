@@ -23,8 +23,5 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx"
-  },
-  "include": [
-    "src"
-, "misc/productContext.tsx", "misc/orderContext.tsx"  ]
+  }
 }

@@ -3,15 +3,6 @@ import { UserDTO } from "../types/ApiInterfaces";
 
 import { useAuthApi } from "../hooks/useAuthApi";
 
-interface AuthContextType {
-    token: string,
-    fetchAndSetToken: (email: string, password: string) => Promise<Boolean>,
-    resetToken: () => void;
-    userId: number,
-    signUpUser: (user: UserDTO) => Promise<void>,
-    isAuthenticated: boolean,
-}
-
 const AuthContext = createContext<AuthContextType | null>(null);
 
 export const AuthContextProvider = (props: {
@@ -44,4 +35,11 @@ export const useAuth = () => {
     return context;
 };
 
-
+interface AuthContextType {
+    token: string,
+    fetchAndSetToken: (email: string, password: string) => Promise<Boolean>,
+    resetToken: () => void;
+    userId: number,
+    signUpUser: (user: UserDTO) => Promise<void>,
+    isAuthenticated: boolean,
+}

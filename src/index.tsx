@@ -10,8 +10,8 @@ import RegisterForm from './pages/Register/SignUp';
 import ProductList from './pages/Products/Products';
 import Cart from './pages/Cart/Cart';
 import { ProductProvider } from './context/ProductContext';
-//import { InitContextProvider } from './context/initContext';
-
+import useFavoriteProducts from './hooks/useFavoriteProducts';
+import { ApiResponse } from './types/ApiInterfaces';
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );

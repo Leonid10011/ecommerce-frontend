@@ -2,7 +2,7 @@ import {config} from "../config";
 import { ApiResponse, FavoriteProduct } from "../types/ApiInterfaces";
 import { CreateFavoriteItemBody } from "../types/RequestBodyInterfaces";
 import { AcceptEnum, apiRequest } from "./apiRequest";
-
+// Api url stored in config file
 const apiPath = config.api_path;
 
 /**

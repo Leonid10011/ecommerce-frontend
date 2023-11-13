@@ -1,0 +1,6 @@
+{
+    "out": "./docs",
+    "entryPoints": ["src/App.tsx"],
+    "name": "My Project Documentation"
+  }
+  

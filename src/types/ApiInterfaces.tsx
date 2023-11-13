@@ -3,7 +3,7 @@ import { ApiError } from "./ErrorTypes";
 /**
  * Enum for standard HTTP status codes.
  */
-export enum HttpStatusCode {
+enum HttpStatusCode {
     OK = 200,
     Created = 201,
     BadRequest = 400,
@@ -20,7 +20,7 @@ export enum HttpStatusCode {
  * @param data The payload of the response, of generic type T.
  * @param error Any error that occurred during the API call.
  */
-export interface ApiResponse<T> {
+interface ApiResponse<T> {
     data: T | null,
     error: ApiError | null,
 }
@@ -30,7 +30,7 @@ export interface ApiResponse<T> {
  * 
  * @param message A success message.
  */
-export interface ApiSuccessResponse {
+interface ApiSuccessResponse {
     message: string
 }
 
@@ -42,7 +42,7 @@ export interface ApiSuccessResponse {
  * @param email The email address of the user.
  * @param roleId The role ID associated with the user.
  */
-export interface User {
+interface User {
     id: number,
     username: string,
     email: string,
@@ -60,7 +60,7 @@ export interface User {
  * @param quantity The available quantity of the product.
  * @param imgURL The URL of the product image.
  */
-export interface Product {
+interface Product {
     id: number,
     name: string,
     description: string,
@@ -79,7 +79,7 @@ export interface Product {
  * @param roleId The role ID associated with the user.
  * @param password The password of the user.
  */
-export interface UserDTO {
+interface UserDTO {
     id: number,
     username: string,
     email: string,
@@ -97,7 +97,7 @@ export interface UserDTO {
  * @param exp Expiration time (timestamp).
  * @param jti JWT ID.
  */
-export interface TokenInterface {
+interface TokenInterface {
     sub: string,
     groups: string[],
     upn: string,
@@ -114,7 +114,7 @@ export interface TokenInterface {
  * @param date The date the order was created.
  * @param status The status of the order.
  */
-export interface Order {
+interface Order {
     id: number,
     userId: number,
     date: Date,
@@ -130,7 +130,7 @@ export interface Order {
  * @param quantity The quantity of the product ordered.
  * @param price The price of the product at the time of order.
  */
-export interface OrderItemDTO {
+interface OrderItemDTO {
     id: number,
     orderId: number,
     productId: number,
@@ -145,7 +145,7 @@ export interface OrderItemDTO {
  * @param userId The ID of the user who marked the product as favorite.
  * @param productId The ID of the product marked as favorite.
  */
-export interface FavoriteProduct {
+interface FavoriteProduct {
     id: number,
     userId: number,
     productId: number
@@ -164,7 +164,7 @@ export interface FavoriteProduct {
  * @param orderedQuantity The quantity of the product ordered.
  * @param orderedPrice The price of the product at the time of order.
  */
-export interface OrderItemResponseDTO {
+interface OrderItemResponseDTO {
     orderItemId: number,
     orderId: number,
     productId: number,
@@ -174,4 +174,48 @@ export interface OrderItemResponseDTO {
     imageURL: string,
     orderedQuantity: number,
     orderedPrice: number,
+}
+/**
+ * Represents a DTO for an order, including user id, creation date and a status message
+ * @param id The unique identifier of order
+ * @param userId The unique identifier of the corresponding user
+ * @param date The creation time stamp of the order
+ * @param status A message providing information on the current status of the order
+ */
+interface OrderDTO {
+    id: number,
+    userId: number,
+    date: Date,
+    status: string,
+}
+/**
+ * Represent a request DTO of an order item, including order and product information
+ * @param id The unique identifier of the order item 
+ * @param orderId The ID of the order this item belongs to
+ * @param productId The ID of the product
+ * @param quantity The number of products ordered
+ * @param price The final price of the product
+ */
+interface OrderItemRequestDTO {
+    id: number,
+    orderId: number,
+    productId: number,
+    quantity: number,
+    price: number,
+}
+
+export type {
+    HttpStatusCode,
+    ApiResponse,
+    ApiSuccessResponse,
+    User,
+    Product,
+    UserDTO,
+    TokenInterface,
+    Order,
+    OrderItemDTO,
+    FavoriteProduct,
+    OrderItemResponseDTO,
+    OrderDTO,
+    OrderItemRequestDTO,
 }

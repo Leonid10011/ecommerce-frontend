@@ -18,6 +18,11 @@ export interface OrderItemRequestDTO {
     price: number,
 }
 
+/**
+ * Custom hook for managing orders and order items.
+ * 
+ * @param token - Authentication token used for API requests.
+ */
 const useOrderApi = (token: string) => {
     const [order, setOrder] = useState<OrderDTO | null>(null);
     const [orderProducts, setOrderProducts] = useState<OrderItemResponseDTO[]>([]);
@@ -26,92 +31,90 @@ const useOrderApi = (token: string) => {
     const [error, setError] = useState<Error | null>(null);
 
     /**
-     * Attempts to get order of user 
-     * @returns 
+     * Fetches the user's order based on the user ID and sets it in state.
+     * 
+     * @param userId - The ID of the user whose order is to be fetched.
+     * @returns A promise that resolves to void.
      */
-    const fetchAndSetOrder = async (userId:number) => {
+    const fetchAndSetOrder = async (userId: number) => {
         setLoading(true);
         const response: ApiResponse<OrderDTO> = await getOrder(userId, token);
         setLoading(false);
-        console.log("Order log: ", response.data);
-        if(response.data){
-            setOrder(prev => response.data);
-            console.log("Order test: ", order);
+        if (response.data) {
+            setOrder(response.data);
         } else if (response.error) {
-            setError(new Error('Could not get order for provided userId and token.'))
+            setError(new Error('Could not get order for provided userId and token.'));
         } else {
-            console.error("Should not happen.")
+            console.error("Unexpected condition in fetchAndSetOrder.");
         }
-    }
+    };
 
     /**
-     * Attempts to get orderItemsWithProducts by calling api
-     * @returns void
+     * Fetches and sets the order items with product details for the current order.
      */
     const fetchAndSetOrderProducts = async () => {
         setLoading(true);
-        if(!order){
+        if (!order) {
             console.log("Order not set");
-            setLoading(false)
+            setLoading(false);
             return;
         }
         const response: ApiResponse<OrderItemResponseDTO[]> = await getOrderItemsWithProduct(order.id);
         setLoading(false);
-        if(response.data){
-            setOrderProducts([...response.data])
-        } else if(response.error){
+        if (response.data) {
+            setOrderProducts(response.data);
+        } else if (response.error) {
             setError(new Error("Could not get OrderProducts"));
         } else {
-            setError(new Error("Unexpected error occurred"));
+            setError(new Error("Unexpected error occurred in fetchAndSetOrderProducts"));
         }
-    }
+    };
 
     /**
-     * Add an OrderItem. This will be shown in the cart
-     * @param product 
-     * @param token 
+     * Adds an item to the order and updates the order products.
+     * 
+     * @param product - The product details to be added to the order.
      */
     const addOrderItem = async (product: OrderItemRequestDTO) => {    
         setLoading(true);
         const response: ApiResponse<ApiSuccessResponse> = await addItem(product, token);
         setLoading(false);
-        if(response.data){
-            // refetch order products
+        if (response.data) {
             fetchAndSetOrderProducts();
-            toast.success('Added Product to Cart.', {
-                position: 'top-left',
-            })
+            toast.success('Added Product to Cart.', { position: 'top-left' });
         }
+    };
 
-    }
-
+    /**
+     * Deletes an item from the order and updates the order products.
+     * 
+     * @param orderItemId - The ID of the order item to be deleted.
+     */
     const deleteOrderItem = async (orderItemId: number) => {
         setLoading(true);
         const response: ApiResponse<ApiSuccessResponse> = await deleteItem(orderItemId);
         setLoading(false);
-        // Remove order product from current orderProducts
         setOrderProducts(orderProducts.filter(item => item.orderItemId !== orderItemId));
-        if(!response.data)
-            toast.error('Could not remove Product from Cart.', {
-        position: 'top-left'});
-    }
+        if (!response.data) {
+            toast.error('Could not remove Product from Cart.', { position: 'top-left' });
+        }
+    };
 
     /**
-     * @description When logged off, clean the carts content for client view
+     * Resets the cart by clearing the order and order products from the state.
      */
     const resetCart = () => {
         setOrderProducts([]);
         setOrder(null);
-    }
+    };
 
-    // Fetch orderProducts when the order is changed.
     useEffect(() => {
-        if(order){
+        if (order) {
             fetchAndSetOrderProducts();
         }
-    }, [order])
+    }, [order]);
 
-    return { order, orderProducts, fetchAndSetOrder, fetchAndSetOrderProducts, addOrderItem, deleteOrderItem, resetCart }
-}
+    return { order, orderProducts, fetchAndSetOrder, fetchAndSetOrderProducts, addOrderItem, deleteOrderItem, resetCart };
+};
 
 export default useOrderApi;
