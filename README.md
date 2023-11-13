@@ -54,6 +54,7 @@ The project is a work in progress, and I'm actively working on improving it. Som
 
 - [x] Search bar functionality is very primitve and doesn't work well yet.
 - [x] Reconstruct and adjust data structur of products, favItems and orderItems.
+- [ ] Sorting products
 - [ ] A mock transaction with PayPal and others
 - [ ] Starting page, where sales and new products are showcased.
 - [x] Filter products.
