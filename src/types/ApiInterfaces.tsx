@@ -204,6 +204,24 @@ interface OrderItemRequestDTO {
     price: number,
 }
 
+/**
+ * Represents a data transfer object for the rating
+ * 
+ * @param id The unique identifier of the rating
+ * @param rating A number from 1 to 5 indicating the rating
+ * @param date The creation date of the rating.
+ * @param userId The ID of the user of this rating.
+ * @param productId The ID of the product that is rated. 
+ */
+interface RatingDTO {
+    id: number,
+    rating: number,
+    text: string,
+    date: Date,
+    userId: number,
+    productId: number,
+}
+
 export type {
     HttpStatusCode,
     ApiResponse,
@@ -218,4 +236,5 @@ export type {
     OrderItemResponseDTO,
     OrderDTO,
     OrderItemRequestDTO,
+    RatingDTO,
 }

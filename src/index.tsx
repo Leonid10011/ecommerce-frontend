@@ -12,6 +12,7 @@ import Cart from './pages/Cart/Cart';
 import { ProductProvider } from './context/ProductContext';
 import useFavoriteProducts from './hooks/useFavoriteProducts';
 import { ApiResponse } from './types/ApiInterfaces';
+import UserProfile from './components/UserProfile/UserProfile';
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
@@ -28,6 +29,7 @@ root.render(
                   <Route path="/test" element={<RegisterForm/>} />
                   <Route path='/p' element={<ProductList/>} />
                   <Route path='/cart' element={<Cart/>}/>
+                  <Route path='/profile' element={<UserProfile/>}/>
                 </Route>
               </Routes>  
       </ProductProvider>

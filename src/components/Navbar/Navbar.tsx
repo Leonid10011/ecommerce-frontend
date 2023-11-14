@@ -142,7 +142,7 @@ function Navbar() {
                   <IconButton aria-label='Login' onClick={() => { navigation("/signin")}}><LoginIcon/></IconButton>
                   : (
                   <>
-                    <IconButton aria-label='Profile'><AccountCircleIcon/></IconButton>
+                    <IconButton aria-label='Profile' onClick={() => navigation("/profile")}><AccountCircleIcon/></IconButton>
                     <IconButton aria-label='Logout' onClick={logout}><LogoutIcon/></IconButton>
                   </>
                   )}
