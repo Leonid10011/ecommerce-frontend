@@ -2,9 +2,12 @@
 I use this repository to actively develop an ecommerce project with React and MUI. 
 
 # Currently working on:
-- ProductRating
+-[PAUSED] Currently Reworking the whole backend structure to REST norms. 
 
 # Preview
+The old backend is still running with this frontend.
+
+
 http://217.72.204.244/
 
 # This Project will include the following features:
