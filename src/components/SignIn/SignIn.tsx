@@ -1,10 +1,15 @@
 import { useState } from "react";
 import UserForm from "../UserForm/UserForm";
+import useError from "../../hooks/useError";
+import { verifyEmail, verifyPassword } from "../../utils/verification";
+import ErrorBox from "../ErrorBox/ErrorBox";
+import VerificationError from "../../Error/VerificationError";
 
 export default function SignIn(){
     
     const [email, setEmail] = useState<string>("");
     const [password, setPassword] = useState<string>("");
+    const { isError, errorMessage, createError, clearError} = useError();
 
     const handleEmail = (e: React.FormEvent<HTMLInputElement>) => {
         const email: HTMLInputElement = e.currentTarget
@@ -20,8 +25,20 @@ export default function SignIn(){
         }
     }  
 
-    const handleSubmit = () => {
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
         console.log("Submit not implemented");
+        try {
+            clearError();
+            verifyEmail(email);
+            verifyPassword(password);
+        } catch ( err ) {
+            if(err instanceof VerificationError){
+                createError(err.message);
+            } else {
+                createError("Unexpected error occurred")
+            }
+        }
     }
 
     return(
@@ -31,6 +48,12 @@ export default function SignIn(){
                 onSubmit={handleSubmit}
             >
                 <h2  className="text-2x1 font-bold mb-6">Sign In</h2>
+                {isError 
+                    ? 
+                <ErrorBox message={errorMessage}/> 
+                    :
+                ""
+                }
                 <div className="mb-4">
                     <label htmlFor="email" className="block text-gray-700 text-sm font-bold">
                         Email

@@ -1,16 +1,16 @@
 import { useState } from "react";
 import UserForm from "../UserForm/UserForm";
 import ErrorBox from "../ErrorBox/ErrorBox";
-import BadEmailError from "../../Error/BadEmailError";
-import PasswordError from "../../Error/PasswordError";
+import useError from "../../hooks/useError";
+import { verifyEmail, verifyMatchPassword, verifyPassword } from "../../utils/verification";
+import VerificationError from "../../Error/VerificationError";
 
 export default function SignUp(){
     
     const [email, setEmail] = useState<string>("");
     const [password, setPassword] = useState<string>("");
     const [passwordRepeat, setPasswordRepeat] = useState<string>("");
-    const [isError, setIsError] = useState<boolean>(false);
-    const [errorMessage, setErrorMessage] = useState<string>(""); 
+    const { isError, errorMessage, createError, clearError } = useError();
 
     const handleEmail = (e: React.FormEvent<HTMLInputElement>) => {
         const email: HTMLInputElement = e.currentTarget
@@ -36,37 +36,16 @@ export default function SignUp(){
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         try {
+            clearError();
             verifyEmail(email);
-            verifyPassword(password, passwordRepeat);
-        } catch(err) {
-            if(err instanceof BadEmailError){
-                setErrorMessage(err.message);
-            } else if(err instanceof PasswordError){
-                setErrorMessage(err.message);
-            }
-            setIsError(true);
-        } 
-    }
-
-    const verifyPassword = (p1: string, p2: string) => {
-        if(p1 === p2){
-            setErrorMessage("");
-            setIsError(false);
-        } else {
-            throw new PasswordError("Passwords do not match");
+            verifyPassword(password);
+            verifyMatchPassword(password, passwordRepeat);
+        } catch (err ) {
+            if(err instanceof VerificationError)
+                createError(err.message);
+            else 
+                createError("Unexpected error occurred")
         }
-    }
-
-    const verifyEmail = (email: string) => {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        const valid = emailRegex.test(email); 
-        if(valid) {
-            setErrorMessage("");
-            setIsError(false);
-        } else {
-            throw new BadEmailError("Email must be of the form: john.doe@example.com");
-        }
-        
     }
 
     return(
