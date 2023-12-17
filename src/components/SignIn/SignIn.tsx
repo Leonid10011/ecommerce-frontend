@@ -27,7 +27,7 @@ export default function SignIn(){
     return(
         <UserForm>
             <form 
-                className="bg-white p-8 rounded shadow-md max-w-md"    
+                className="bg-white p-8 rounded shadow-md max-w-md mt-16"    
                 onSubmit={handleSubmit}
             >
                 <h2  className="text-2x1 font-bold mb-6">Sign In</h2>

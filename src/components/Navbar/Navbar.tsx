@@ -15,7 +15,10 @@ export default function Navbar(){
                     {isAuthenticated ? (
                         <Link to="/" className="text-white mr-4">Dashboard</Link>
                     ) : (
-                        <Link to="/login" className="text-whtie mr-4">Login</Link>
+                        <>
+                            <Link to="/login" className="text-white mr-4">Login</Link>
+                            <Link to="/logout" className="text-white mr-4">Register</Link>
+                        </>
                     )}
 
                     {isAuthenticated && (

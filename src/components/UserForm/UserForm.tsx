@@ -3,7 +3,7 @@ export default function UserForm({children}: {
 }){
 
     return(
-        <div className="flex justify-center items-center h-screen bg-gray-100">
+        <div className="flex justify-center items-start h-screen bg-gray-100">
             {children}
         </div>
     )
