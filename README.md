@@ -2,9 +2,19 @@
 
 ## How to run
 
-```shell
+- ```shell
   git clone git@github.com:Leonid10011/ecommerce-frontend.git
-  cd ecommerce-frontend
-  npm install
-  npm run dev
-```
+  ```
+- ```shell
+      cd ecommerce-frontend
+   ```
+- ```shell
+      npm install
+   ```
+- ```shell
+       npm run dev
+   ```
+
+
+    
+ 
