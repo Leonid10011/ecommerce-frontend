@@ -4,6 +4,7 @@
 
 Currently I'm reworking the backend completely while applying clean code and a documentation. 
 
+## Started new **frontend** on 'master' branch
 
 **[NEXT UP]** After I finish the new backend, ([click here](https://github.com/Leonid10011/ecommerce-backend)), I will rewrite the frontend using REDUX and Tailwind styling. 
 
